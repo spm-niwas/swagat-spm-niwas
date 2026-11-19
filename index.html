@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Swagat — SPM NIWAS Visitor PWA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Hide scrollbars inside mobile app container while preserving scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            70% { transform: scale(1.08); opacity: 0; }
+            100% { transform: scale(0.95); opacity: 0; }
+        }
+        .animate-pulse-ring { animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-900 min-h-screen flex flex-col items-center justify-center sm:p-4">
+
+    <!-- Mobile App Shell (Full-screen on mobile, sleek phone frame on desktop) -->
+    <div id="app-shell" class="w-full sm:max-w-[430px] h-[100dvh] sm:h-[850px] bg-slate-50 sm:rounded-[2.5rem] sm:shadow-2xl sm:border-[6px] sm:border-slate-800 flex flex-col overflow-hidden relative">
+        
+        <!-- Top Status & App Bar -->
+        <header class="bg-slate-900 text-white px-4 pt-4 pb-3 shrink-0 z-20 shadow-md">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                    <!-- Custom SPM NIWAS Logo Emblem -->
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 p-0.5 shadow-lg shrink-0" title="SPM NIWAS">
+                        <div class="w-full h-full bg-slate-900 rounded-[10px] flex flex-col items-center justify-center relative overflow-hidden">
+                            <svg class="w-5 h-5 text-amber-400" viewBox="0 0 32 32" fill="none">
+                                <!-- Architectural Roof / Gateway Arch -->
+                                <path d="M4 14L16 5L28 14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                <!-- Twin Pillars (Office & Residential) -->
+                                <path d="M9 13V25M23 13V25M6 25H26" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Center Welcome Archway -->
+                                <path d="M13 25V19C13 17.3431 14.3431 16 16 16C17.6569 16 19 17.3431 19 19V25" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span class="text-[7px] font-extrabold tracking-widest text-amber-300 leading-none mt-0.5">SPM</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h1 class="font-extrabold text-base tracking-tight leading-none text-white">Swagat</h1>
+                            <button onclick="openModal('config-modal')" id="sync-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:opacity-80 transition cursor-pointer" title="Tap to configure Cloud Sync">DEMO MODE</button>
+                        </div>
+                        <p class="text-[11px] font-semibold tracking-wide text-amber-300/90 mt-0.5">SPM NIWAS • Main Gate</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                    <!-- Active User Pill & Logout -->
+                    <button id="header-user-pill" onclick="logoutUser()" class="hidden items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-900/60 text-slate-200 border border-slate-700 transition" title="Switch User / Logout">
+                        <span id="header-user-label">User</span>
+                        <span class="text-rose-400">⏻</span>
+                    </button>
+                    <!-- Install PWA / APK Guide Button -->
+                    <button onclick="openModal('pwa-modal')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Install PWA / Build APK">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                    </button>
+                    <!-- Firebase & Settings Button -->
+                    <button onclick="openModal('config-modal')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Settings & Cloud Sync">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Developer / Admin Role Preview Switcher (Hidden in Production Role-Locked Mode) -->
+            <div id="demo-role-switcher" class="hidden grid grid-cols-3 gap-1 bg-slate-800/90 p-1 rounded-xl text-xs font-semibold">
+                <button id="tab-guard" onclick="switchRole('guard')" class="py-2 px-2 rounded-lg bg-blue-600 text-white shadow transition flex items-center justify-center gap-1.5">
+                    <span>🛡️ Guard</span>
+                </button>
+                <button id="tab-host" onclick="switchRole('host')" class="py-2 px-2 rounded-lg text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 relative">
+                    <span>🏠/🏢 Host</span>
+                    <span id="host-pending-dot" class="hidden w-2 h-2 rounded-full bg-amber-400"></span>
+                </button>
+                <button id="tab-admin" onclick="switchRole('admin')" class="py-2 px-2 rounded-lg text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5">
+                    <span>📊 Admin</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==================== 0. ROLE-LOCKED LOGIN SCREEN ==================== -->
+        <section id="view-login" class="flex-1 overflow-y-auto no-scrollbar p-5 flex flex-col justify-between bg-slate-50">
+            <div class="space-y-4 my-auto">
+                <div class="text-center space-y-1.5">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-[11px] font-bold">
+                        <span>🔐 Role-Locked Access</span>
+                    </div>
+                    <h2 class="text-xl font-extrabold text-slate-900">Sign in to Swagat</h2>
+                    <p class="text-xs text-slate-500">Enter your registered SPM NIWAS mobile number & 4-digit PIN to open your authorized portal.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Registered Mobile Number *</label>
+                        <input id="login-phone" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" oninput="formatNumericOnly(this)" placeholder="e.g., 9876543210"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">4-Digit PIN *</label>
+                        <input id="login-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="••••"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-extrabold tracking-[0.4em] text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                    </div>
+                    <button type="button" onclick="handlePinLogin()" id="btn-login-submit" class="w-full bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-bold text-sm py-3 rounded-xl shadow-md transition">
+                        Unlock My Portal →
+                    </button>
+                    <div class="flex items-center justify-between pt-1 text-[11px]">
+                        <button type="button" onclick="openModal('forgot-pin-modal')" class="font-bold text-blue-600 hover:underline">
+                            Forgot PIN? Request Admin Reset
+                        </button>
+                        <span id="login-attempt-hint" class="text-slate-400 font-medium"></span>
+                    </div>
+                </div>
+
+                <!-- Quick Test Accounts for Demo / Verification -->
+                <div class="bg-slate-100/80 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 text-center">Quick Tap Demo Logins</p>
+                    <div class="grid grid-cols-2 gap-2 text-left">
+                        <button type="button" onclick="quickFillLogin('9000000001', '1111')" class="bg-white hover:bg-blue-50 border border-slate-200 rounded-xl p-2 transition">
+                            <p class="text-[11px] font-extrabold text-blue-700">🛡️ Main Gate Guard</p>
+                            <p class="text-[10px] text-slate-500 font-mono">9000000001 • PIN 1111</p>
+                        </button>
+                        <button type="button" onclick="quickFillLogin('9876543210', '2222')" class="bg-white hover:bg-emerald-50 border border-slate-200 rounded-xl p-2 transition">
+                            <p class="text-[11px] font-extrabold text-emerald-700">🏢/🏠 Rahul (Dual Host)</p>
+                            <p class="text-[10px] text-slate-500 font-mono">9876543210 • PIN 2222</p>
+                        </button>
+                        <button type="button" onclick="quickFillLogin('9811122233', '3333')" class="bg-white hover:bg-emerald-50 border border-slate-200 rounded-xl p-2 transition">
+                            <p class="text-[11px] font-extrabold text-emerald-700">🏠 Dr. Sen (Resident)</p>
+                            <p class="text-[10px] text-slate-500 font-mono">9811122233 • PIN 3333</p>
+                        </button>
+                        <button type="button" onclick="quickFillLogin('9999999999', '9999')" class="bg-white hover:bg-amber-50 border border-slate-200 rounded-xl p-2 transition">
+                            <p class="text-[11px] font-extrabold text-amber-700">📊 Campus Admin</p>
+                            <p class="text-[10px] text-slate-500 font-mono">9999999999 • PIN 9999</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Scrollable Viewport (Hidden until signed in) -->
+        <main id="main-app-viewport" class="hidden flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 pb-24">
+
+            <!-- ==================== 1. GUARD VIEW (GATEKEEPER CONSOLE) ==================== -->
+            <section id="view-guard" class="space-y-4">
+                
+                <!-- Pre-Approved Entry Code Quick Bar -->
+                <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-3.5 text-white shadow-md">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-100">Pre-Approved Entry Code</span>
+                        <span class="text-[11px] bg-white/20 px-2 py-0.5 rounded-full font-medium">Fast-Track</span>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <input id="otp-verify-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="4-Digit OTP" 
+                            class="flex-1 min-w-[160px] bg-white/15 border border-white/30 rounded-xl px-3 py-2 text-sm font-bold tracking-widest placeholder-indigo-200 text-white text-center focus:outline-none focus:ring-2 focus:ring-white">
+                        <button type="button" onclick="verifyPassCode()" class="bg-white text-indigo-700 font-bold text-xs px-5 py-2.5 rounded-xl shadow hover:bg-indigo-50 active:scale-95 transition shrink-0">
+                            Verify
+                        </button>
+                    </div>
+                </div>
+
+                <!-- New Walk-In Visitor Check-In Card -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-bold text-slate-800 text-sm">Log Walk-In Visitor</h2>
+                        <!-- AI Scan ID / Vehicle Plate Button -->
+                        <label class="cursor-pointer inline-flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition">
+                            <span>✨ AI Scan ID/Plate</span>
+                            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleAiScan(event)">
+                        </label>
+                    </div>
+
+                    <!-- AI Scanning Status Banner -->
+                    <div id="ai-scan-banner" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-2.5 text-xs text-indigo-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        <span id="ai-scan-text">Gemini AI is reading card/plate...</span>
+                    </div>
+
+                    <!-- Step 1: Zone Access Control Selector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1.5">1. Select Access Zone (Single Gate Control)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="zone-btn-OFFICE" onclick="selectZone('OFFICE')" class="p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-xs flex items-center justify-center gap-2 transition">
+                                <span>🏢 Corporate Office</span>
+                            </button>
+                            <button type="button" id="zone-btn-RESIDENTIAL" onclick="selectZone('RESIDENTIAL')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition">
+                                <span>🏠 Residential Wing</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Searchable Host / Destination Selector -->
+                    <div class="relative">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">2. Search & Select Host / Unit</label>
+                        <div class="relative">
+                            <input id="visitor-destination-search" type="text" autocomplete="off"
+                                onfocus="openDestinationDropdown()" oninput="filterDestinations(this.value)"
+                                placeholder="Type flat no., dept, or name..."
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-8 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <button type="button" onclick="clearDestinationSearch()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs font-bold px-1">✕</button>
+                        </div>
+                        <input id="visitor-destination" type="hidden" value="">
+                        <div id="destination-dropdown-list" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-30 divide-y divide-slate-100">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Visitor Details -->
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Visitor Name *</label>
+                            <input id="visitor-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Phone Number *</label>
+                            <input id="visitor-phone" type="tel" inputmode="numeric" pattern="[0-9]*" oninput="formatNumericOnly(this)" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Category</label>
+                            <select id="visitor-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="Guest">👤 Guest / Client</option>
+                                <option value="Delivery">📦 Delivery</option>
+                                <option value="Cab">🚕 Cab / Taxi</option>
+                                <option value="Vendor">🛠️ Service / Vendor</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Vehicle No. (Opt)</label>
+                            <input id="visitor-vehicle" type="text" inputmode="text" autocapitalize="characters" oninput="this.value = this.value.toUpperCase()" placeholder="WB 02 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <button onclick="submitWalkIn()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-sm py-3 rounded-xl shadow-md shadow-blue-600/20 transition flex items-center justify-center gap-2">
+                        <span>Request Host Approval</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Live Gate Activity Feed -->
+                <div class="space-y-2.5">
+                    <div class="flex items-center justify-between px-1">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Gate Log</h3>
+                        <span id="guard-log-count" class="text-xs font-semibold text-slate-400">0 entries</span>
+                    </div>
+                    <div id="guard-visitor-list" class="space-y-2.5">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== 2. HOST VIEW (RESIDENT / EMPLOYEE) ==================== -->
+            <section id="view-host" class="hidden space-y-4">
+                
+                <!-- Active Host Profile Selector (Supports Dual-Role Campus Users) -->
+                <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-md">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Active Host Unit</span>
+                        <span id="host-zone-pill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">OFFICE ZONE</span>
+                    </div>
+                    <select id="active-host-unit" onchange="renderAll()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="ALL">🌐 View All Units (Demo Mode)</option>
+                    </select>
+                </div>
+
+                <!-- Pending Approval Alerts -->
+                <div id="host-approvals-section" class="space-y-2.5">
+                    <div class="flex items-center justify-between px-1">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                            <span>Action Required at Main Gate</span>
+                        </h3>
+                    </div>
+                    <div id="host-pending-list" class="space-y-2.5">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Pre-Approve Guest & AI Invite Generator -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-bold text-slate-800 text-sm">Pre-Approve Expected Guest</h2>
+                        <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">✨ Gemini Assisted</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Guest Name *</label>
+                            <input id="pre-guest-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., Vikram Mehta" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Category</label>
+                            <select id="pre-guest-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="Guest">👤 Guest</option>
+                                <option value="Delivery">📦 Delivery</option>
+                                <option value="Vendor">🛠️ Service</option>
+                                <option value="Cab">🚕 Cab</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Quick Note for AI Invite (Optional)</label>
+                        <input id="pre-guest-note" type="text" placeholder="e.g., Client meeting at 3 PM, park in Visitor Bay" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <button onclick="createPreApprovedPass()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm py-3 rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+                        <span>Generate 4-Digit Gate Pass</span>
+                    </button>
+
+                    <!-- Generated Pass & AI Invite Box -->
+                    <div id="generated-pass-card" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-[11px] font-bold uppercase text-emerald-700">Pre-Approved Gate OTP</p>
+                                <p id="gen-otp-code" class="text-2xl font-extrabold tracking-[0.2em] text-emerald-900">4829</p>
+                            </div>
+                            <button onclick="generateAiInvite()" id="btn-ai-invite" class="bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-2 rounded-xl shadow-sm transition">
+                                ✨ Draft Invite
+                            </button>
+                        </div>
+                        <textarea id="ai-invite-text" rows="3" class="w-full bg-white border border-emerald-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none" placeholder="Tap 'Draft Invite' to generate a polite WhatsApp/SMS message with gate directions..."></textarea>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="openGuestWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
+                                <span>📲 Send on WhatsApp</span>
+                            </button>
+                            <button type="button" onclick="copyInviteText()" class="bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-slate-800 transition">
+                                📋 Copy Text
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Host's Visitor History -->
+                <div class="space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 px-1">Recent Visitors for Unit</h3>
+                    <div id="host-history-list" class="space-y-2">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== 3. ADMIN / SECURITY HEAD VIEW ==================== -->
+            <section id="view-admin" class="hidden space-y-4 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start">
+                
+                <!-- Left Column on Desktop: Live Occupancy, AI Security Briefing & Live Gate Feed -->
+                <div class="space-y-4 lg:col-span-5">
+                    <!-- Live Zone Headcount Cards -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl p-4 shadow-md">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-semibold text-blue-100">Office Inside</span>
+                                <span class="text-base">🏢</span>
+                            </div>
+                            <p id="stat-office-inside" class="text-3xl font-extrabold">0</p>
+                            <p class="text-[11px] text-blue-200 mt-1">Blue Zone Badge</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-2xl p-4 shadow-md">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-semibold text-emerald-100">Residential Inside</span>
+                                <span class="text-base">🏠</span>
+                            </div>
+                            <p id="stat-res-inside" class="text-3xl font-extrabold">0</p>
+                            <p class="text-[11px] text-emerald-200 mt-1">Emerald Zone Badge</p>
+                        </div>
+                    </div>
+
+                    <!-- Gemini AI Security Briefing Card -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">AI Gate Security Briefing</h3>
+                                <p class="text-[11px] text-slate-500">Analyze mixed-use traffic & overstays</p>
+                            </div>
+                            <button onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition">
+                                ✨ Analyze Logs
+                            </button>
+                        </div>
+                        <div id="ai-briefing-output" class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 leading-relaxed">
+                            Tap <strong>Analyze Logs</strong> to generate a real-time executive summary of today's Office vs. Residential visitor traffic.
+                        </div>
+                    </div>
+
+                    <!-- Desktop Live Gate Monitor Feed -->
+                    <div class="hidden lg:block bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800 text-sm">Live Main Gate Activity</h3>
+                            <span id="admin-gate-count" class="text-[11px] font-semibold text-slate-400">0 entries</span>
+                        </div>
+                        <div id="admin-gate-feed" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                        <!-- Rendered dynamically on desktop -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column on Desktop: Staff & Residents Directory Manager -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 lg:col-span-7">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Staff & Residents Database</h3>
+                        <p class="text-[11px] text-slate-500">Manage SPM NIWAS Office, Residential & Guard logins</p>
+                    </div>
+                    <span id="directory-total-count" class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">0 Units</span>
+                </div>
+
+                <!-- Add New Unit / Staff / Resident Form -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 space-y-2">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                        <select id="admin-dir-zone" class="bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="OFFICE">🏢 Office Staff</option>
+                            <option value="RESIDENTIAL">🏠 Resident Unit</option>
+                            <option value="GUARD">🛡️ Gate Guard</option>
+                            <option value="ADMIN">📊 Campus Admin</option>
+                        </select>
+                        <input id="admin-dir-unit" type="text" placeholder="Flat / Dept / Gate" class="bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name" class="col-span-2 bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex gap-1.5">
+                        <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" oninput="formatNumericOnly(this)" placeholder="Mobile (10 digits)" class="flex-1 min-w-0 bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shrink-0">
+                            <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-14 px-1.5 py-2 text-xs text-center font-bold focus:outline-none">
+                            <button type="button" onclick="generateRandomAdminPin()" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold border-l border-slate-200" title="Generate Random Temp PIN">🎲</button>
+                        </div>
+                        <button type="button" onclick="addDirectoryEntry()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition shrink-0">
+                            + Add User
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs & Search for Directory List -->
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex flex-wrap gap-1.5 text-[11px] font-bold">
+                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-2.5 py-1 rounded-lg bg-slate-900 text-white">All</button>
+                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600">🏢 Staff</button>
+                        <button type="button" id="dir-filter-RESIDENTIAL" onclick="setAdminDirFilter('RESIDENTIAL')" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600">🏠 Residents</button>
+                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600">🛡️ Guards</button>
+                        <button type="button" id="dir-filter-RESET" onclick="setAdminDirFilter('RESET')" class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800">🔄 Resets (<span id="reset-req-count">0</span>)</button>
+                    </div>
+                    <input id="admin-dir-search" type="text" oninput="renderAdminDirectory()" placeholder="Search name, flat, mobile..." class="w-full lg:w-48 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Live Directory Entries List -->
+                <div id="admin-directory-list" class="space-y-1.5 max-h-56 lg:max-h-[430px] overflow-y-auto pr-0.5">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Digital Zone Pass Modal (Color-Coded for Single Gate Access Control) -->
+    <div id="pass-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-40 flex items-center justify-center p-5">
+        <div id="pass-card-container" class="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-blue-600">
+            <div id="pass-header" class="bg-blue-600 text-white p-5 text-center">
+                <p class="text-[11px] font-bold uppercase tracking-widest opacity-90">Authorized Zone Pass</p>
+                <h3 id="pass-zone-title" class="text-xl font-extrabold mt-0.5">CORPORATE OFFICE</h3>
+            </div>
+            <div class="p-5 text-center space-y-3">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 mx-auto">
+                    <svg class="w-16 h-16 text-slate-800" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h3v2h-3v-2zm-5 0h2v4h-2v-4zm5 4h3v2h-3v-2zm-3 2h2v2h-2v-2zm-2-2h2v2h-2v-2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4 id="pass-visitor-name" class="text-lg font-extrabold text-slate-900">Visitor Name</h4>
+                    <p id="pass-visitor-type" class="text-xs font-semibold text-slate-500">Guest • WB 02 AB 1234</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/80 text-xs space-y-1">
+                    <p class="text-slate-500">Destination: <strong id="pass-destination" class="text-slate-800">IT Dept</strong></p>
+                    <p class="text-slate-500">Pass OTP: <strong id="pass-otp" class="text-slate-900 font-mono">4821</strong> • <span id="pass-time">10:30 AM</span></p>
+                </div>
+                <button onclick="closeModal('pass-modal')" class="w-full bg-slate-900 text-white font-bold text-xs py-3 rounded-xl">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase & Settings Modal -->
+    <div id="config-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl space-y-3.5 max-h-[85%] overflow-y-auto">
+            <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-900 text-base">⚙️ Settings & Cloud Sync</h3>
+                <button onclick="closeModal('config-modal')" class="p-1.5 rounded-lg bg-slate-100 text-slate-500">✕</button>
+            </div>
+
+            <!-- Self-Service PIN Change (Visible when logged in) -->
+            <div id="settings-change-pin-box" class="hidden bg-indigo-50/70 border border-indigo-200 rounded-2xl p-3 space-y-2">
+                <p class="text-xs font-bold text-indigo-950">🔑 Change My 4-Digit PIN</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <input id="settings-old-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Current PIN" class="bg-white border border-indigo-200 rounded-xl px-3 py-2 text-xs text-center font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input id="settings-new-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="New PIN" class="bg-white border border-indigo-200 rounded-xl px-3 py-2 text-xs text-center font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button type="button" onclick="handleSelfPinChange()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2 rounded-xl transition">
+                    Update My Private PIN
+                </button>
+            </div>
+
+            <!-- Hidden Developer / Admin Role Preview Toggle -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex items-center justify-between gap-2">
+                <div>
+                    <p class="text-xs font-bold text-slate-800">Developer Role Preview Bar</p>
+                    <p class="text-[11px] text-slate-500">Show Guard / Host / Admin switcher tabs for testing</p>
+                </div>
+                <button type="button" id="btn-toggle-demo-tabs" onclick="toggleDemoRoleBar()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-700 transition shrink-0">
+                    OFF
+                </button>
+            </div>
+
+            <!-- Optional Gemini AI Key (Stored locally on device, never committed to GitHub) -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2">
+                <div>
+                    <p class="text-xs font-bold text-slate-800">✨ Gemini AI API Key (Optional)</p>
+                    <p class="text-[11px] text-slate-500">Saved privately in this browser for live ID/Plate OCR & AI Briefings</p>
+                </div>
+                <div class="flex gap-1.5">
+                    <input id="settings-gemini-key" type="password" placeholder="Paste Gemini API Key (optional)" class="flex-1 min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="button" onclick="saveGeminiKeySetting()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition shrink-0">Save</button>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-3 space-y-2">
+                <p class="text-xs font-bold text-slate-800">🔥 Live Firestore Connection</p>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Paste your Firebase Web Config JSON below to sync across all phones on GitHub Pages:
+                </p>
+                <textarea id="firebase-config-input" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-[11px] font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "appId": "..."}'></textarea>
+                <div class="flex gap-2">
+                    <button onclick="connectCustomFirebase()" class="flex-1 bg-blue-600 text-white font-bold text-xs py-3 rounded-xl">Connect Firestore</button>
+                    <button onclick="closeModal('config-modal')" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA & APK Packaging Guide Modal -->
+    <div id="pwa-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl space-y-4 max-h-[85%] overflow-y-auto">
+            <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-900 text-base">📲 Install PWA & Build Android APK</h3>
+                <button onclick="closeModal('pwa-modal')" class="p-1.5 rounded-lg bg-slate-100 text-slate-500">✕</button>
+            </div>
+            <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+                    <p class="font-bold mb-1">✅ PWA Manifest & Service Worker Active</p>
+                    <p>This single file dynamically registers a Web App Manifest & Service Worker—ready for mobile install and APK wrapping.</p>
+                </div>
+                <div class="space-y-1.5">
+                    <p class="font-bold text-slate-800">Step 1: Host on GitHub Pages</p>
+                    <p>Upload this file as <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono">index.html</code> to a GitHub repo and enable <strong>Settings → Pages</strong> to get your free <code class="bg-slate-100 px-1 rounded">https://...github.io</code> link.</p>
+                </div>
+                <div class="space-y-1.5">
+                    <p class="font-bold text-slate-800">Step 2: Generate Android .APK (No Coding)</p>
+                    <p>Open <strong>pwabuilder.com</strong>, paste your GitHub Pages URL, and click <strong>Package for Stores → Android → Generate</strong> to download your signed <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono">.apk</code> file!</p>
+                </div>
+                <button id="btn-install-pwa" onclick="triggerInstallPrompt()" class="hidden w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow">
+                    Install App to Device Now
+                </button>
+            </div>
+            <button onclick="closeModal('pwa-modal')" class="w-full bg-slate-900 text-white font-bold text-xs py-3 rounded-xl">Got It</button>
+        </div>
+    </div>
+
+    <!-- Mandatory First-Login Private PIN Setup Modal -->
+    <div id="force-pin-modal" class="hidden absolute inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl mx-auto font-bold">🔐</div>
+            <div>
+                <h3 class="font-extrabold text-slate-900 text-base">Set Your Private 4-Digit PIN</h3>
+                <p class="text-xs text-slate-500 mt-1">You signed in with an Admin temporary PIN. Create your own personal PIN so only you can access your portal.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <input id="force-new-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="New PIN" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-center font-extrabold tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="force-confirm-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Confirm PIN" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-center font-extrabold tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button type="button" onclick="submitForcedPinSetup()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl shadow">
+                Save Private PIN & Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Forgot PIN Recovery Request Modal (Zero-SMS Flow) -->
+    <div id="forgot-pin-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-3.5">
+            <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-900 text-base">🔄 Request PIN Reset</h3>
+                <button onclick="closeModal('forgot-pin-modal')" class="p-1.5 rounded-lg bg-slate-100 text-slate-500">✕</button>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">
+                Enter your registered SPM NIWAS mobile number. An alert will appear immediately on the Admin dashboard to issue you a fresh temporary PIN.
+            </p>
+            <input id="forgot-pin-phone" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" oninput="formatNumericOnly(this)" placeholder="Registered 10-digit Mobile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="flex gap-2">
+                <button type="button" onclick="submitForgotPinRequest()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl">
+                    Notify Admin Now
+                </button>
+                <button type="button" onclick="closeModal('forgot-pin-modal')" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification Banner (No alert() used) -->
+    <div id="toast-banner" class="hidden absolute bottom-4 left-4 right-4 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl border border-slate-700 z-50 flex items-center justify-between transition-all">
+        <span id="toast-message">Notification</span>
+    </div>
+
+    </div>
+
+    <!-- PWA Manifest & Service Worker Bootstrapper -->
+    <script>
+        (function setupPWA() {
+            try {
+                // 1. Dynamically generate Web App Manifest for PWA & PWABuilder APK conversion
+                const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0f172a"/><path d="M96 230L256 105L416 230" stroke="#f59e0b" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M160 220V395M352 220V395M120 395H392" stroke="#38bdf8" stroke-width="28" stroke-linecap="round"/><path d="M216 395V310C216 287.9 233.9 270 256 270C278.1 270 296 287.9 296 310V395" stroke="#10b981" stroke-width="28" stroke-linecap="round" fill="none"/></svg>`;
+                const iconUrl = 'data:image/svg+xml;base64,' + btoa(iconSvg);
+                const manifest = {
+                    name: "Swagat — SPM NIWAS Gate",
+                    short_name: "Swagat",
+                    description: "Mixed-Use Corporate Office & Residential Visitor Management for SPM NIWAS",
+                    start_url: "./",
+                    display: "standalone",
+                    background_color: "#0f172a",
+                    theme_color: "#0f172a",
+                    icons: [
+                        { src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+                        { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+                    ]
+                };
+                const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+                const link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = URL.createObjectURL(manifestBlob);
+                document.head.appendChild(link);
+
+                // 2. Register inline Service Worker for offline caching & TWA APK eligibility
+                if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                    const swCode = `
+                        const CACHE = 'swagat-spm-niwas-v1';
+                        self.addEventListener('install', e => self.skipWaiting());
+                        self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+                        self.addEventListener('fetch', e => {
+                            if (e.request.method !== 'GET') return;
+                            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+                        });
+                    `;
+                    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+                }
+
+                // 3. Capture native PWA install prompt
+                window.deferredInstallPrompt = null;
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    window.deferredInstallPrompt = e;
+                    const btn = document.getElementById('btn-install-pwa');
+                    if (btn) btn.classList.remove('hidden');
+                });
+            } catch (e) {
+                console.warn("PWA bootstrap skipped:", e.message);
+            }
+        })();
+    </script>
+
+    <!-- Main Application Logic (Firebase Firestore + Gemini AI + State Sync) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Default Staff, Residents, Guards & Admin Directory Data (Includes Mobile & 4-Digit PIN)
+        const DEFAULT_DIRECTORY = [
+            { id: 'dir_guard_1', zone: 'GUARD', unit: 'Main Gate', name: 'Ramesh Singh', phone: '9000000001', pin: '1111', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_1', zone: 'OFFICE', unit: 'IT Dept (Floor 2)', name: 'Rahul Sharma', phone: '9876543210', pin: '2222', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_5', zone: 'RESIDENTIAL', unit: 'Flat A-402', name: 'Rahul Sharma', phone: '9876543210', pin: '2222', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_2', zone: 'OFFICE', unit: 'HR & Admin (Floor 1)', name: 'Priya Nair', phone: '9822233344', pin: '4444', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_3', zone: 'OFFICE', unit: 'Finance Wing (Floor 3)', name: 'Amitabh Roy', phone: '9833344455', pin: '5555', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_4', zone: 'OFFICE', unit: 'Executive Lounge', name: 'Reception', phone: '9844455566', pin: '6666', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_6', zone: 'RESIDENTIAL', unit: 'Flat B-105', name: 'Dr. Anita Sen', phone: '9811122233', pin: '3333', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_7', zone: 'RESIDENTIAL', unit: 'Flat A-201', name: 'K. Subramanian', phone: '9855566677', pin: '7777', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_8', zone: 'RESIDENTIAL', unit: 'Flat B-304', name: 'Neha Kapoor', phone: '9866677788', pin: '8888', pinMustChange: false, pinResetRequested: false },
+            { id: 'dir_admin_1', zone: 'ADMIN', unit: 'Management Office', name: 'SPM NIWAS Admin', phone: '9999999999', pin: '9999', pinMustChange: false, pinResetRequested: false }
+        ];
+
+        // Application State
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'swagat-spm-niwas';
+        let currentRole = 'guard';
+        let selectedZone = 'OFFICE';
+        let adminDirFilter = 'ALL';
+        let directoryEntries = [...DEFAULT_DIRECTORY];
+        let visitors = [];
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let useFirestore = false;
+        let loggedInSession = null;
+        let failedPinAttempts = 0;
+        let loginLockUntil = 0;
+        let demoBarEnabled = false;
+
+        function formatDirectoryLabel(d) {
+            return `${d.unit} - ${d.name}`;
+        }
+
+        function getZoneDirectoryLabels(zone) {
+            return directoryEntries
+                .filter(d => d.zone === zone)
+                .map(formatDirectoryLabel);
+        }
+
+        window.quickFillLogin = function(phone, pin) {
+            document.getElementById('login-phone').value = phone;
+            document.getElementById('login-pin').value = pin;
+            handlePinLogin();
+        };
+
+        window.handlePinLogin = function() {
+            if (Date.now() < loginLockUntil) {
+                const secs = Math.ceil((loginLockUntil - Date.now()) / 1000);
+                showToast(`⏳ Too many attempts. Try again in ${secs}s.`);
+                return;
+            }
+
+            const phone = document.getElementById('login-phone').value.trim();
+            const pin = document.getElementById('login-pin').value.trim();
+
+            if (phone.length < 10 || pin.length !== 4) {
+                showToast("⚠️ Enter your 10-digit mobile & 4-digit PIN.");
+                return;
+            }
+
+            const matches = directoryEntries.filter(d => d.phone === phone && d.pin === pin);
+            if (matches.length === 0) {
+                failedPinAttempts++;
+                const left = Math.max(0, 5 - failedPinAttempts);
+                const hint = document.getElementById('login-attempt-hint');
+                if (failedPinAttempts >= 5) {
+                    loginLockUntil = Date.now() + 60000;
+                    failedPinAttempts = 0;
+                    if (hint) hint.textContent = "Locked 60s";
+                    showToast("🔒 Locked for 60s after 5 wrong PIN attempts.");
+                } else {
+                    if (hint) hint.textContent = `${left} tries left`;
+                    showToast(`❌ Invalid mobile or PIN (${left} tries left).`);
+                }
+                return;
+            }
+
+            failedPinAttempts = 0;
+            const hint = document.getElementById('login-attempt-hint');
+            if (hint) hint.textContent = "";
+
+            const primary = matches[0];
+            let assignedRole = 'host';
+            if (matches.some(m => m.zone === 'ADMIN')) assignedRole = 'admin';
+            else if (matches.some(m => m.zone === 'GUARD')) assignedRole = 'guard';
+
+            const allowedUnits = matches
+                .filter(m => m.zone === 'OFFICE' || m.zone === 'RESIDENTIAL')
+                .map(formatDirectoryLabel);
+
+            loggedInSession = {
+                name: primary.name,
+                phone: primary.phone,
+                role: assignedRole,
+                allowedUnits
+            };
+
+            try {
+                localStorage.setItem('swagat_session_v1', JSON.stringify(loggedInSession));
+            } catch (e) {}
+
+            applySessionUI();
+
+            if (matches.some(m => m.pinMustChange)) {
+                openModal('force-pin-modal');
+            } else {
+                showToast(`👋 Welcome, ${primary.name}!`);
+            }
+        };
+
+        async function updateUserPinByPhone(phone, newPin, extraFields = {}) {
+            const matchingRecords = directoryEntries.filter(d => d.phone === phone);
+            if (useFirestore && db && currentUser) {
+                for (const rec of matchingRecords) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'directory', rec.id);
+                    await updateDoc(docRef, { pin: newPin, ...extraFields });
+                }
+            } else {
+                directoryEntries = directoryEntries.map(d =>
+                    d.phone === phone ? { ...d, pin: newPin, ...extraFields } : d
+                );
+                syncDirectoryAcrossUI();
+            }
+        }
+
+        window.submitForcedPinSetup = async function() {
+            if (!loggedInSession) return;
+            const p1 = document.getElementById('force-new-pin').value.trim();
+            const p2 = document.getElementById('force-confirm-pin').value.trim();
+            if (p1.length !== 4 || p1 !== p2) {
+                showToast("⚠️ Both PIN fields must match (4 digits).");
+                return;
+            }
+            await updateUserPinByPhone(loggedInSession.phone, p1, { pinMustChange: false, pinResetRequested: false });
+            document.getElementById('force-new-pin').value = '';
+            document.getElementById('force-confirm-pin').value = '';
+            closeModal('force-pin-modal');
+            showToast("🔐 Personal PIN saved!");
+        };
+
+        window.handleSelfPinChange = async function() {
+            if (!loggedInSession) return;
+            const oldPin = document.getElementById('settings-old-pin').value.trim();
+            const newPin = document.getElementById('settings-new-pin').value.trim();
+            const validOld = directoryEntries.some(d => d.phone === loggedInSession.phone && d.pin === oldPin);
+            if (!validOld) {
+                showToast("❌ Current PIN is incorrect.");
+                return;
+            }
+            if (newPin.length !== 4) {
+                showToast("⚠️ Enter a 4-digit new PIN.");
+                return;
+            }
+            await updateUserPinByPhone(loggedInSession.phone, newPin, { pinMustChange: false, pinResetRequested: false });
+            document.getElementById('settings-old-pin').value = '';
+            document.getElementById('settings-new-pin').value = '';
+            closeModal('config-modal');
+            showToast("✅ Your personal PIN has been updated!");
+        };
+
+        window.submitForgotPinRequest = async function() {
+            const phone = document.getElementById('forgot-pin-phone').value.trim();
+            if (phone.length < 10) {
+                showToast("⚠️ Enter your 10-digit registered mobile number.");
+                return;
+            }
+            const matches = directoryEntries.filter(d => d.phone === phone);
+            if (matches.length === 0) {
+                showToast("❌ Mobile number not found in SPM NIWAS directory.");
+                return;
+            }
+            if (useFirestore && db && currentUser) {
+                for (const rec of matches) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'directory', rec.id);
+                    await updateDoc(docRef, { pinResetRequested: true });
+                }
+            } else {
+                directoryEntries = directoryEntries.map(d =>
+                    d.phone === phone ? { ...d, pinResetRequested: true } : d
+                );
+                syncDirectoryAcrossUI();
+            }
+            document.getElementById('forgot-pin-phone').value = '';
+            closeModal('forgot-pin-modal');
+            showToast("📨 PIN reset request sent to SPM NIWAS Admin!");
+        };
+
+        window.logoutUser = function() {
+            loggedInSession = null;
+            demoBarEnabled = false;
+            try { localStorage.removeItem('swagat_session_v1'); } catch (e) {}
+            applySessionUI();
+            showToast("🔒 Signed out.");
+        };
+
+        window.toggleDemoRoleBar = function() {
+            demoBarEnabled = !demoBarEnabled;
+            const btn = document.getElementById('btn-toggle-demo-tabs');
+            const bar = document.getElementById('demo-role-switcher');
+            if (demoBarEnabled) {
+                btn.textContent = 'ON';
+                btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white transition shrink-0';
+                bar.classList.remove('hidden');
+            } else {
+                btn.textContent = 'OFF';
+                btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-700 transition shrink-0';
+                bar.classList.add('hidden');
+                if (loggedInSession) switchRole(loggedInSession.role);
+            }
+            syncDirectoryAcrossUI();
+            renderAll();
+        };
+
+        function restoreSavedSession() {
+            try {
+                const raw = localStorage.getItem('swagat_session_v1');
+                if (raw) loggedInSession = JSON.parse(raw);
+            } catch (e) {}
+            applySessionUI();
+        }
+
+        function applySessionUI() {
+            const loginView = document.getElementById('view-login');
+            const mainViewport = document.getElementById('main-app-viewport');
+            const userPill = document.getElementById('header-user-pill');
+            const roleBar = document.getElementById('demo-role-switcher');
+            const changePinBox = document.getElementById('settings-change-pin-box');
+
+            if (!loggedInSession) {
+                updateAppShellLayout('login');
+                loginView.classList.remove('hidden');
+                mainViewport.classList.add('hidden');
+                userPill.classList.add('hidden');
+                userPill.classList.remove('flex');
+                roleBar.classList.add('hidden');
+                if (changePinBox) changePinBox.classList.add('hidden');
+                return;
+            }
+
+            loginView.classList.add('hidden');
+            mainViewport.classList.remove('hidden');
+            userPill.classList.remove('hidden');
+            userPill.classList.add('flex');
+            if (changePinBox) changePinBox.classList.remove('hidden');
+            document.getElementById('header-user-label').textContent = loggedInSession.name.split(' ')[0];
+
+            if (demoBarEnabled) roleBar.classList.remove('hidden');
+            else roleBar.classList.add('hidden');
+
+            syncDirectoryAcrossUI();
+            switchRole(loggedInSession.role);
+        }
+
+        // Update 3-State Connection Status Pill (DEMO MODE | CLOUD LIVE | OFFLINE)
+        function updateSyncStatus(state) {
+            const badge = document.getElementById('sync-badge');
+            if (!badge) return;
+            if (!navigator.onLine) {
+                badge.textContent = 'OFFLINE';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 cursor-pointer';
+                return;
+            }
+            if (state === 'CLOUD') {
+                badge.textContent = 'CLOUD LIVE';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-pointer';
+            } else {
+                badge.textContent = 'DEMO MODE';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 cursor-pointer';
+            }
+        }
+
+        window.addEventListener('online', () => updateSyncStatus(useFirestore ? 'CLOUD' : 'DEMO'));
+        window.addEventListener('offline', () => updateSyncStatus('OFFLINE'));
+
+        async function initBackend(customConfig = null) {
+            try {
+                const defaultFirebaseConfig = {
+                    apiKey: "AIzaSyBuI1nwSzv2MxPn8WTeldUuM6L0GKAQJ1s",
+                    authDomain: "swagat-spm-niwas.firebaseapp.com",
+                    projectId: "swagat-spm-niwas",
+                    storageBucket: "swagat-spm-niwas.firebasestorage.app",
+                    messagingSenderId: "197344098062",
+                    appId: "1:197344098062:web:c53a6aaf3a9ad31e34895f",
+                    measurementId: "G-91K8GXWL8P"
+                };
+                const rawConfig = customConfig || (typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultFirebaseConfig);
+                if (!rawConfig || !rawConfig.apiKey) {
+                    useFirestore = false;
+                    updateSyncStatus('DEMO');
+                    seedInitialDemoData();
+                    return;
+                }
+
+                const app = initializeApp(rawConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        useFirestore = true;
+                        updateSyncStatus('CLOUD');
+                        subscribeToFirestore();
+                    }
+                });
+            } catch (err) {
+                console.warn("Using instant local state mode:", err.message);
+                useFirestore = false;
+                updateSyncStatus('DEMO');
+                seedInitialDemoData();
+            }
+        }
+
+        function subscribeToFirestore() {
+            try {
+                const visitorsCol = collection(db, 'artifacts', appId, 'public', 'data', 'visitors');
+                onSnapshot(visitorsCol, (snapshot) => {
+                    visitors = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    visitors.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    if (visitors.length === 0) {
+                        seedInitialDemoData();
+                    } else {
+                        renderAll();
+                    }
+                }, (err) => {
+                    console.warn("Firestore listener fallback:", err.message);
+                    useFirestore = false;
+                    updateSyncStatus('DEMO');
+                    seedInitialDemoData();
+                });
+
+                const directoryCol = collection(db, 'artifacts', appId, 'public', 'data', 'directory');
+                onSnapshot(directoryCol, (snapshot) => {
+                    if (snapshot.empty) {
+                        DEFAULT_DIRECTORY.forEach(item => {
+                            const { id, ...cleanItem } = item;
+                            addDoc(directoryCol, cleanItem).catch(() => {});
+                        });
+                    } else {
+                        directoryEntries = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                        directoryEntries.sort((a, b) => a.unit.localeCompare(b.unit));
+                        syncDirectoryAcrossUI();
+                    }
+                }, () => {});
+            } catch (err) {
+                console.warn("Subscription error:", err.message);
+                useFirestore = false;
+                updateSyncStatus('DEMO');
+                seedInitialDemoData();
+            }
+        }
+
+        function seedInitialDemoData() {
+            if (visitors.length > 0) {
+                renderAll();
+                return;
+            }
+            const now = Date.now();
+            visitors = [
+                {
+                    id: 'demo_1',
+                    visitorName: 'Arjun Malhotra',
+                    visitorPhone: '98765 43210',
+                    visitorType: 'Guest',
+                    zone: 'OFFICE',
+                    destination: 'IT Dept (Floor 2) - Rahul Sharma',
+                    vehicleNumber: 'WB 02 AN 4512',
+                    passCode: '7391',
+                    status: 'PENDING',
+                    createdAt: now - 120000,
+                    timeLabel: formatTime(now - 120000)
+                },
+                {
+                    id: 'demo_2',
+                    visitorName: 'Zomato Delivery',
+                    visitorPhone: '91234 56789',
+                    visitorType: 'Delivery',
+                    zone: 'RESIDENTIAL',
+                    destination: 'Flat A-402 - Rahul Sharma',
+                    vehicleNumber: 'WB 06 K 8821',
+                    passCode: '2050',
+                    status: 'PRE_APPROVED',
+                    createdAt: now - 300000,
+                    timeLabel: formatTime(now - 300000)
+                },
+                {
+                    id: 'demo_3',
+                    visitorName: 'Meera Krishnan',
+                    visitorPhone: '99887 76655',
+                    visitorType: 'Guest',
+                    zone: 'RESIDENTIAL',
+                    destination: 'Flat B-105 - Dr. Anita Sen',
+                    vehicleNumber: '',
+                    passCode: '5140',
+                    status: 'APPROVED',
+                    createdAt: now - 900000,
+                    timeLabel: formatTime(now - 900000)
+                }
+            ];
+            renderAll();
+        }
+
+        // ==================== CRUD OPERATIONS ====================
+        async function saveVisitorRecord(record, silentToast = false) {
+            if (useFirestore && db && currentUser) {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'visitors');
+                await addDoc(colRef, record);
+            } else {
+                record.id = 'loc_' + Math.random().toString(36).substring(2, 9);
+                visitors.unshift(record);
+                renderAll();
+            }
+            if (!silentToast) {
+                showToast(`📨 Approval request sent to ${record.destination}`);
+            }
+        }
+
+        async function updateVisitorStatus(id, newStatus) {
+            if (useFirestore && db && currentUser) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'visitors', id);
+                await updateDoc(docRef, { status: newStatus });
+            } else {
+                const item = visitors.find(v => v.id === id);
+                if (item) item.status = newStatus;
+                renderAll();
+            }
+            const labels = {
+                'APPROVED': '✅ Entry Approved!',
+                'DENIED': '⛔ Entry Denied.',
+                'CHECKED_OUT': '👋 Visitor Checked Out.'
+            };
+            showToast(labels[newStatus] || 'Status updated');
+        }
+
+        // ==================== UI INTERACTIONS ====================
+        function updateAppShellLayout(role) {
+            const shell = document.getElementById('app-shell');
+            if (!shell) return;
+            if (role === 'admin' && loggedInSession) {
+                shell.className = "w-full sm:max-w-[430px] lg:max-w-5xl h-[100dvh] sm:h-[850px] lg:h-[88vh] bg-slate-50 sm:rounded-[2rem] sm:shadow-2xl sm:border-[6px] sm:border-slate-800 flex flex-col overflow-hidden relative transition-all duration-300";
+            } else {
+                shell.className = "w-full sm:max-w-[430px] h-[100dvh] sm:h-[850px] bg-slate-50 sm:rounded-[2.5rem] sm:shadow-2xl sm:border-[6px] sm:border-slate-800 flex flex-col overflow-hidden relative transition-all duration-300";
+            }
+        }
+
+        window.switchRole = function(role) {
+            currentRole = role;
+            updateAppShellLayout(role);
+            ['guard', 'host', 'admin'].forEach(r => {
+                document.getElementById(`view-${r}`).classList.toggle('hidden', r !== role);
+                const tab = document.getElementById(`tab-${r}`);
+                if (r === role) {
+                    tab.className = "py-2 px-2 rounded-lg bg-blue-600 text-white shadow transition flex items-center justify-center gap-1.5 relative";
+                } else {
+                    tab.className = "py-2 px-2 rounded-lg text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 relative";
+                }
+            });
+            renderAll();
+        };
+
+        window.selectZone = function(zone) {
+            selectedZone = zone;
+            const btnOffice = document.getElementById('zone-btn-OFFICE');
+            const btnRes = document.getElementById('zone-btn-RESIDENTIAL');
+
+            if (zone === 'OFFICE') {
+                btnOffice.className = "p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-xs flex items-center justify-center gap-2 transition";
+                btnRes.className = "p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition";
+            } else {
+                btnRes.className = "p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-bold text-xs flex items-center justify-center gap-2 transition";
+                btnOffice.className = "p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition";
+            }
+
+            const options = getZoneDirectoryLabels(zone);
+            const firstOption = options[0] || '';
+            const hiddenInput = document.getElementById('visitor-destination');
+            const searchInput = document.getElementById('visitor-destination-search');
+            if (hiddenInput) hiddenInput.value = firstOption;
+            if (searchInput) searchInput.value = firstOption;
+            renderDestinationOptions('');
+        };
+
+        window.openDestinationDropdown = function() {
+            const list = document.getElementById('destination-dropdown-list');
+            if (list) {
+                renderDestinationOptions('');
+                list.classList.remove('hidden');
+            }
+        };
+
+        window.clearDestinationSearch = function() {
+            const searchInput = document.getElementById('visitor-destination-search');
+            const hiddenInput = document.getElementById('visitor-destination');
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            if (hiddenInput) hiddenInput.value = '';
+            openDestinationDropdown();
+        };
+
+        window.filterDestinations = function(query) {
+            const list = document.getElementById('destination-dropdown-list');
+            if (list) list.classList.remove('hidden');
+            renderDestinationOptions(query);
+        };
+
+        window.chooseDestination = function(label) {
+            const searchInput = document.getElementById('visitor-destination-search');
+            const hiddenInput = document.getElementById('visitor-destination');
+            const list = document.getElementById('destination-dropdown-list');
+            if (searchInput) searchInput.value = label;
+            if (hiddenInput) hiddenInput.value = label;
+            if (list) list.classList.add('hidden');
+        };
+
+        function renderDestinationOptions(query) {
+            const list = document.getElementById('destination-dropdown-list');
+            if (!list) return;
+            const q = (query || '').toLowerCase().trim();
+            const options = getZoneDirectoryLabels(selectedZone).filter(label =>
+                label.toLowerCase().includes(q)
+            );
+            if (options.length === 0) {
+                list.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-slate-400">No matching unit/staff in ${selectedZone}</div>`;
+                return;
+            }
+            list.innerHTML = options.map(opt => `
+                <button type="button" onmousedown="chooseDestination('${opt.replace(/'/g, "\\'")}')" class="w-full text-left px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-800 transition flex items-center justify-between">
+                    <span>${opt}</span>
+                    <span class="text-[10px] font-bold uppercase ${selectedZone === 'OFFICE' ? 'text-blue-500' : 'text-emerald-600'}">${selectedZone === 'OFFICE' ? 'Office' : 'Flat'}</span>
+                </button>
+            `).join('');
+        }
+
+        document.addEventListener('click', (e) => {
+            const list = document.getElementById('destination-dropdown-list');
+            const search = document.getElementById('visitor-destination-search');
+            if (list && search && !list.contains(e.target) && e.target !== search) {
+                list.classList.add('hidden');
+            }
+        });
+
+        function syncDirectoryAcrossUI() {
+            const hostSelect = document.getElementById('active-host-unit');
+            if (hostSelect) {
+                const prevVal = hostSelect.value;
+                const isRestrictedHost = loggedInSession && loggedInSession.role === 'host' && !demoBarEnabled;
+
+                if (isRestrictedHost) {
+                    const myUnits = loggedInSession.allowedUnits.length > 0
+                        ? loggedInSession.allowedUnits
+                        : ['No Unit Assigned'];
+                    hostSelect.innerHTML = myUnits.map(u => `<option value="${u}">${u}</option>`).join('');
+                    hostSelect.value = myUnits.includes(prevVal) ? prevVal : myUnits[0];
+                } else {
+                    const officeOpts = getZoneDirectoryLabels('OFFICE').map(l => `<option value="${l}">🏢 ${l}</option>`).join('');
+                    const resOpts = getZoneDirectoryLabels('RESIDENTIAL').map(l => `<option value="${l}">🏠 ${l}</option>`).join('');
+                    hostSelect.innerHTML = `<option value="ALL">🌐 View All Units (Demo Mode)</option>${officeOpts}${resOpts}`;
+                    if ([...hostSelect.options].some(o => o.value === prevVal)) {
+                        hostSelect.value = prevVal;
+                    }
+                }
+            }
+
+            const currentDest = document.getElementById('visitor-destination')?.value;
+            const zoneLabels = getZoneDirectoryLabels(selectedZone);
+            if (!currentDest || !zoneLabels.includes(currentDest)) {
+                const fallback = zoneLabels[0] || '';
+                const hiddenInput = document.getElementById('visitor-destination');
+                const searchInput = document.getElementById('visitor-destination-search');
+                if (hiddenInput) hiddenInput.value = fallback;
+                if (searchInput) searchInput.value = fallback;
+            }
+            renderDestinationOptions('');
+            renderAdminDirectory();
+        }
+
+        window.setAdminDirFilter = function(filter) {
+            adminDirFilter = filter;
+            ['ALL', 'OFFICE', 'RESIDENTIAL', 'GUARD', 'RESET'].forEach(f => {
+                const btn = document.getElementById(`dir-filter-${f}`);
+                if (!btn) return;
+                if (f === filter) {
+                    btn.className = f === 'RESET'
+                        ? 'px-2.5 py-1 rounded-lg bg-amber-600 text-white'
+                        : 'px-2.5 py-1 rounded-lg bg-slate-900 text-white';
+                } else {
+                    btn.className = f === 'RESET'
+                        ? 'px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800'
+                        : 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600';
+                }
+            });
+            renderAdminDirectory();
+        };
+
+        window.generateRandomAdminPin = function() {
+            const pinInput = document.getElementById('admin-dir-pin');
+            if (pinInput) {
+                pinInput.value = String(Math.floor(1000 + Math.random() * 9000));
+            }
+        };
+
+        window.addDirectoryEntry = async function() {
+            const zone = document.getElementById('admin-dir-zone').value;
+            const unit = document.getElementById('admin-dir-unit').value.trim();
+            const name = document.getElementById('admin-dir-name').value.trim();
+            const phone = document.getElementById('admin-dir-phone').value.trim();
+            let pin = document.getElementById('admin-dir-pin').value.trim();
+
+            if (!unit || !name || phone.length < 10) {
+                showToast("⚠️ Enter Unit, Name & 10-digit Mobile.");
+                return;
+            }
+            if (pin.length !== 4) {
+                pin = String(Math.floor(1000 + Math.random() * 9000));
+            }
+
+            const newEntry = { zone, unit, name, phone, pin, pinMustChange: true, pinResetRequested: false };
+            if (useFirestore && db && currentUser) {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'directory');
+                await addDoc(colRef, newEntry);
+            } else {
+                directoryEntries.push({ id: 'dir_' + Date.now(), ...newEntry });
+                syncDirectoryAcrossUI();
+            }
+
+            document.getElementById('admin-dir-unit').value = '';
+            document.getElementById('admin-dir-name').value = '';
+            document.getElementById('admin-dir-phone').value = '';
+            document.getElementById('admin-dir-pin').value = '';
+            shareUserCredentials(name, phone, pin, true);
+        };
+
+        window.adminResetUserPin = async function(id) {
+            const entry = directoryEntries.find(d => d.id === id);
+            if (!entry) return;
+            const tempPin = String(Math.floor(1000 + Math.random() * 9000));
+            await updateUserPinByPhone(entry.phone, tempPin, { pinMustChange: true, pinResetRequested: false });
+            shareUserCredentials(entry.name, entry.phone, tempPin, false);
+        };
+
+        window.shareUserCredentials = function(name, phone, tempPin, isNewUser = false) {
+            const appUrl = window.location.href.split('?')[0];
+            const intro = isNewUser
+                ? `Namaste ${name}! 🙏 Your Swagat gate portal for SPM NIWAS is ready.`
+                : `Namaste ${name}! 🔄 Your Swagat (SPM NIWAS) PIN has been reset.`;
+            const msg = `${intro}\n\n🔗 App Link: ${appUrl}\n📱 Mobile: ${phone}\n🔑 Temp PIN: ${tempPin}\n\n(You will be prompted to set your own private 4-digit PIN on first login.)`;
+
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = msg;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            } catch (e) {}
+
+            const cleanDigits = phone.replace(/\D/g, '');
+            const waNumber = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
+            const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank', 'noopener');
+            showToast(`📲 Opening WhatsApp for ${name} (Temp PIN: ${tempPin})...`);
+        };
+
+        window.deleteDirectoryEntry = async function(id) {
+            if (useFirestore && db && currentUser) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'directory', id);
+                await deleteDoc(docRef);
+            } else {
+                directoryEntries = directoryEntries.filter(d => d.id !== id);
+                syncDirectoryAcrossUI();
+            }
+            showToast("🗑️ Entry removed from database.");
+        };
+
+        function renderAdminDirectory() {
+            const list = document.getElementById('admin-directory-list');
+            const countBadge = document.getElementById('directory-total-count');
+            const resetCountBadge = document.getElementById('reset-req-count');
+            if (!list || !countBadge) return;
+
+            const resetCount = directoryEntries.filter(d => d.pinResetRequested).length;
+            if (resetCountBadge) resetCountBadge.textContent = resetCount;
+
+            const searchQuery = (document.getElementById('admin-dir-search')?.value || '').toLowerCase().trim();
+            countBadge.textContent = `${directoryEntries.length} Users`;
+            const filtered = directoryEntries.filter(d => {
+                const matchesTab = adminDirFilter === 'ALL'
+                    ? true
+                    : adminDirFilter === 'RESET'
+                        ? d.pinResetRequested
+                        : d.zone === adminDirFilter;
+                if (!matchesTab) return false;
+                if (!searchQuery) return true;
+                return `${d.name} ${d.unit} ${d.phone}`.toLowerCase().includes(searchQuery);
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No matching entries found.</p>`;
+                return;
+            }
+
+            const zoneBadges = {
+                'OFFICE': { tag: 'OFFICE', cls: 'bg-blue-100 text-blue-700' },
+                'RESIDENTIAL': { tag: 'RESIDENTIAL', cls: 'bg-emerald-100 text-emerald-700' },
+                'GUARD': { tag: 'GUARD', cls: 'bg-indigo-100 text-indigo-700' },
+                'ADMIN': { tag: 'ADMIN', cls: 'bg-amber-100 text-amber-800' }
+            };
+
+            list.innerHTML = filtered.map(d => {
+                const badge = zoneBadges[d.zone] || zoneBadges['OFFICE'];
+                const pinBadge = d.pinResetRequested
+                    ? `<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 animate-pulse">RESET REQUESTED</span>`
+                    : d.pinMustChange
+                        ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">TEMP PIN: ${d.pin}</span>`
+                        : `<span class="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">PRIVATE PIN ••••</span>`;
+                return `
+                    <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border ${d.pinResetRequested ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200/80'} text-xs">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded ${badge.cls}">${badge.tag}</span>
+                                <span class="font-bold text-slate-800 truncate">${d.unit}</span>
+                                ${pinBadge}
+                            </div>
+                            <p class="text-[11px] text-slate-500 truncate mt-0.5">${d.name} • <span class="font-mono text-slate-600">${d.phone || 'No Phone'}</span></p>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" onclick="adminResetUserPin('${d.id}')" class="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold transition shadow-sm" title="Generate Temp PIN & Open WhatsApp">
+                                📲 WhatsApp PIN
+                            </button>
+                            <button type="button" onclick="deleteDirectoryEntry('${d.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Remove User">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.submitWalkIn = async function() {
+            const name = document.getElementById('visitor-name').value.trim();
+            const phone = document.getElementById('visitor-phone').value.trim();
+            const type = document.getElementById('visitor-type').value;
+            const vehicle = document.getElementById('visitor-vehicle').value.trim().toUpperCase();
+            const destination = document.getElementById('visitor-destination').value || document.getElementById('visitor-destination-search').value.trim();
+
+            if (!name || !phone || !destination) {
+                showToast("⚠️ Please select a Host/Unit and enter Visitor Name & Phone.");
+                return;
+            }
+
+            const now = Date.now();
+            const record = {
+                visitorName: name,
+                visitorPhone: phone,
+                visitorType: type,
+                zone: selectedZone,
+                destination: destination,
+                vehicleNumber: vehicle,
+                passCode: String(Math.floor(1000 + Math.random() * 9000)),
+                status: 'PENDING',
+                createdAt: now,
+                timeLabel: formatTime(now)
+            };
+
+            document.getElementById('visitor-name').value = '';
+            document.getElementById('visitor-phone').value = '';
+            document.getElementById('visitor-vehicle').value = '';
+
+            await saveVisitorRecord(record);
+        };
+
+        window.verifyPassCode = async function() {
+            const code = document.getElementById('otp-verify-input').value.trim();
+            if (code.length !== 4) {
+                showToast("⚠️ Enter a valid 4-digit OTP code.");
+                return;
+            }
+
+            const match = visitors.find(v => v.passCode === code && (v.status === 'PRE_APPROVED' || v.status === 'APPROVED'));
+            if (!match) {
+                showToast("❌ Invalid or expired OTP code.");
+                return;
+            }
+
+            document.getElementById('otp-verify-input').value = '';
+            if (match.status === 'PRE_APPROVED') {
+                await updateVisitorStatus(match.id, 'APPROVED');
+            }
+            openPassModal(match);
+        };
+
+        window.createPreApprovedPass = async function() {
+            const guestName = document.getElementById('pre-guest-name').value.trim();
+            const guestType = document.getElementById('pre-guest-type').value;
+            const hostSelect = document.getElementById('active-host-unit').value;
+            const destination = hostSelect === 'ALL' ? 'IT Dept (Floor 2) - Rahul Sharma' : hostSelect;
+            const zone = destination.startsWith('Flat') ? 'RESIDENTIAL' : 'OFFICE';
+
+            if (!guestName) {
+                showToast("⚠️ Please enter the expected guest's name.");
+                return;
+            }
+
+            const otp = String(Math.floor(1000 + Math.random() * 9000));
+            const now = Date.now();
+            const record = {
+                visitorName: guestName,
+                visitorPhone: 'Pre-Approved',
+                visitorType: guestType,
+                zone: zone,
+                destination: destination,
+                vehicleNumber: '',
+                passCode: otp,
+                status: 'PRE_APPROVED',
+                createdAt: now,
+                timeLabel: formatTime(now)
+            };
+
+            await saveVisitorRecord(record, true);
+
+            document.getElementById('gen-otp-code').textContent = otp;
+            document.getElementById('generated-pass-card').classList.remove('hidden');
+            document.getElementById('ai-invite-text').value = `Namaste ${guestName}! Your gate pass for ${destination} at SPM NIWAS is ready. Show OTP *${otp}* at the Main Gate for instant entry.`;
+            showToast(`🎟️ Pass ${otp} generated for ${guestName}`);
+        };
+
+        window.openPassModal = function(visitor) {
+            const isOffice = visitor.zone === 'OFFICE';
+            const card = document.getElementById('pass-card-container');
+            const header = document.getElementById('pass-header');
+
+            card.className = `w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl border-4 ${isOffice ? 'border-blue-600' : 'border-emerald-600'}`;
+            header.className = `${isOffice ? 'bg-blue-600' : 'bg-emerald-600'} text-white p-5 text-center`;
+            document.getElementById('pass-zone-title').textContent = isOffice ? '🏢 CORPORATE OFFICE' : '🏠 RESIDENTIAL WING';
+            document.getElementById('pass-visitor-name').textContent = visitor.visitorName;
+            document.getElementById('pass-visitor-type').textContent = `${visitor.visitorType}${visitor.vehicleNumber ? ' • ' + visitor.vehicleNumber : ''}`;
+            document.getElementById('pass-destination').textContent = visitor.destination;
+            document.getElementById('pass-otp').textContent = visitor.passCode;
+            document.getElementById('pass-time').textContent = visitor.timeLabel;
+
+            openModal('pass-modal');
+        };
+
+        // ==================== RENDERING VIEWS ====================
+        function renderAll() {
+            renderGuardView();
+            renderHostView();
+            renderAdminView();
+        }
+
+        function renderGuardView() {
+            const list = document.getElementById('guard-visitor-list');
+            document.getElementById('guard-log-count').textContent = `${visitors.length} entries`;
+
+            if (visitors.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No gate entries recorded yet today.</div>`;
+                return;
+            }
+
+            list.innerHTML = visitors.map(v => {
+                const isOffice = v.zone === 'OFFICE';
+                const zonePill = isOffice
+                    ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">🏢 OFFICE</span>`
+                    : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">🏠 RESIDENTIAL</span>`;
+
+                const statusMap = {
+                    'PENDING': `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">⏳ PENDING</span>`,
+                    'PRE_APPROVED': `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">🎟️ OTP: ${v.passCode}</span>`,
+                    'APPROVED': `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">✅ INSIDE</span>`,
+                    'DENIED': `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">⛔ DENIED</span>`,
+                    'CHECKED_OUT': `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">OUT</span>`
+                };
+
+                let actionBtns = '';
+                if (v.status === 'APPROVED') {
+                    actionBtns = `
+                        <div class="flex gap-2 mt-2.5 pt-2.5 border-t border-slate-100">
+                            <button onclick='openPassModal(${JSON.stringify(v).replace(/'/g, "&#39;")})' class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[11px] py-2 rounded-xl transition">View Pass</button>
+                            <button onclick="updateVisitorStatus('${v.id}', 'CHECKED_OUT')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] py-2 rounded-xl transition">Check Out</button>
+                        </div>
+                    `;
+                } else if (v.status === 'PRE_APPROVED') {
+                    actionBtns = `
+                        <div class="flex gap-2 mt-2.5 pt-2.5 border-t border-slate-100">
+                            <button onclick="updateVisitorStatus('${v.id}', 'APPROVED')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] py-2 rounded-xl transition">Check In Guest (OTP ${v.passCode})</button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200/80">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <div class="flex items-center gap-1.5 mb-1">
+                                    ${zonePill}
+                                    <span class="text-[11px] text-slate-400 font-medium">${v.timeLabel}</span>
+                                </div>
+                                <h4 class="font-bold text-slate-900 text-sm">${v.visitorName} <span class="text-xs font-normal text-slate-500">(${v.visitorType})</span></h4>
+                                <p class="text-xs text-slate-600 mt-0.5">To: <strong>${v.destination}</strong></p>
+                                ${v.vehicleNumber ? `<p class="text-[11px] font-mono text-slate-500 mt-0.5">🚗 ${v.vehicleNumber}</p>` : ''}
+                            </div>
+                            <div class="shrink-0">${statusMap[v.status] || ''}</div>
+                        </div>
+                        ${actionBtns}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderHostView() {
+            const activeUnit = document.getElementById('active-host-unit').value;
+            const zonePill = document.getElementById('host-zone-pill');
+
+            if (activeUnit.startsWith('Flat')) {
+                zonePill.textContent = 'RESIDENTIAL ZONE';
+                zonePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            } else if (activeUnit === 'ALL') {
+                zonePill.textContent = 'ALL CAMPUS UNITS';
+                zonePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+            } else {
+                zonePill.textContent = 'OFFICE ZONE';
+                zonePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30';
+            }
+
+            const unitVisitors = activeUnit === 'ALL'
+                ? visitors
+                : visitors.filter(v => v.destination === activeUnit);
+
+            const pending = unitVisitors.filter(v => v.status === 'PENDING');
+            const history = unitVisitors.filter(v => v.status !== 'PENDING');
+
+            const dot = document.getElementById('host-pending-dot');
+            if (dot) dot.classList.toggle('hidden', pending.length === 0);
+
+            const pendingList = document.getElementById('host-pending-list');
+            if (pending.length === 0) {
+                pendingList.innerHTML = `<div class="bg-white rounded-2xl p-4 border border-slate-200/80 text-center text-xs text-slate-400">No visitors waiting at the gate right now.</div>`;
+            } else {
+                pendingList.innerHTML = pending.map(v => `
+                    <div class="bg-amber-50 border-2 border-amber-400 rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">Gate Approval Needed</span>
+                                <h4 class="font-extrabold text-slate-900 text-base mt-1">${v.visitorName}</h4>
+                                <p class="text-xs text-slate-600">${v.visitorType} • 📞 ${v.visitorPhone}</p>
+                                <p class="text-xs font-semibold text-slate-700 mt-0.5">For: ${v.destination}</p>
+                            </div>
+                            <span class="text-xs font-bold text-slate-500">${v.timeLabel}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="updateVisitorStatus('${v.id}', 'APPROVED')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl shadow transition">✅ Approve Entry</button>
+                            <button onclick="updateVisitorStatus('${v.id}', 'DENIED')" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 font-bold text-xs py-2.5 rounded-xl transition">⛔ Deny</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const historyList = document.getElementById('host-history-list');
+            historyList.innerHTML = history.length === 0
+                ? `<div class="text-center py-4 text-xs text-slate-400">No recent visitor history.</div>`
+                : history.map(v => `
+                    <div class="bg-white rounded-xl p-3 border border-slate-200/80 flex items-center justify-between text-xs">
+                        <div>
+                            <p class="font-bold text-slate-800">${v.visitorName} <span class="font-normal text-slate-400">(${v.visitorType})</span></p>
+                            <p class="text-[11px] text-slate-500">${v.destination} • ${v.timeLabel}</p>
+                        </div>
+                        <span class="font-bold text-[10px] px-2 py-1 rounded-lg bg-slate-100 text-slate-700">${v.status.replace('_', ' ')}</span>
+                    </div>
+                `).join('');
+        }
+
+        function renderAdminView() {
+            const officeInside = visitors.filter(v => v.zone === 'OFFICE' && v.status === 'APPROVED').length;
+            const resInside = visitors.filter(v => v.zone === 'RESIDENTIAL' && v.status === 'APPROVED').length;
+            document.getElementById('stat-office-inside').textContent = officeInside;
+            document.getElementById('stat-res-inside').textContent = resInside;
+
+            const gateCountEl = document.getElementById('admin-gate-count');
+            const gateFeedEl = document.getElementById('admin-gate-feed');
+            if (gateCountEl && gateFeedEl) {
+                gateCountEl.textContent = `${visitors.length} entries`;
+                gateFeedEl.innerHTML = visitors.length === 0
+                    ? `<p class="text-xs text-slate-400 text-center py-4">No gate entries yet today.</p>`
+                    : visitors.map(v => `
+                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2 text-xs">
+                            <div class="min-w-0">
+                                <p class="font-bold text-slate-800 truncate">${v.visitorName} <span class="font-normal text-slate-400">(${v.visitorType})</span></p>
+                                <p class="text-[11px] text-slate-500 truncate">${v.destination} • ${v.timeLabel}</p>
+                            </div>
+                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700 shrink-0">${v.status.replace('_', ' ')}</span>
+                        </div>
+                    `).join('');
+            }
+            renderAdminDirectory();
+        }
+
+        // ==================== GEMINI AI FEATURES ====================
+        async function callGemini(parts) {
+            const apiKey = (localStorage.getItem('swagat_gemini_key') || '').trim();
+            if (!apiKey) throw new Error('No Gemini key configured');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts }] })
+                    });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                } catch (err) {
+                    if (attempt === 2) throw err;
+                    await new Promise(r => setTimeout(r, 800 * Math.pow(2, attempt)));
+                }
+            }
+        }
+
+        window.handleAiScan = async function(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            const banner = document.getElementById('ai-scan-banner');
+            const bannerText = document.getElementById('ai-scan-text');
+            banner.classList.remove('hidden');
+            bannerText.textContent = "Gemini AI is scanning ID card / vehicle plate...";
+
+            try {
+                const base64Data = await fileToBase64(file);
+                const prompt = `Extract visitor details from this image (could be an ID card, business card, delivery parcel, or vehicle license plate). Return ONLY valid JSON with keys: "name" (string), "phone" (string), "vehicle" (string), "type" (one of "Guest", "Delivery", "Cab", "Vendor"). Leave unknown fields as empty strings.`;
+
+                const rawText = await callGemini([
+                    { text: prompt },
+                    { inlineData: { mimeType: file.type || 'image/jpeg', data: base64Data } }
+                ]);
+
+                const cleaned = rawText.replace(/```json|```/g, '').trim();
+        window.openModal = (id) => {
+            if (id === 'config-modal') {
+                const keyInput = document.getElementById('settings-gemini-key');
+                if (keyInput) keyInput.value = localStorage.getItem('swagat_gemini_key') || '';
+            }
+            document.getElementById(id).classList.remove('hidden');
+        };
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+        window.saveGeminiKeySetting = function() {
+            const val = (document.getElementById('settings-gemini-key')?.value || '').trim();
+            if (val) {
+                localStorage.setItem('swagat_gemini_key', val);
+                showToast("✨ Gemini AI key saved privately on this device!");
+            } else {
+                localStorage.removeItem('swagat_gemini_key');
+                showToast("🧹 Gemini AI key cleared (using built-in smart templates).");
+            }
+        };
+
+        window.generateAiInvite = async function() {
+            const guestName = document.getElementById('pre-guest-name').value.trim() || 'Guest';
+            const note = document.getElementById('pre-guest-note').value.trim();
+            const otp = document.getElementById('gen-otp-code').textContent;
+            const hostUnit = document.getElementById('active-host-unit').value;
+            const destination = hostUnit === 'ALL' ? 'IT Dept (Floor 2) - Rahul Sharma' : hostUnit;
+
+            const btn = document.getElementById('btn-ai-invite');
+            btn.textContent = "Drafting...";
+            btn.disabled = true;
+
+            try {
+                const prompt = `Write a short, warm, professional WhatsApp visitor gate pass invite (max 45 words) for "${guestName}" visiting "${destination}" at "SPM NIWAS". Include their 4-digit Main Gate OTP "${otp}" and mention: "${note || 'Present OTP at the single main gate for zone badge'}". Do not use markdown formatting.`;
+                const reply = await callGemini([{ text: prompt }]);
+                if (reply) document.getElementById('ai-invite-text').value = reply.trim();
+            } catch (err) {
+                document.getElementById('ai-invite-text').value = `Namaste ${guestName}! You are invited to ${destination} at SPM NIWAS. ${note ? note + '. ' : ''}Please show OTP *${otp}* at the Main Gate for fast entry.`;
+            } finally {
+                btn.textContent = "✨ Draft Invite";
+                btn.disabled = false;
+            }
+        };
+
+        window.generateSecurityBriefing = async function() {
+            const output = document.getElementById('ai-briefing-output');
+            const btn = document.getElementById('btn-ai-briefing');
+            btn.textContent = "Analyzing...";
+            btn.disabled = true;
+
+            try {
+                const summaryData = visitors.map(v => `${v.zone}: ${v.visitorName} (${v.visitorType}) -> ${v.destination} [${v.status}]`).join('\n');
+                const prompt = `You are a Chief Security Officer for a mixed-use corporate office & residential campus. Summarize these gate logs in 3 concise bullet points (traffic split, pending approvals, and security recommendations):\n${summaryData}`;
+                const reply = await callGemini([{ text: prompt }]);
+                output.innerHTML = reply ? reply.replace(/\n/g, '<br>') : "All zones operating normally.";
+            } catch (err) {
+                const off = visitors.filter(v => v.zone === 'OFFICE').length;
+                const res = visitors.filter(v => v.zone === 'RESIDENTIAL').length;
+                output.innerHTML = `• <strong>Campus Split:</strong> ${off} Office entries vs. ${res} Residential entries.<br>• <strong>Access Control:</strong> All entries verified via Single Main Gate zone badges.<br>• <strong>Recommendation:</strong> Follow up on any pending approvals older than 5 minutes.`;
+            } finally {
+                btn.textContent = "✨ Analyze Logs";
+                btn.disabled = false;
+            }
+        };
+
+        // ==================== UTILITIES & MODALS ====================
+        function toTitleCase(str) {
+            return str.replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        window.formatTitleCase = function(input) {
+            const pos = input.selectionStart;
+            input.value = toTitleCase(input.value);
+            if (pos !== null) input.setSelectionRange(pos, pos);
+        };
+
+        window.formatNumericOnly = function(input) {
+            input.value = input.value.replace(/\D/g, '');
+        };
+
+        function formatTime(ts) {
+            return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+        window.openGuestWhatsApp = function() {
+            const text = document.getElementById('ai-invite-text').value.trim();
+            if (!text) return;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+        };
+
+        window.copyInviteText = function() {
+            const textarea = document.getElementById('ai-invite-text');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showToast("📋 Invite copied to clipboard!");
+        };
+
+        window.connectCustomFirebase = async function() {
+            try {
+                const raw = document.getElementById('firebase-config-input').value.trim();
+                const parsed = JSON.parse(raw);
+                closeModal('config-modal');
+                showToast("🔄 Connecting to Firestore...");
+                await initBackend(parsed);
+            } catch (e) {
+                showToast("❌ Invalid JSON config. Check syntax.");
+            }
+        };
+
+        window.triggerInstallPrompt = async function() {
+            if (window.deferredInstallPrompt) {
+                window.deferredInstallPrompt.prompt();
+                await window.deferredInstallPrompt.userChoice;
+                window.deferredInstallPrompt = null;
+            }
+        };
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const banner = document.getElementById('toast-banner');
+            document.getElementById('toast-message').textContent = msg;
+            banner.classList.remove('hidden');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => banner.classList.add('hidden'), 3200);
+        }
+
+        // Boot App
+        selectZone('OFFICE');
+        restoreSavedSession();
+        initBackend();
+    </script>
+</body>
+</html>
