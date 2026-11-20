@@ -647,18 +647,18 @@
                             <h3 class="font-bold text-slate-800 text-sm">Staff & Residents Database</h3>
                             <p class="text-[11px] text-slate-500">Manage role-locked PIN access & WhatsApp onboarding</p>
                         </div>
-                        <span id="admin-dir-count" class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full">0 entries</span>
-                    </div>
-
-                    <!-- Add New Host / Guard / Admin Form -->
+                    <!-- Add New Host / Guard Form -->
                     <div class="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-2">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <select id="admin-dir-zone" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="OFFICE">🏢 Office Dept</option>
-                                <option value="RESIDENTIAL">🏠 Resident Unit</option>
+                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="OFFICE">🏢 Office Staff</option>
+                                <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
                                 <option value="GUARD">🛡️ Security Guard</option>
                             </select>
-                            <input id="admin-dir-unit" type="text" placeholder="Unit (e.g., Flat C-301)" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div id="admin-dir-flat-wrap" class="hidden">
+                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full bg-emerald-50/70 border border-emerald-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -678,8 +678,8 @@
                     <!-- Filter Tabs -->
                     <div class="flex gap-1 text-[11px] font-bold overflow-x-auto no-scrollbar">
                         <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white transition shrink-0">All</button>
-                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🏢 Office</button>
-                        <button type="button" id="dir-filter-RESIDENTIAL" onclick="setAdminDirFilter('RESIDENTIAL')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🏠 Flats</button>
+                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🏢 Office Staff</button>
+                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🏢🏠 Office + Res</button>
                         <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🛡️ Guards</button>
                         <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">📊 Admins</button>
                         <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🔄 Resets</button>
@@ -929,6 +929,29 @@
         <!-- Custom Toast Notification Banner (No alert() used) -->
         <div id="toast-banner" class="hidden absolute bottom-4 left-4 right-4 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl border border-slate-700 z-50 flex items-center justify-between transition-all">
             <span id="toast-message">Notification</span>
+        </div>
+
+        <!-- Allot Residence Quarter Modal (Upgrades Office Staff -> Office with Residence) -->
+        <div id="allot-flat-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-3.5">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-slate-900 text-base">🏠 Allot Campus Residence</h3>
+                    <button onclick="closeModal('allot-flat-modal')" class="p-1.5 rounded-lg bg-slate-100 text-slate-500">✕</button>
+                </div>
+                <p id="allot-flat-subtitle" class="text-xs text-slate-500 leading-relaxed">
+                    Assign a Residential Flat / Quarter to upgrade this employee to <strong>Office with Residence</strong> using their existing mobile & PIN.
+                </p>
+                <input id="allot-flat-phone" type="hidden" value="">
+                <input id="allot-flat-input" type="text" placeholder="Flat / Quarter No. (e.g., Flat C-204)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <div class="flex gap-2">
+                    <button type="button" onclick="confirmAllotResidence()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl shadow">
+                        Confirm & Allot Flat
+                    </button>
+                    <button type="button" onclick="closeModal('allot-flat-modal')" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl">
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -2927,9 +2950,22 @@
             if (el) el.value = String(Math.floor(1000 + Math.random() * 9000));
         };
 
+        window.handleAdminDirCategoryChange = function() {
+            const cat = document.getElementById('admin-dir-zone')?.value || 'OFFICE';
+            const unitEl = document.getElementById('admin-dir-unit');
+            const flatWrap = document.getElementById('admin-dir-flat-wrap');
+            if (flatWrap) {
+                flatWrap.classList.toggle('hidden', cat !== 'OFFICE_RES');
+            }
+            if (unitEl) {
+                if (cat === 'GUARD') unitEl.placeholder = 'Gate / Post (e.g., Main Gate)';
+                else unitEl.placeholder = 'Office Dept (e.g., IT Dept Floor 2) *';
+            }
+        };
+
         window.setAdminDirFilter = function(filter) {
             adminDirFilter = filter;
-            ['ALL', 'OFFICE', 'RESIDENTIAL', 'GUARD', 'ADMIN', 'RESETS'].forEach(k => {
+            ['ALL', 'OFFICE', 'OFFICE_RES', 'GUARD', 'ADMIN', 'RESETS'].forEach(k => {
                 const btn = document.getElementById(`dir-filter-${k}`);
                 if (!btn) return;
                 btn.className = k === filter
@@ -2937,6 +2973,158 @@
                     : 'px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0';
             });
             renderAdminDirectory();
+        };
+
+        window.addDirectoryEntry = async function() {
+            const category = document.getElementById('admin-dir-zone').value;
+            if (category === 'ADMIN' || category === 'SUPERADMIN') {
+                showToast('⚠️ Only Super Admin (director@spmniwas.in) can appoint Campus Admins.');
+                return;
+            }
+            const officeUnit = document.getElementById('admin-dir-unit').value.trim();
+            const flatUnit = document.getElementById('admin-dir-flat')?.value.trim() || '';
+            const name = document.getElementById('admin-dir-name').value.trim();
+            const phone = document.getElementById('admin-dir-phone').value.trim();
+            let pin = document.getElementById('admin-dir-pin').value.trim();
+
+            if (!name || phone.length < 10) {
+                showToast('⚠️ Enter Full Name and 10-digit Mobile Number.');
+                return;
+            }
+            if ((category === 'OFFICE' || category === 'OFFICE_RES') && !officeUnit) {
+                showToast('⚠️ Enter the Office Department / Wing.');
+                return;
+            }
+            if (category === 'OFFICE_RES' && !flatUnit) {
+                showToast('⚠️ Enter the Residential Flat / Quarter number.');
+                return;
+            }
+            if (pin.length !== 4) {
+                pin = String(Math.floor(1000 + Math.random() * 9000));
+            }
+
+            const recordsToCreate = [];
+            if (category === 'GUARD') {
+                recordsToCreate.push({
+                    zone: 'GUARD',
+                    unit: officeUnit || 'Main Gate',
+                    name,
+                    phone,
+                    pin,
+                    pinMustChange: true,
+                    pinResetRequested: false
+                });
+            } else {
+                recordsToCreate.push({
+                    zone: 'OFFICE',
+                    unit: officeUnit,
+                    name,
+                    phone,
+                    pin,
+                    pinMustChange: true,
+                    pinResetRequested: false
+                });
+                if (category === 'OFFICE_RES') {
+                    recordsToCreate.push({
+                        zone: 'RESIDENTIAL',
+                        unit: flatUnit,
+                        name,
+                        phone,
+                        pin,
+                        pinMustChange: true,
+                        pinResetRequested: false
+                    });
+                }
+            }
+
+            if (useFirestore && db && currentUser) {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'directory');
+                for (const rec of recordsToCreate) {
+                    await addDoc(colRef, rec);
+                }
+            } else {
+                recordsToCreate.forEach((rec, idx) => {
+                    directoryEntries.unshift({ id: `dir_${Date.now()}_${idx}`, ...rec });
+                });
+                syncDirectoryAcrossUI();
+            }
+
+            document.getElementById('admin-dir-unit').value = '';
+            if (document.getElementById('admin-dir-flat')) document.getElementById('admin-dir-flat').value = '';
+            document.getElementById('admin-dir-name').value = '';
+            document.getElementById('admin-dir-phone').value = '';
+            document.getElementById('admin-dir-pin').value = '';
+            shareUserCredentials(name, phone, pin, true);
+        };
+
+        window.openAllotResidenceModal = function(phone, name) {
+            const phoneEl = document.getElementById('allot-flat-phone');
+            const inputEl = document.getElementById('allot-flat-input');
+            const subEl = document.getElementById('allot-flat-subtitle');
+            if (phoneEl) phoneEl.value = phone;
+            if (inputEl) inputEl.value = '';
+            if (subEl) subEl.innerHTML = `Assign a Residential Flat / Quarter to upgrade <strong>${name}</strong> to <strong>Office with Residence</strong> (same mobile & PIN).`;
+            openModal('allot-flat-modal');
+        };
+
+        window.confirmAllotResidence = async function() {
+            const phone = document.getElementById('allot-flat-phone')?.value.trim();
+            const flatUnit = document.getElementById('allot-flat-input')?.value.trim();
+            if (!phone || !flatUnit) {
+                showToast('⚠️ Enter a valid Flat / Quarter number (e.g., Flat C-204).');
+                return;
+            }
+            const officeRec = directoryEntries.find(d => d.phone === phone && d.zone === 'OFFICE');
+            if (!officeRec) return;
+
+            const newResRec = {
+                zone: 'RESIDENTIAL',
+                unit: flatUnit,
+                name: officeRec.name,
+                phone: officeRec.phone,
+                pin: officeRec.pin,
+                pinMustChange: officeRec.pinMustChange || false,
+                pinResetRequested: false
+            };
+
+            if (useFirestore && db && currentUser) {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'directory');
+                await addDoc(colRef, newResRec);
+            } else {
+                directoryEntries.unshift({ id: 'dir_res_' + Date.now(), ...newResRec });
+                syncDirectoryAcrossUI();
+            }
+            closeModal('allot-flat-modal');
+            showToast(`🏠 Upgraded ${officeRec.name} to Office + Residence (${flatUnit})!`);
+        };
+
+        window.vacateEmployeeResidence = async function(phone) {
+            const resRecords = directoryEntries.filter(d => d.phone === phone && d.zone === 'RESIDENTIAL');
+            if (resRecords.length === 0) return;
+
+            if (useFirestore && db && currentUser) {
+                for (const r of resRecords) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', r.id));
+                }
+            } else {
+                directoryEntries = directoryEntries.filter(d => !(d.phone === phone && d.zone === 'RESIDENTIAL'));
+                syncDirectoryAcrossUI();
+            }
+            showToast('🏢 Residence vacated — status changed back to Office Staff.');
+        };
+
+        window.removeEmployeeByPhone = async function(phone) {
+            const targets = directoryEntries.filter(d => d.phone === phone && d.zone !== 'ADMIN' && d.zone !== 'SUPERADMIN');
+            if (targets.length === 0) return;
+            if (useFirestore && db && currentUser) {
+                for (const t of targets) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', t.id));
+                }
+            } else {
+                directoryEntries = directoryEntries.filter(d => !(d.phone === phone && d.zone !== 'ADMIN' && d.zone !== 'SUPERADMIN'));
+                syncDirectoryAcrossUI();
+            }
+            showToast('🗑️ Employee removed from directory.');
         };
 
         window.addDirectoryEntry = async function() {
@@ -3026,40 +3214,98 @@
             const countEl = document.getElementById('admin-dir-count');
             if (!listEl) return;
 
-            const filtered = directoryEntries.filter(d => {
-                if (d.zone === 'SUPERADMIN') return false;
-                if (adminDirFilter === 'RESETS') return !!d.pinResetRequested;
-                if (adminDirFilter !== 'ALL') return d.zone === adminDirFilter;
+            // Consolidate directory records by employee/user so Office + Residence appears as a single unified profile
+            const groupedMap = new Map();
+            directoryEntries.forEach(d => {
+                if (d.zone === 'SUPERADMIN') return;
+                const key = `${d.zone === 'ADMIN' ? 'ADMIN_' : 'USER_'}${d.phone}`;
+                if (!groupedMap.has(key)) {
+                    groupedMap.set(key, {
+                        primaryId: d.id,
+                        name: d.name,
+                        phone: d.phone,
+                        pin: d.pin,
+                        pinMustChange: !!d.pinMustChange,
+                        pinResetRequested: !!d.pinResetRequested,
+                        officeRec: null,
+                        resRecs: [],
+                        guardRec: null,
+                        adminRec: null
+                    });
+                }
+                const g = groupedMap.get(key);
+                if (d.pinResetRequested) g.pinResetRequested = true;
+                if (d.zone === 'OFFICE') g.officeRec = d;
+                else if (d.zone === 'RESIDENTIAL') g.resRecs.push(d);
+                else if (d.zone === 'GUARD') g.guardRec = d;
+                else if (d.zone === 'ADMIN') g.adminRec = d;
+            });
+
+            const consolidated = Array.from(groupedMap.values()).map(g => {
+                let category = 'OFFICE';
+                if (g.adminRec) category = 'ADMIN';
+                else if (g.guardRec) category = 'GUARD';
+                else if (g.officeRec && g.resRecs.length > 0) category = 'OFFICE_RES';
+                else if (g.resRecs.length > 0) category = 'OFFICE_RES';
+                return { ...g, category };
+            });
+
+            const filtered = consolidated.filter(item => {
+                if (adminDirFilter === 'RESETS') return item.pinResetRequested;
+                if (adminDirFilter !== 'ALL') return item.category === adminDirFilter;
                 return true;
             });
-            if (countEl) countEl.textContent = `${filtered.length} entries`;
+            if (countEl) countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'person' : 'people'}`;
 
-            const zoneBadges = {
-                'OFFICE': 'bg-blue-50 text-blue-700',
-                'RESIDENTIAL': 'bg-emerald-50 text-emerald-700',
-                'GUARD': 'bg-amber-50 text-amber-800',
-                'ADMIN': 'bg-indigo-50 text-indigo-700'
-            };
+            listEl.innerHTML = filtered.map(item => {
+                const canDelete = item.category !== 'ADMIN' || (loggedInSession && loggedInSession.role === 'superadmin');
+                let statusBadge = '';
+                let unitLine = '';
+                let statusToggleBtn = '';
 
-            listEl.innerHTML = filtered.map(d => {
-                const canDelete = d.zone !== 'ADMIN' || (loggedInSession && loggedInSession.role === 'superadmin');
+                if (item.category === 'ADMIN') {
+                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">📊 Campus Admin</span>`;
+                    unitLine = item.adminRec.unit;
+                } else if (item.category === 'GUARD') {
+                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800">🛡️ Security Guard</span>`;
+                    unitLine = item.guardRec.unit;
+                } else if (item.category === 'OFFICE_RES') {
+                    const officeTxt = item.officeRec ? item.officeRec.unit : 'Campus Staff';
+                    const flatTxt = item.resRecs.map(r => r.unit).join(', ');
+                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">🏢🏠 Office + Residence</span>`;
+                    unitLine = `${officeTxt} • <strong>${flatTxt}</strong>`;
+                    if (item.officeRec) {
+                        statusToggleBtn = `<button type="button" onclick="vacateEmployeeResidence('${item.phone}')" class="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold transition" title="Remove Residence & switch to Office Staff only">Vacate Flat</button>`;
+                    }
+                } else {
+                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">🏢 Office Staff</span>`;
+                    unitLine = item.officeRec ? item.officeRec.unit : '';
+                    statusToggleBtn = `<button type="button" onclick="openAllotResidenceModal('${item.phone}', '${item.name.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold transition" title="Allot Quarter & upgrade to Office with Residence">+ Allot Flat</button>`;
+                }
+
+                const deleteAction = item.category === 'ADMIN'
+                    ? `deleteDirectoryEntry('${item.primaryId}')`
+                    : `removeEmployeeByPhone('${item.phone}')`;
+
                 return `
-                <div class="p-3 ${d.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} flex items-center justify-between gap-2 text-xs">
+                <div class="p-3 ${item.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} flex items-center justify-between gap-2 text-xs">
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-1.5">
-                            <span class="font-extrabold text-slate-900 truncate">${d.name}</span>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${zoneBadges[d.zone] || 'bg-slate-100 text-slate-700'}">${d.unit}</span>
-                            ${d.pinResetRequested ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
+                            <span class="font-extrabold text-slate-900 truncate">${item.name}</span>
+                            ${statusBadge}
+                            ${item.pinResetRequested ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
                         </div>
+                        <p class="text-[11px] text-slate-600 mt-0.5 truncate">${unitLine}</p>
                         <p class="text-[11px] text-slate-500 mt-0.5 font-mono">
-                            📱 ${d.phone} • ${d.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${d.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
+                            📱 ${item.phone} • ${item.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${item.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
                         </p>
                     </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" onclick="adminResetUserPin('${d.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition">
-                            📲 WhatsApp PIN
+                    <div class="flex flex-wrap items-center justify-end gap-1.5 shrink-0">
+                        ${statusToggleBtn}
+                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition">
+                            📲 PIN
                         </button>
-                        ${canDelete ? `<button type="button" onclick="deleteDirectoryEntry('${d.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Delete Entry">✕</button>` : ''}
+                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Delete Entry">✕</button>` : ''}
                     </div>
                 </div>
             `;
