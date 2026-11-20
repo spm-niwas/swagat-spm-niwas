@@ -35,16 +35,16 @@
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <!-- Dynamic Campus Logo or Fallback Icon -->
-                    <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden shrink-0" title="SPM NIWAS">
-                        <img id="header-logo-img" src="" alt="SPM NIWAS Logo" class="hidden w-full h-full object-contain p-0.5 bg-white" />
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                        <img id="header-logo-img" src="" alt="SPM NIWAS Logo" class="hidden w-full h-full object-contain p-1 bg-white" />
                         <span id="header-logo-fallback" class="font-swagat text-lg font-black text-amber-400">S</span>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
-                            <h1 class="font-swagat font-bold text-base tracking-wide leading-none text-white shrink-0">Swagat</h1>
-                            <button onclick="openModal('config-modal')" id="sync-badge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:opacity-80 transition cursor-pointer shrink-0" title="Sync Status">DEMO MODE</button>
+                            <h1 class="font-swagat text-base font-black text-white tracking-wider truncate">Swagat</h1>
+                            <span id="sync-badge" onclick="openModal('config-modal')" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-pointer shrink-0">CLOUD LIVE</span>
                         </div>
-                        <p class="text-[11px] font-semibold tracking-wide text-amber-300/90 mt-0.5 truncate">SPM NIWAS • Guest welcome app</p>
+                        <p class="text-[11px] font-semibold text-amber-300/90 truncate">SPM NIWAS • Guest welcome app</p>
                     </div>
                 </div>
 
@@ -286,17 +286,6 @@
             <!-- ==================== 2. HOST VIEW (RESIDENT / EMPLOYEE) ==================== -->
             <section id="view-host" class="hidden space-y-4">
                 
-                <!-- Active Host Profile Selector (Supports Dual-Role Campus Users) -->
-                <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-md">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Active Host Unit</span>
-                        <span id="host-zone-pill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">OFFICE ZONE</span>
-                    </div>
-                    <select id="active-host-unit" onchange="handleActiveHostUnitChange()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="ALL">🌐 View All Units (Demo Mode)</option>
-                    </select>
-                </div>
-
                 <!-- Gate Bell Sound & OS Pop-Up Notification Banner -->
                 <div id="host-notify-banner" class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200/80 flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2.5 min-w-0">
@@ -483,123 +472,111 @@
                         </button>
                     </div>
 
-                    <!-- Live Campus Headcount -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-blue-600 text-white rounded-2xl p-3.5 shadow-md min-w-0">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-blue-100 truncate">Office Inside</p>
-                            <p id="stat-office-inside" class="text-2xl sm:text-3xl font-extrabold mt-1">0</p>
-                            <p class="text-[11px] text-blue-200 mt-0.5 truncate">Corporate Guests</p>
-                        </div>
-                        <div class="bg-emerald-600 text-white rounded-2xl p-3.5 shadow-md min-w-0">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-100 truncate">Residential Inside</p>
-                            <p id="stat-res-inside" class="text-2xl sm:text-3xl font-extrabold mt-1">0</p>
-                            <p class="text-[11px] text-emerald-200 mt-0.5 truncate">Flat Visitors</p>
-                        </div>
-                    </div>
-
-                    <!-- Campus Logo & Branding Uploader (Bottom) -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="min-w-0">
-                                <h3 class="font-bold text-slate-800 text-sm">📍 Main Gate Geofencing</h3>
-                                <p class="text-xs text-slate-500">Restrict Guard check-ins to physical gate GPS</p>
-                            </div>
-                            <button type="button" id="btn-toggle-geofence" onclick="toggleGeofenceEnabled()" class="px-3.5 py-2 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-700 transition shrink-0">
-                                OFF
-                            </button>
-                        </div>
-                        <button type="button" id="btn-capture-gate-gps" onclick="captureCurrentGateCoordinates()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs py-3 rounded-xl transition">
-                            <span>🎯 Capture My Current Gate Location</span>
-                        </button>
+                    <!-- Live Campus Headcount + AI Security Briefing (3-Card Row) -->
+                    <div class="space-y-2.5">
                         <div class="grid grid-cols-3 gap-2">
-                            <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="Lat (22.5726)" aria-label="Latitude" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
-                            <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="Lng (88.3639)" aria-label="Longitude" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
-                            <select id="geo-radius-select" onchange="saveGeofenceFields()" aria-label="Radius" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-sm font-bold">
-                                <option value="50">50m</option>
-                                <option value="100" selected>100m</option>
-                                <option value="150">150m</option>
-                                <option value="250">250m</option>
-                                <option value="500">500m</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- AI Daily Security Briefing -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="min-w-0">
-                                <h3 class="font-bold text-slate-800 text-sm">AI Security Briefing</h3>
-                                <p class="text-xs text-slate-500">Real-time traffic & anomaly insights</p>
+                            <div class="bg-blue-600 text-white rounded-2xl p-3 shadow-md min-w-0 flex flex-col justify-between">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-blue-100 leading-tight">Office Inside</p>
+                                <p id="stat-office-inside" class="text-2xl font-extrabold mt-1">0</p>
+                                <p class="text-[10px] text-blue-200 mt-0.5 truncate">Corporate</p>
                             </div>
-                            <button onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow transition shrink-0">
-                                ✨ Analyze
+                            <div class="bg-emerald-600 text-white rounded-2xl p-3 shadow-md min-w-0 flex flex-col justify-between">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-100 leading-tight">Residential Inside</p>
+                                <p id="stat-res-inside" class="text-2xl font-extrabold mt-1">0</p>
+                                <p class="text-[10px] text-emerald-200 mt-0.5 truncate">Flats</p>
+                            </div>
+                            <button type="button" onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-slate-900 hover:bg-indigo-950 active:scale-95 text-white rounded-2xl p-3 shadow-md border border-indigo-500/30 min-w-0 flex flex-col justify-between text-left transition">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-amber-300 leading-tight">AI Security Briefing</p>
+                                <p class="text-xl font-extrabold mt-1">✨</p>
+                                <p class="text-[10px] text-indigo-300 mt-0.5 truncate">Tap to view</p>
                             </button>
                         </div>
-                        <div id="ai-briefing-output" class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-700 leading-relaxed break-words">
-                            Tap <strong>"✨ Analyze"</strong> to generate an instant executive summary of today's Office & Residential gate movements.
-                        </div>
+                        <div id="ai-briefing-output" class="hidden bg-white border border-slate-200/80 rounded-2xl p-3.5 text-xs text-slate-700 leading-relaxed break-words shadow-sm"></div>
                     </div>
 
-                    <!-- Live Gate Activity Feed -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5 overflow-hidden">
-                        <div class="flex items-center justify-between gap-2">
-                            <h3 class="font-bold text-slate-800 text-sm">Live Gate Activity</h3>
-                            <span id="admin-gate-count" class="text-xs font-semibold text-slate-500 shrink-0">0 entries</span>
-                        </div>
-                        <div id="admin-gate-feed" class="max-h-60 overflow-y-auto space-y-2 pr-0.5"></div>
+                    <!-- Live Gate Activity Feed (Collapsed by Default, Tap to Expand) -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 overflow-hidden">
+                        <button type="button" onclick="toggleAdminGateFeed()" class="w-full flex items-center justify-between gap-2 text-left">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-800 text-sm">Live Gate Activity</h3>
+                                <span id="admin-gate-count" class="text-xs font-semibold text-slate-500 shrink-0">0 entries</span>
+                            </div>
+                            <span id="admin-gate-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg transition-transform">▼ Tap to expand</span>
+                        </button>
+                        <div id="admin-gate-feed" class="hidden max-h-60 overflow-y-auto space-y-2 pr-0.5 mt-3 pt-2.5 border-t border-slate-100"></div>
                     </div>
                 </div>
 
-                <!-- Right Column: Staff, Residents & Guards Directory -->
-                <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3.5 lg:col-span-7 min-w-0 overflow-hidden">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-slate-800 text-base">Staff & Residents Database</h3>
-                            <p class="text-xs text-slate-500">Manage role-locked PIN access & WhatsApp onboarding</p>
-                        </div>
-                        <span id="admin-dir-count" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 shrink-0">0 people</span>
-                    </div>
+                <!-- Right Column: Collapsible Add User & Added Users Directory -->
+                <div class="space-y-3 lg:col-span-7 min-w-0">
+                    <!-- 1. Add User Toggle Button -->
+                    <button type="button" id="btn-toggle-admin-add-user" onclick="toggleAdminAddUserForm()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-sm py-3.5 px-4 rounded-2xl shadow-md shadow-blue-600/20 flex items-center justify-between transition">
+                        <span class="flex items-center gap-2"><span>➕</span><span>Add User</span></span>
+                        <span id="admin-add-user-chevron" class="text-xs font-extrabold bg-white/20 px-2.5 py-1 rounded-lg">▼ Open Form</span>
+                    </button>
 
-                    <!-- Add New Host / Guard Form -->
-                    <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="OFFICE">🏢 Office Staff</option>
-                                <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
-                                <option value="GUARD">🛡️ Security Guard</option>
-                            </select>
-                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div id="admin-dir-flat-wrap" class="hidden">
-                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full min-w-0 bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-3 text-sm font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210 *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
-                            <div class="w-32 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full min-w-0 px-2.5 py-3 text-sm text-center font-bold tracking-widest focus:outline-none">
-                                <button type="button" onclick="generateRandomAdminPin()" class="px-3 py-3 bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-700 shrink-0" title="Auto-generate 4-digit PIN">🎲</button>
+                    <!-- Collapsible New User Form -->
+                    <div id="admin-add-user-panel" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Register Staff, Resident or Guard</h3>
+                                <p class="text-xs text-slate-500">Issue role-locked mobile & 4-digit PIN access</p>
                             </div>
-                            <button type="button" onclick="addDirectoryEntry()" class="flex-1 min-w-[160px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-sm transition">
-                                + Add & Share PIN
-                            </button>
+                            <button type="button" onclick="toggleAdminAddUserForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">✕</button>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="OFFICE">🏢 Office Staff</option>
+                                    <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
+                                    <option value="GUARD">🛡️ Security Guard</option>
+                                </select>
+                                <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div id="admin-dir-flat-wrap" class="hidden">
+                                <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full min-w-0 bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-3 text-sm font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210 *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
+                                <div class="w-32 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
+                                    <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full min-w-0 px-2.5 py-3 text-sm text-center font-bold tracking-widest focus:outline-none">
+                                    <button type="button" onclick="generateRandomAdminPin()" class="px-3 py-3 bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-700 shrink-0" title="Auto-generate 4-digit PIN">🎲</button>
+                                </div>
+                                <button type="button" onclick="addDirectoryEntry()" class="flex-1 min-w-[160px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-sm transition">
+                                    + Add & Share PIN
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Filter Tabs -->
-                    <div class="flex flex-wrap gap-2 text-xs font-bold">
-                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-3 py-2 rounded-xl bg-slate-900 text-white transition">All</button>
-                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢 Office Staff</button>
-                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢🏠 Office + Res</button>
-                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🛡️ Guards</button>
-                        <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">📊 Admins</button>
-                        <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🔄 Resets</button>
-                    </div>
+                    <!-- 2. Added Users Toggle Button -->
+                    <button type="button" id="btn-toggle-admin-added-users" onclick="toggleAdminAddedUsersList()" class="w-full bg-white hover:bg-slate-100 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                        <span class="flex items-center gap-2">
+                            <span>👥</span>
+                            <span>Added Users</span>
+                            <span id="admin-dir-count" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">0 people</span>
+                        </span>
+                        <span id="admin-added-users-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼ View All</span>
+                    </button>
 
-                    <!-- Directory List -->
-                    <div id="admin-directory-list" class="max-h-80 lg:max-h-[450px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl"></div>
+                    <!-- Collapsible Added Users Directory -->
+                    <div id="admin-added-users-panel" class="hidden bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3.5 overflow-hidden">
+                        <!-- Filter Tabs -->
+                        <div class="flex flex-wrap gap-2 text-xs font-bold">
+                            <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-3 py-2 rounded-xl bg-slate-900 text-white transition">All</button>
+                            <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢 Office Staff</button>
+                            <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢🏠 Office + Res</button>
+                            <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🛡️ Guards</button>
+                            <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">📊 Admins</button>
+                            <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🔄 Resets</button>
+                        </div>
+
+                        <!-- Directory List -->
+                        <div id="admin-directory-list" class="max-h-80 lg:max-h-[450px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl"></div>
+                    </div>
                 </div>
             </section>
 
@@ -643,15 +620,6 @@
                         </div>
                         <button type="button" onclick="toggleSuperAdminAddForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">✕</button>
                     </div>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Admin Full Name *</label>
-                            <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., S. K. Banerjee" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-600 mb-1.5">10-Digit Mobile *</label>
-                                <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <div class="space-y-2.5">
                         <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Admin Full Name * (e.g., S. K. Banerjee)" aria-label="Admin Full Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold capitalize placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -696,7 +664,34 @@
                     </div>
                 </div>
 
-                <!-- 4. Design Studio Preview Launcher (Super Admin Only in Production) -->
+                <!-- 4. Main Gate Geofencing (Below Logo) -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <h3 class="font-bold text-slate-900 text-base">📍 Main Gate Geofencing</h3>
+                            <p class="text-xs text-slate-500">Restrict Guard check-ins to physical gate GPS</p>
+                        </div>
+                        <button type="button" id="btn-toggle-geofence" onclick="toggleGeofenceEnabled()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-700 transition shrink-0">
+                            OFF
+                        </button>
+                    </div>
+                    <button type="button" id="btn-capture-gate-gps" onclick="captureCurrentGateCoordinates()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs py-3 rounded-xl transition">
+                        <span>🎯 Capture My Current Gate Location</span>
+                    </button>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="Lat (22.5726)" aria-label="Latitude" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
+                        <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="Lng (88.3639)" aria-label="Longitude" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
+                        <select id="geo-radius-select" onchange="saveGeofenceFields()" aria-label="Radius" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-bold">
+                            <option value="50">50m</option>
+                            <option value="100" selected>100m</option>
+                            <option value="150">150m</option>
+                            <option value="250">250m</option>
+                            <option value="500">500m</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 5. Design Studio Preview Launcher (Super Admin Only in Production) -->
                 <div class="bg-amber-50/90 rounded-2xl p-4 border border-amber-200 flex items-center justify-between gap-3">
                     <div class="min-w-0">
                         <h3 class="font-bold text-amber-950 text-sm">🎨 All-Screens Design View</h3>
@@ -891,11 +886,6 @@
                 <div class="space-y-2.5">
                     <input id="superadmin-login-email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" value="director@spmniwas.in" placeholder="Super Admin Email *" aria-label="Super Admin Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <input id="superadmin-login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="4-Digit PIN" aria-label="4-Digit PIN" class="pin-mask w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-base font-extrabold tracking-[0.45em] text-center text-slate-900 placeholder:text-sm placeholder:font-medium placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">4-Digit PIN *</label>
-                        <input id="superadmin-login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="••••" class="pin-mask w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-base font-extrabold tracking-[0.45em] text-center text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
                 </div>
                 <div class="flex gap-2 pt-1">
                     <button type="button" onclick="handleSuperAdminModalLogin()" class="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-bold text-xs py-3 rounded-xl shadow">
@@ -1407,13 +1397,7 @@
                     }
                 });
 
-                const hostSelect = document.getElementById('active-host-unit');
-                if (hostSelect) {
-                    const officeOpts = getZoneDirectoryLabels('OFFICE').map(l => `<option value="${l}">🏢 ${l}</option>`).join('');
-                    const resOpts = getZoneDirectoryLabels('RESIDENTIAL').map(l => `<option value="${l}">🏠 ${l}</option>`).join('');
-                    hostSelect.innerHTML = `<option value="ALL">🌐 View All Units (Studio Preview)</option>${officeOpts}${resOpts}`;
-                    updateHostCategoryOptions();
-                }
+                updateHostCategoryOptions();
                 renderAll();
                 showToast("🎨 Design Studio ON — Mobile-proportioned screens displayed!");
             } else {
@@ -2018,7 +2002,7 @@
             }
         }
 
-        async function updateVisitorStatus(id, newStatus) {
+        window.updateVisitorStatus = async function(id, newStatus) {
             if (useFirestore && db && currentUser) {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'visitors', id);
                 await updateDoc(docRef, { status: newStatus });
@@ -2033,17 +2017,12 @@
                 'CHECKED_OUT': '👋 Visitor Checked Out.'
             };
             showToast(labels[newStatus] || 'Status updated');
-        }
+        };
 
         // ==================== UI INTERACTIONS ====================
         window.openAdminPersonalHostView = function() {
             if (!loggedInSession || !loggedInSession.allowedUnits || loggedInSession.allowedUnits.length === 0) return;
-            const hostSelect = document.getElementById('active-host-unit');
-            if (hostSelect) {
-                hostSelect.innerHTML = loggedInSession.allowedUnits.map(u => `<option value="${u}">${u}</option>`).join('');
-                hostSelect.value = loggedInSession.allowedUnits[0];
-                updateHostCategoryOptions();
-            }
+            updateHostCategoryOptions();
             switchRole('host');
         };
 
@@ -2152,14 +2131,18 @@
         };
 
         function getActiveResidentialUnitForHost() {
-            const activeVal = document.getElementById('active-host-unit')?.value || '';
-            if (activeVal && activeVal !== 'ALL') {
-                const unitName = extractUnitName(activeVal);
-                const match = directoryEntries.find(d => d.zone === 'RESIDENTIAL' && d.unit.toLowerCase() === unitName.toLowerCase());
-                if (match) return match.unit;
+            if (loggedInSession && Array.isArray(loggedInSession.allowedUnits)) {
+                const resUnit = loggedInSession.allowedUnits.find(u =>
+                    u.toLowerCase().startsWith('flat') ||
+                    directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, u))
+                );
+                if (resUnit) return extractUnitName(resUnit);
             }
-            const firstRes = directoryEntries.find(d => d.zone === 'RESIDENTIAL');
-            return firstRes ? firstRes.unit : '';
+            if (designStudioMode) {
+                const firstRes = directoryEntries.find(d => d.zone === 'RESIDENTIAL');
+                return firstRes ? firstRes.unit : '';
+            }
+            return '';
         }
 
         window.generateRandomHostFamilyPin = function() {
@@ -2237,39 +2220,121 @@
             const countPill = document.getElementById('host-family-count');
             const familyCardBtn = document.getElementById('btn-host-family-card');
 
-            const activeVal = document.getElementById('active-host-unit')?.value || '';
-            const isResidentialContext = activeVal === 'ALL' || activeVal.toLowerCase().startsWith('flat') || directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, activeVal));
-
             if (familyCardBtn) {
-                familyCardBtn.classList.toggle('hidden', !isResidentialContext || !flatUnit);
+                familyCardBtn.classList.toggle('hidden', !flatUnit);
             }
             if (!flatUnit) return;
 
+            if (badge) badge.textContent = flatUnit;
             const members = directoryEntries.filter(d => d.zone === 'RESIDENTIAL' && d.unit.toLowerCase() === flatUnit.toLowerCase());
             if (countPill) countPill.textContent = `${members.length} ${members.length === 1 ? 'member' : 'members'}`;
-            if (badge) badge.textContent = flatUnit;
-            if (!list) return;
 
-            list.innerHTML = members.map((m, idx) => {
+            if (!list) return;
+            list.innerHTML = members.map(m => {
                 const isSelf = loggedInSession && m.phone === loggedInSession.phone;
                 return `
-                    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-3 text-sm">
+                    <div class="bg-white rounded-2xl p-3.5 border border-slate-200/80 flex items-center justify-between gap-2">
                         <div class="min-w-0">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="font-extrabold text-slate-900 break-words">${m.name}</span>
-                                ${idx === 0 ? `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">PRIMARY</span>` : `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700">FAMILY</span>`}
+                            <div class="flex items-center gap-1.5">
+                                <p class="text-sm font-extrabold text-slate-900 truncate">${m.name}</p>
+                                ${isSelf ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">You</span>` : ''}
                             </div>
-                            <p class="text-xs font-medium text-slate-600 mt-1">📱 ${displayIndianMobile(m.phone)} • ${m.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${m.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">📱 ${displayIndianMobile(m.phone)} • ${m.pinMustChange ? `Temp PIN: ${m.pin}` : 'Private PIN Set'}</p>
                         </div>
-                        <div class="flex items-center gap-2 pt-2.5 border-t border-slate-100">
-                            <button type="button" onclick="adminResetUserPin('${m.id}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition" title="Send Temp PIN on WhatsApp">
-                                📲 PIN
-                            </button>
-                            ${(!isSelf && members.length > 1) ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="ml-auto px-3.5 py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold transition" title="Remove Family Member">✕ Remove</button>` : ''}
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button type="button" onclick="adminResetUserPin('${m.id}')" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">📲 PIN</button>
+                            ${!isSelf && members.length > 1 ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition">Remove</button>` : ''}
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function resolveHostDestinationForCategory(guestType) {
+            if (designStudioMode && (!loggedInSession || !loggedInSession.allowedUnits || loggedInSession.allowedUnits.length === 0)) {
+                return guestType === 'Official Visitor'
+                    ? 'IT Dept (Floor 2) - Rahul Sharma'
+                    : 'Flat A-402 - Rahul Sharma';
+            }
+            const units = (loggedInSession && Array.isArray(loggedInSession.allowedUnits)) ? loggedInSession.allowedUnits : [];
+            if (units.length === 0) return 'SPM NIWAS';
+            if (units.length === 1) return units[0];
+
+            const resUnit = units.find(u =>
+                u.toLowerCase().startsWith('flat') ||
+                directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, u))
+            );
+            const officeUnit = units.find(u => u !== resUnit);
+
+            if (guestType === 'Official Visitor') {
+                return officeUnit || units[0];
+            }
+            return resUnit || units[0];
+        }
+
+        window.createPreApprovedPass = async function() {
+            const guestName = document.getElementById('pre-guest-name').value.trim();
+            const rawPhone = document.getElementById('pre-guest-phone')?.value || '';
+            const cleanPhone = normalizeIndianMobile(rawPhone);
+            const guestType = document.getElementById('pre-guest-type').value;
+            const destination = resolveHostDestinationForCategory(guestType);
+            const isRes = destination.toLowerCase().startsWith('flat') ||
+                directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, destination));
+            const zone = isRes ? 'RESIDENTIAL' : 'OFFICE';
+
+            if (!guestName) {
+                showToast("⚠️ Please enter the guest's name.");
+                return;
+            }
+            if (rawPhone.trim() && !isValidIndianMobile(cleanPhone)) {
+                showToast("⚠️ Enter a valid 10-digit mobile starting with 6, 7, 8, or 9.");
+                return;
+            }
+
+            const otp = String(Math.floor(1000 + Math.random() * 9000));
+            const now = Date.now();
+            const record = {
+                visitorName: guestName,
+                visitorPhone: cleanPhone ? displayIndianMobile(cleanPhone) : 'Pre-Approved',
+                visitorType: guestType,
+                zone: zone,
+                destination: destination,
+                hostPhone: loggedInSession?.phone || '',
+                vehicleNumber: '',
+                passCode: otp,
+                status: 'PRE_APPROVED',
+                createdAt: now,
+                timeLabel: formatTime(now)
+            };
+
+            await saveVisitorRecord(record, true);
+
+            if (document.getElementById('pre-guest-phone')) document.getElementById('pre-guest-phone').value = '';
+            document.getElementById('gen-otp-code').textContent = otp;
+            document.getElementById('generated-pass-card').classList.remove('hidden');
+            document.getElementById('ai-invite-text').value = `Namaste ${guestName}! Your gate pass for ${destination} at SPM NIWAS is ready. Show OTP *${otp}* at the Main Gate for instant entry.`;
+            showToast(`🎟️ Pass ${otp} generated for ${guestName}`);
+        };
+
+        // Unified Host & Family Privacy Filter across all units assigned to the logged-in user:
+        // - Residential Flats: All family members registered to that flat share visibility.
+        // - Office Units: Each staff member only sees their own visitors/passes (not colleagues').
+        function canHostViewVisitor(visitor) {
+            if (designStudioMode && (!loggedInSession || !loggedInSession.allowedUnits || loggedInSession.allowedUnits.length === 0)) {
+                return true;
+            }
+            if (!loggedInSession || !loggedInSession.allowedUnits || loggedInSession.allowedUnits.length === 0) {
+                return false;
+            }
+            return loggedInSession.allowedUnits.some(targetUnit => {
+                const isResidential = targetUnit.toLowerCase().startsWith('flat') ||
+                    directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, targetUnit));
+                if (isResidential) {
+                    return isSameUnit(visitor.destination, targetUnit);
+                }
+                return visitor.destination === targetUnit ||
+                    (visitor.hostPhone && visitor.hostPhone === loggedInSession.phone && isSameUnit(visitor.destination, targetUnit));
+            });
         }
 
         window.submitWalkIn = async function() {
@@ -2330,69 +2395,6 @@
             }
             openPassModal(match);
         };
-
-        window.createPreApprovedPass = async function() {
-            const guestName = document.getElementById('pre-guest-name').value.trim();
-            const rawPhone = document.getElementById('pre-guest-phone')?.value || '';
-            const cleanPhone = normalizeIndianMobile(rawPhone);
-            const guestType = document.getElementById('pre-guest-type').value;
-            const hostSelect = document.getElementById('active-host-unit').value;
-            const destination = hostSelect === 'ALL' ? 'IT Dept (Floor 2) - Rahul Sharma' : hostSelect;
-            const zone = destination.startsWith('Flat') ? 'RESIDENTIAL' : 'OFFICE';
-
-            if (!guestName) {
-                showToast("⚠️ Please enter the guest's name.");
-                return;
-            }
-            if (rawPhone.trim() && !isValidIndianMobile(cleanPhone)) {
-                showToast("⚠️ Enter a valid 10-digit mobile starting with 6, 7, 8, or 9.");
-                return;
-            }
-
-            const otp = String(Math.floor(1000 + Math.random() * 9000));
-            const now = Date.now();
-            const record = {
-                visitorName: guestName,
-                visitorPhone: cleanPhone ? displayIndianMobile(cleanPhone) : 'Pre-Approved',
-                visitorType: guestType,
-                zone: zone,
-                destination: destination,
-                vehicleNumber: '',
-                passCode: otp,
-                status: 'PRE_APPROVED',
-                createdAt: now,
-                timeLabel: formatTime(now)
-            };
-
-            await saveVisitorRecord(record, true);
-
-            if (document.getElementById('pre-guest-phone')) document.getElementById('pre-guest-phone').value = '';
-            document.getElementById('gen-otp-code').textContent = otp;
-            document.getElementById('generated-pass-card').classList.remove('hidden');
-            document.getElementById('ai-invite-text').value = `Namaste ${guestName}! Your gate pass for ${destination} at SPM NIWAS is ready. Show OTP *${otp}* at the Main Gate for instant entry.`;
-            showToast(`🎟️ Pass ${otp} generated for ${guestName}`);
-        };
-
-        // Strict Host & Family Privacy Filter:
-        // - Residential Flats: All family members registered to that flat share visibility.
-        // - Office Units: Each staff member only sees their own visitors/passes (not colleagues').
-        function canHostViewVisitor(visitor, selectedUnit) {
-            if (designStudioMode && selectedUnit === 'ALL') return true;
-            if (!loggedInSession || !loggedInSession.allowedUnits || loggedInSession.allowedUnits.length === 0) {
-                return false;
-            }
-            const targetUnit = (selectedUnit && selectedUnit !== 'ALL') ? selectedUnit : loggedInSession.allowedUnits[0];
-            if (!loggedInSession.allowedUnits.includes(targetUnit)) return false;
-
-            const isResidential = targetUnit.toLowerCase().startsWith('flat') ||
-                directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, targetUnit));
-
-            if (isResidential) {
-                return isSameUnit(visitor.destination, targetUnit);
-            }
-            return visitor.destination === targetUnit ||
-                (visitor.hostPhone && visitor.hostPhone === loggedInSession.phone && isSameUnit(visitor.destination, targetUnit));
-        }
 
         window.openPassModal = function(visitor) {
             const isOffice = visitor.zone === 'OFFICE';
@@ -2483,21 +2485,7 @@
         }
 
         function renderHostView() {
-            const activeUnit = document.getElementById('active-host-unit').value;
-            const zonePill = document.getElementById('host-zone-pill');
-
-            if (activeUnit.startsWith('Flat')) {
-                zonePill.textContent = 'RESIDENTIAL ZONE';
-                zonePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-            } else if (activeUnit === 'ALL') {
-                zonePill.textContent = 'ALL CAMPUS UNITS';
-                zonePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
-            } else {
-                zonePill.textContent = 'OFFICE ZONE';
-                zonePill.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30';
-            }
-
-            const unitVisitors = visitors.filter(v => canHostViewVisitor(v, activeUnit));
+            const unitVisitors = visitors.filter(v => canHostViewVisitor(v));
 
             renderHostFamilyManager();
 
@@ -2598,16 +2586,34 @@
             renderAdminDirectory();
         }
 
-        // ==================== SUPER ADMIN MANAGEMENT (director@spmniwas.in) ====================
-        window.toggleSuperAdminAddForm = function(showForm) {
-            const btn = document.getElementById('btn-toggle-superadmin-form');
-            const card = document.getElementById('superadmin-add-form-card');
-            if (!btn || !card) return;
-            btn.classList.toggle('hidden', showForm);
-            card.classList.toggle('hidden', !showForm);
-            if (showForm) {
-                document.getElementById('superadmin-name')?.focus();
+        window.toggleAdminGateFeed = function() {
+            const feed = document.getElementById('admin-gate-feed');
+            const chevron = document.getElementById('admin-gate-chevron');
+            if (!feed) return;
+            const isHidden = feed.classList.toggle('hidden');
+            if (chevron) {
+                chevron.textContent = isHidden ? '▼ Tap to expand' : '▲ Collapse';
             }
+        };
+
+        window.toggleAdminAddUserForm = function(forceState = null) {
+            const panel = document.getElementById('admin-add-user-panel');
+            const chevron = document.getElementById('admin-add-user-chevron');
+            if (!panel) return;
+            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲ Close Form' : '▼ Open Form';
+            if (shouldOpen) document.getElementById('admin-dir-name')?.focus();
+        };
+
+        window.toggleAdminAddedUsersList = function(forceState = null) {
+            const panel = document.getElementById('admin-added-users-panel');
+            const chevron = document.getElementById('admin-added-users-chevron');
+            if (!panel) return;
+            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲ Hide' : '▼ View All';
+            if (shouldOpen) renderAdminDirectory();
         };
 
         window.generateRandomSuperAdminPin = function() {
@@ -2893,10 +2899,10 @@
 
         window.generateAiInvite = async function() {
             const guestName = document.getElementById('pre-guest-name')?.value.trim() || 'Guest';
+            const guestType = document.getElementById('pre-guest-type')?.value || 'Personal Guest';
             const otp = document.getElementById('gen-otp-code')?.textContent.trim() || '0000';
             const note = document.getElementById('pre-guest-note')?.value.trim() || '';
-            const hostSelect = document.getElementById('active-host-unit')?.value || 'SPM NIWAS';
-            const destination = hostSelect === 'ALL' ? 'SPM NIWAS' : hostSelect;
+            const destination = resolveHostDestinationForCategory(guestType);
             const btn = document.getElementById('btn-ai-invite');
             if (btn) btn.textContent = '✨ Drafting...';
 
@@ -2930,9 +2936,10 @@
 
         window.generateSecurityBriefing = async function() {
             const out = document.getElementById('ai-briefing-output');
-            const btn = document.getElementById('btn-ai-briefing');
-            if (btn) btn.textContent = '✨ Analyzing...';
-            if (out) out.textContent = 'Analyzing live Office & Residential gate movements...';
+            if (out) {
+                out.classList.remove('hidden');
+                out.textContent = 'Analyzing live Office & Residential gate movements...';
+            }
 
             const officeIn = visitors.filter(v => v.zone === 'OFFICE' && v.status === 'APPROVED').length;
             const resIn = visitors.filter(v => v.zone === 'RESIDENTIAL' && v.status === 'APPROVED').length;
@@ -2942,7 +2949,6 @@
                 text: `Provide a concise 3-bullet executive security briefing for SPM NIWAS campus: Total logs today: ${visitors.length}, Corporate Office inside: ${officeIn}, Residential Wing inside: ${resIn}, Pending gate approvals: ${pending}.`
             }]);
 
-            if (btn) btn.textContent = '✨ Analyze Logs';
             if (out) {
                 out.innerHTML = aiSummary
                     ? aiSummary.replace(/\n/g, '<br>')
@@ -2976,9 +2982,8 @@
             return list.map(c => `<option value="${c.value}">${c.label}</option>`).join('');
         }
 
-        function hasHouseWithOfficeAccess(unitValue = '') {
-            if (designStudioMode && unitValue === 'ALL') return true;
-            if (unitValue && (unitValue.toLowerCase().startsWith('flat') || directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, unitValue)))) {
+        function hasHouseWithOfficeAccess() {
+            if (designStudioMode && (!loggedInSession || !loggedInSession.allowedUnits || loggedInSession.allowedUnits.length === 0)) {
                 return true;
             }
             if (loggedInSession && Array.isArray(loggedInSession.allowedUnits)) {
@@ -2993,9 +2998,8 @@
         function updateHostCategoryOptions() {
             const preSelect = document.getElementById('pre-guest-type');
             if (!preSelect) return;
-            const activeUnit = document.getElementById('active-host-unit')?.value || '';
             const prevVal = preSelect.value;
-            const allowHouse = hasHouseWithOfficeAccess(activeUnit);
+            const allowHouse = hasHouseWithOfficeAccess();
             preSelect.innerHTML = buildCategoryOptionsHTML(allowHouse);
             if (Array.from(preSelect.options).some(o => o.value === prevVal)) {
                 preSelect.value = prevVal;
@@ -3003,9 +3007,75 @@
         }
 
         window.handleActiveHostUnitChange = function() {
+            renderHostUnitSelectorUI();
             updateHostCategoryOptions();
             renderAll();
         };
+
+        window.selectHostUnit = function(unitLabel) {
+            const hostInput = document.getElementById('active-host-unit');
+            if (!hostInput) return;
+            hostInput.value = unitLabel;
+            handleActiveHostUnitChange();
+        };
+
+        function renderHostUnitSelectorUI() {
+            const hostInput = document.getElementById('active-host-unit');
+            const labelEl = document.getElementById('host-single-unit-label');
+            const iconEl = document.getElementById('host-unit-icon');
+            const pillsWrap = document.getElementById('host-unit-toggle-pills');
+            if (!hostInput || !labelEl || !pillsWrap) return;
+
+            if (designStudioMode) {
+                const allUnits = [
+                    ...getZoneDirectoryLabels('OFFICE'),
+                    ...getZoneDirectoryLabels('RESIDENTIAL')
+                ];
+                if (!hostInput.value) hostInput.value = 'ALL';
+                const activeVal = hostInput.value;
+                labelEl.textContent = activeVal === 'ALL' ? 'All Campus Units (Studio)' : activeVal;
+                if (iconEl) iconEl.textContent = activeVal.startsWith('Flat') ? '🏠' : (activeVal === 'ALL' ? '🌐' : '🏢');
+                pillsWrap.classList.remove('hidden');
+                pillsWrap.className = 'flex gap-1.5 overflow-x-auto no-scrollbar bg-slate-800/90 p-1 rounded-xl';
+                const studioChoices = ['ALL', ...allUnits.slice(0, 3)];
+                pillsWrap.innerHTML = studioChoices.map(u => {
+                    const isSel = u === activeVal;
+                    const shortTxt = u === 'ALL' ? '🌐 All Units' : (u.startsWith('Flat') ? `🏠 ${extractUnitName(u)}` : `🏢 ${extractUnitName(u)}`);
+                    return `<button type="button" onclick="selectHostUnit('${u.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition ${isSel ? 'bg-blue-600 text-white shadow' : 'text-slate-300 hover:text-white'}">${shortTxt}</button>`;
+                }).join('');
+                return;
+            }
+
+            const units = (loggedInSession && Array.isArray(loggedInSession.allowedUnits)) ? loggedInSession.allowedUnits : [];
+            if (units.length === 0) {
+                hostInput.value = '';
+                labelEl.textContent = loggedInSession ? loggedInSession.name : 'No Unit Assigned';
+                if (iconEl) iconEl.textContent = '👤';
+                pillsWrap.classList.add('hidden');
+                return;
+            }
+
+            if (!units.includes(hostInput.value)) {
+                hostInput.value = units[0];
+            }
+            const currentVal = hostInput.value;
+            const isFlat = currentVal.toLowerCase().startsWith('flat') || directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, currentVal));
+            labelEl.textContent = currentVal;
+            if (iconEl) iconEl.textContent = isFlat ? '🏠' : '🏢';
+
+            if (units.length === 1) {
+                pillsWrap.classList.add('hidden');
+            } else {
+                pillsWrap.classList.remove('hidden');
+                pillsWrap.className = 'grid grid-cols-2 gap-1.5 bg-slate-800/90 p-1 rounded-xl';
+                pillsWrap.innerHTML = units.map(u => {
+                    const isSel = u === currentVal;
+                    const uFlat = u.toLowerCase().startsWith('flat') || directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, u));
+                    const shortLabel = `${uFlat ? '🏠' : '🏢'} ${extractUnitName(u)}`;
+                    return `<button type="button" onclick="selectHostUnit('${u.replace(/'/g, "\\'")}')" class="py-2 px-2.5 rounded-lg text-xs font-extrabold truncate transition ${isSel ? (uFlat ? 'bg-emerald-600 text-white shadow' : 'bg-blue-600 text-white shadow') : 'text-slate-300 hover:text-white'}">${shortLabel}</button>`;
+                }).join('');
+            }
+        }
 
         window.selectZone = function(zone) {
             selectedZone = zone;
@@ -3084,16 +3154,6 @@
 
         function syncDirectoryAcrossUI() {
             filterDestinations(document.getElementById('visitor-destination-search')?.value || '');
-            const hostSelect = document.getElementById('active-host-unit');
-            if (hostSelect && !designStudioMode) {
-                const prev = hostSelect.value;
-                if (loggedInSession && loggedInSession.allowedUnits && loggedInSession.allowedUnits.length > 0) {
-                    hostSelect.innerHTML = loggedInSession.allowedUnits.map(u => `<option value="${u}">${u}</option>`).join('');
-                    if (loggedInSession.allowedUnits.includes(prev)) hostSelect.value = prev;
-                } else {
-                    hostSelect.innerHTML = `<option value="">No Unit Assigned</option>`;
-                }
-            }
             updateHostCategoryOptions();
             renderAdminDirectory();
             renderHostFamilyManager();
@@ -3208,6 +3268,8 @@
             document.getElementById('admin-dir-name').value = '';
             document.getElementById('admin-dir-phone').value = '';
             document.getElementById('admin-dir-pin').value = '';
+            toggleAdminAddUserForm(false);
+            toggleAdminAddedUsersList(true);
             shareUserCredentials(name, phone, pin, true);
         };
 
