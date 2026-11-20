@@ -137,7 +137,7 @@
                 <div class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-5 sm:p-6 shadow-xl shadow-indigo-950/10 border border-white space-y-4 text-left">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-indigo-950/75 mb-1.5">Mobile Number *</label>
-                        <input id="login-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="10-digit mobile number"
+                        <input id="login-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210"
                             class="w-full bg-slate-50/90 border border-indigo-100 rounded-xl px-4 py-3 text-base font-bold tracking-wider text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
                     </div>
                     <div>
@@ -265,7 +265,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-600 mb-1.5">Phone Number *</label>
-                            <input id="visitor-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="visitor-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
 
@@ -489,7 +489,7 @@
                         <div class="grid grid-cols-3 gap-2">
                             <div class="col-span-2">
                                 <label class="block text-xs font-semibold text-slate-500 mb-1">10-Digit Mobile *</label>
-                                <input id="host-family-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="9876500001" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <input id="host-family-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 00001" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-500 mb-1">Temp PIN</label>
@@ -516,24 +516,24 @@
             <!-- ==================== 3. ADMIN / SECURITY HEAD VIEW ==================== -->
             <section id="view-admin" class="hidden space-y-4 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start">
                 <!-- Left Column: Campus Logo, Personal Unit Shortcut, Occupancy, Geofence, AI & Live Log -->
-                <div class="space-y-4 lg:col-span-5">
+                <div class="space-y-4 lg:col-span-5 min-w-0">
                     <!-- Campus Logo & Branding Uploader -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="min-w-0">
                                 <h3 class="font-bold text-slate-800 text-sm">🏛️ Campus Logo & Branding</h3>
                                 <p class="text-[11px] text-slate-500">Shown at the center of the Swagat welcome screen</p>
                             </div>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">Live Sync</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 shrink-0">Live Sync</span>
                         </div>
-                        <div class="flex items-center gap-3.5">
+                        <div class="flex items-center gap-3">
                             <div class="w-16 h-16 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
                                 <img id="admin-logo-preview" src="" alt="Campus Logo" class="hidden w-full h-full object-contain p-1 bg-white" />
                                 <span id="admin-logo-empty" class="text-[10px] font-bold text-slate-400 text-center px-1">No Logo</span>
                             </div>
-                            <div class="flex-1 space-y-1.5">
-                                <label class="cursor-pointer w-full bg-slate-900 hover:bg-indigo-950 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
-                                    <span>📤 Upload Logo (PNG/JPG/SVG)</span>
+                            <div class="flex-1 min-w-0 space-y-1.5">
+                                <label class="cursor-pointer w-full bg-slate-900 hover:bg-indigo-950 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 text-center">
+                                    <span class="truncate">📤 Upload Logo</span>
                                     <input type="file" accept="image/*" class="hidden" onchange="handleCampusLogoUpload(event)">
                                 </label>
                                 <button type="button" id="btn-remove-logo" onclick="removeCampusLogo()" class="hidden w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] py-1.5 rounded-xl transition">
@@ -546,35 +546,35 @@
                     <!-- Admin Personal Unit Shortcut (Shown if Admin also holds a Flat or Office unit) -->
                     <div id="admin-my-unit-card" class="hidden bg-gradient-to-r from-indigo-900 to-slate-900 text-white rounded-2xl p-4 shadow-md flex items-center justify-between gap-3">
                         <div class="min-w-0">
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex flex-wrap items-center gap-1.5">
                                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-300">My Personal Unit</span>
                                 <span id="admin-my-unit-pending" class="hidden text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-400 text-slate-950">0 Waiting</span>
                             </div>
                             <p id="admin-my-unit-label" class="text-xs font-bold text-slate-200 truncate mt-0.5">Flat / Office</p>
                         </div>
-                        <button type="button" onclick="openAdminPersonalHostView()" class="bg-white hover:bg-amber-50 text-slate-900 font-extrabold text-xs px-3.5 py-2 rounded-xl shadow shrink-0 transition">
-                            Manage Guests →
+                        <button type="button" onclick="openAdminPersonalHostView()" class="bg-white hover:bg-amber-50 text-slate-900 font-extrabold text-xs px-3 py-2 rounded-xl shadow shrink-0 transition">
+                            Manage →
                         </button>
                     </div>
 
                     <!-- Live Campus Headcount -->
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-blue-600 text-white rounded-2xl p-4 shadow-md">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-blue-100">Office Inside</p>
-                            <p id="stat-office-inside" class="text-3xl font-extrabold mt-1">0</p>
-                            <p class="text-[11px] text-blue-200 mt-0.5">Active Corporate Guests</p>
+                        <div class="bg-blue-600 text-white rounded-2xl p-3.5 shadow-md min-w-0">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-blue-100 truncate">Office Inside</p>
+                            <p id="stat-office-inside" class="text-2xl sm:text-3xl font-extrabold mt-1">0</p>
+                            <p class="text-[11px] text-blue-200 mt-0.5 truncate">Corporate Guests</p>
                         </div>
-                        <div class="bg-emerald-600 text-white rounded-2xl p-4 shadow-md">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-100">Residential Inside</p>
-                            <p id="stat-res-inside" class="text-3xl font-extrabold mt-1">0</p>
-                            <p class="text-[11px] text-emerald-200 mt-0.5">Active Flat Visitors</p>
+                        <div class="bg-emerald-600 text-white rounded-2xl p-3.5 shadow-md min-w-0">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-100 truncate">Residential Inside</p>
+                            <p id="stat-res-inside" class="text-2xl sm:text-3xl font-extrabold mt-1">0</p>
+                            <p class="text-[11px] text-emerald-200 mt-0.5 truncate">Flat Visitors</p>
                         </div>
                     </div>
 
                     <!-- Main Gate Geofencing Control Card -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
                         <div class="flex items-center justify-between gap-2">
-                            <div>
+                            <div class="min-w-0">
                                 <h3 class="font-bold text-slate-800 text-sm">📍 Main Gate Geofencing</h3>
                                 <p class="text-[11px] text-slate-500">Require Guard to be physically at Main Gate</p>
                             </div>
@@ -583,20 +583,20 @@
                             </button>
                         </div>
                         <button type="button" id="btn-capture-gate-gps" onclick="captureCurrentGateCoordinates()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition">
-                            <span>🎯 Capture My Current Gate Location</span>
+                            <span>🎯 Capture Current Gate Location</span>
                         </button>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
+                            <div class="min-w-0">
                                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Latitude</label>
-                                <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="22.5726" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-mono">
+                                <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="22.5726" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs font-mono">
                             </div>
-                            <div>
+                            <div class="min-w-0">
                                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Longitude</label>
-                                <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="88.3639" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-mono">
+                                <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="88.3639" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs font-mono">
                             </div>
-                            <div>
+                            <div class="min-w-0">
                                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Radius</label>
-                                <select id="geo-radius-select" onchange="saveGeofenceFields()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs font-bold">
+                                <select id="geo-radius-select" onchange="saveGeofenceFields()" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs font-bold">
                                     <option value="50">50m</option>
                                     <option value="100" selected>100m</option>
                                     <option value="150">150m</option>
@@ -608,101 +608,77 @@
                     </div>
 
                     <!-- AI Daily Security Briefing -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="min-w-0">
                                 <h3 class="font-bold text-slate-800 text-sm">AI Security Briefing</h3>
                                 <p class="text-[11px] text-slate-500">Real-time traffic & anomaly insights</p>
                             </div>
-                            <button onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition">
-                                ✨ Analyze Logs
+                            <button onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition shrink-0">
+                                ✨ Analyze
                             </button>
                         </div>
-                        <div id="ai-briefing-output" class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-700 leading-relaxed">
-                            Tap <strong>"✨ Analyze Logs"</strong> to generate an instant executive summary of today's Office & Residential gate movements.
+                        <div id="ai-briefing-output" class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-700 leading-relaxed break-words">
+                            Tap <strong>"✨ Analyze"</strong> to generate an instant executive summary of today's Office & Residential gate movements.
                         </div>
                     </div>
 
                     <!-- Live Gate Activity Feed -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5">
-                        <div class="flex items-center justify-between">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5 overflow-hidden">
+                        <div class="flex items-center justify-between gap-2">
                             <h3 class="font-bold text-slate-800 text-sm">Live Gate Activity</h3>
-                            <span id="admin-gate-count" class="text-[11px] font-semibold text-slate-500">0 entries</span>
+                            <span id="admin-gate-count" class="text-[11px] font-semibold text-slate-500 shrink-0">0 entries</span>
                         </div>
                         <div id="admin-gate-feed" class="max-h-60 overflow-y-auto space-y-2 pr-0.5"></div>
                     </div>
                 </div>
 
                 <!-- Right Column: Staff, Residents & Guards Directory -->
-                <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3 lg:col-span-7">
-                    <div class="flex items-center justify-between">
-                        <div>
+                <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3 lg:col-span-7 min-w-0 overflow-hidden">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0">
                             <h3 class="font-bold text-slate-800 text-sm">Staff & Residents Database</h3>
                             <p class="text-[11px] text-slate-500">Manage role-locked PIN access & WhatsApp onboarding</p>
                         </div>
+                        <span id="admin-dir-count" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 shrink-0">0 people</span>
+                    </div>
+
                     <!-- Add New Host / Guard Form -->
-                    <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-2.5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-2.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="OFFICE">🏢 Office Staff</option>
                                 <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
                                 <option value="GUARD">🛡️ Security Guard</option>
                             </select>
-                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div id="admin-dir-flat-wrap" class="hidden">
-                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full bg-emerald-50/70 border border-emerald-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="10-Digit Mobile *" class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div class="flex gap-2">
-                            <div class="w-32 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full px-2 py-2.5 text-sm text-center font-bold tracking-widest focus:outline-none">
-                                <button type="button" onclick="generateRandomAdminPin()" class="px-2.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-600" title="Auto-generate 4-digit PIN">🎲</button>
-                            </div>
-                            <button type="button" onclick="addDirectoryEntry()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-2.5 rounded-xl shadow-sm transition">
-                                + Add & Share PIN
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Filter Tabs -->
-                    <div class="flex gap-1.5 text-xs font-bold overflow-x-auto no-scrollbar pb-0.5">
-                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-3 py-2 rounded-xl bg-slate-900 text-white transition shrink-0">All</button>
-                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 transition shrink-0">🏢 Office Staff</button>
-                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 transition shrink-0">🏢🏠 Office + Res</button>
-                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 transition shrink-0">🛡️ Guards</button>
-                        <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 transition shrink-0">📊 Admins</button>
-                        <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 transition shrink-0">🔄 Resets</button>
-                    </div>
-                        <div id="admin-dir-flat-wrap" class="hidden">
-                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full bg-emerald-50/70 border border-emerald-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full min-w-0 bg-emerald-50/70 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="10-Digit Mobile *" class="bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210 *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div class="flex gap-1.5">
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
                             <div class="w-28 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full px-2 py-2 text-xs text-center font-bold tracking-widest focus:outline-none">
-                                <button type="button" onclick="generateRandomAdminPin()" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600" title="Auto-generate 4-digit PIN">🎲</button>
+                                <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full min-w-0 px-2 py-2 text-xs text-center font-bold tracking-widest focus:outline-none">
+                                <button type="button" onclick="generateRandomAdminPin()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 shrink-0" title="Auto-generate 4-digit PIN">🎲</button>
                             </div>
-                            <button type="button" onclick="addDirectoryEntry()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2 rounded-xl shadow-sm transition">
+                            <button type="button" onclick="addDirectoryEntry()" class="flex-1 min-w-[140px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition">
                                 + Add & Share PIN
                             </button>
                         </div>
                     </div>
 
                     <!-- Filter Tabs -->
-                    <div class="flex gap-1 text-[11px] font-bold overflow-x-auto no-scrollbar">
-                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white transition shrink-0">All</button>
-                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🏢 Office Staff</button>
-                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🏢🏠 Office + Res</button>
-                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🛡️ Guards</button>
-                        <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">📊 Admins</button>
-                        <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0">🔄 Resets</button>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] font-bold">
+                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white transition">All</button>
+                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🏢 Office Staff</button>
+                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🏢🏠 Office + Res</button>
+                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🛡️ Guards</button>
+                        <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">📊 Admins</button>
+                        <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🔄 Resets</button>
                     </div>
 
                     <!-- Directory List -->
@@ -745,7 +721,7 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-500 mb-1">10-Digit Mobile *</label>
-                                <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-500 mb-1">Designation / Office</label>
@@ -934,7 +910,7 @@
                 <p class="text-xs text-slate-500 leading-relaxed">
                     Enter your registered SPM NIWAS mobile number. An alert will appear immediately on the Admin dashboard to issue you a fresh temporary PIN.
                 </p>
-                <input id="forgot-pin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Registered 10-digit Mobile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="forgot-pin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <div class="flex gap-2">
                     <button type="button" onclick="submitForgotPinRequest()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl">
                         Notify Admin Now
@@ -1423,25 +1399,25 @@
             }
 
             if (designStudioMode) {
-                // Expand shell into a full-width 4-Screen Design Board (1-col mobile, 2-col tablet, 4-col wide screen)
-                shell.className = "w-full max-w-[1800px] min-h-[100dvh] bg-slate-100 sm:rounded-[1.75rem] sm:shadow-2xl sm:border-[5px] sm:border-slate-800 flex flex-col overflow-hidden relative transition-all duration-300";
+                // Expand shell into a centered multi-phone Design Board where each card stays proportioned like a real mobile phone (~390px)
+                shell.className = "w-full max-w-[1720px] min-h-[100dvh] bg-slate-200/90 sm:rounded-[1.75rem] sm:shadow-2xl sm:border-[5px] sm:border-slate-800 flex flex-col overflow-hidden relative transition-all duration-300";
                 if (designBar) { designBar.classList.remove('hidden'); designBar.classList.add('flex'); }
                 if (settingsBtn) settingsBtn.classList.remove('hidden');
 
                 loginView.classList.remove('hidden');
                 mainViewport.classList.remove('hidden');
-                mainViewport.className = "flex-1 overflow-y-auto p-3.5 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 items-start pb-24";
+                mainViewport.className = "flex-1 overflow-y-auto p-4 flex flex-wrap justify-center gap-5 items-start pb-24";
 
-                // Inject Login screen as Card #1 in the grid
+                // Inject Login screen as Card #1 proportioned as a realistic mobile phone frame
                 if (!document.getElementById('design-login-slot')) {
                     const slot = document.createElement('div');
                     slot.id = 'design-login-slot';
-                    slot.className = "rounded-3xl overflow-hidden border-2 border-indigo-300 shadow-lg bg-white flex flex-col";
-                    slot.innerHTML = `<div class="bg-indigo-950 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider px-4 py-2 flex items-center justify-between"><span>1. Welcome & Login</span><span class="text-[10px] text-indigo-300">PUBLIC</span></div>`;
+                    slot.className = "w-full max-w-[395px] shrink-0 rounded-[2rem] overflow-hidden border-[4px] border-slate-800 shadow-xl bg-white flex flex-col";
+                    slot.innerHTML = `<div class="bg-indigo-950 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider px-4 py-2.5 flex items-center justify-between"><span>1. Welcome & Login</span><span class="text-[10px] text-indigo-300">MOBILE 395px</span></div>`;
                     slot.appendChild(loginView);
                     mainViewport.prepend(slot);
                 }
-                // Show Guard, Host, Admin & Super Admin simultaneously with clear headers
+                // Show Guard, Host, Admin & Super Admin simultaneously in realistic mobile-proportioned phone frames
                 const stageTitles = {
                     guard: '2. Guard Gate Console',
                     host: '3. Host (Resident/Staff)',
@@ -1453,15 +1429,15 @@
                     if (!sec) return;
                     sec.classList.remove('hidden');
                     if (r === 'admin') {
-                        // Keep Admin compact inside the studio grid
-                        sec.className = "space-y-4 bg-slate-50 p-3.5 rounded-3xl border-2 border-slate-300 shadow-lg";
+                        // Keep Admin in mobile phone proportions inside Design Studio
+                        sec.className = "w-full max-w-[395px] shrink-0 space-y-4 bg-slate-50 p-3.5 rounded-[2rem] border-[4px] border-slate-800 shadow-xl";
                     } else {
-                        sec.classList.add('bg-slate-50', 'p-3.5', 'rounded-3xl', 'border-2', 'border-slate-300', 'shadow-lg');
+                        sec.classList.add('w-full', 'max-w-[395px]', 'shrink-0', 'bg-slate-50', 'p-3.5', 'rounded-[2rem]', 'border-[4px]', 'border-slate-800', 'shadow-xl');
                     }
                     if (!sec.dataset.designWrapped) {
                         sec.dataset.designWrapped = '1';
                         const hdr = document.createElement('div');
-                        hdr.className = 'design-stage-badge bg-slate-900 text-white text-[11px] font-extrabold uppercase tracking-wider px-3.5 py-2 rounded-2xl mb-3 flex items-center justify-between';
+                        hdr.className = 'design-stage-badge bg-slate-900 text-white text-[11px] font-extrabold uppercase tracking-wider px-3.5 py-2.5 rounded-2xl mb-3 flex items-center justify-between';
                         hdr.innerHTML = `<span>${stageTitles[r]}</span><span class="text-emerald-400 text-[10px]">LIVE SYNC</span>`;
                         sec.prepend(hdr);
                     }
@@ -1474,7 +1450,7 @@
                     hostSelect.innerHTML = `<option value="ALL">🌐 View All Units (Studio Preview)</option>${officeOpts}${resOpts}`;
                 }
                 renderAll();
-                showToast("🎨 Design Studio ON — All 4 screens displayed side-by-side!");
+                showToast("🎨 Design Studio ON — Mobile-proportioned screens displayed!");
             } else {
                 if (designBar) { designBar.classList.add('hidden'); designBar.classList.remove('flex'); }
                 mainViewport.className = "flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 pb-24";
@@ -1493,7 +1469,7 @@
                     }
                     if (sec.dataset.designWrapped) {
                         delete sec.dataset.designWrapped;
-                        sec.classList.remove('bg-slate-50', 'p-3.5', 'rounded-3xl', 'border-2', 'border-slate-300', 'shadow-lg');
+                        sec.classList.remove('w-full', 'max-w-[395px]', 'shrink-0', 'bg-slate-50', 'p-3.5', 'rounded-[2rem]', 'border-[4px]', 'border-slate-800', 'shadow-xl');
                         const badge = sec.querySelector('.design-stage-badge');
                         if (badge) badge.remove();
                     }
@@ -2300,7 +2276,7 @@
                                 <span class="font-extrabold text-slate-900 truncate">${m.name}</span>
                                 ${idx === 0 ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">PRIMARY</span>` : `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700">FAMILY</span>`}
                             </div>
-                            <p class="text-[11px] text-slate-500 mt-0.5 font-mono">📱 ${m.phone} • ${m.pinMustChange ? `Temp PIN: ${m.pin}` : 'Private PIN Set'}</p>
+                            <p class="text-[11px] text-slate-500 mt-0.5 font-mono">📱 ${displayIndianMobile(m.phone)} • ${m.pinMustChange ? `Temp PIN: ${m.pin}` : 'Private PIN Set'}</p>
                         </div>
                         <div class="flex items-center gap-1 shrink-0">
                             <button type="button" onclick="adminResetUserPin('${m.id}')" class="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold transition" title="Send Temp PIN on WhatsApp">
@@ -2333,7 +2309,7 @@
             const now = Date.now();
             const record = {
                 visitorName: name,
-                visitorPhone: phone,
+                visitorPhone: displayIndianMobile(phone),
                 visitorType: type,
                 zone: selectedZone,
                 destination: destination,
@@ -2540,7 +2516,7 @@
                             <div>
                                 <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">Gate Approval Needed</span>
                                 <h4 class="font-extrabold text-slate-900 text-base mt-1">${v.visitorName}</h4>
-                                <p class="text-xs text-slate-600">${v.visitorType} • 📞 ${v.visitorPhone}</p>
+                                <p class="text-xs text-slate-600">${v.visitorType} • 📞 ${displayIndianMobile(v.visitorPhone)}</p>
                                 <p class="text-xs font-semibold text-slate-700 mt-0.5">For: ${v.destination}</p>
                             </div>
                             <span class="text-xs font-bold text-slate-500">${v.timeLabel}</span>
@@ -2599,10 +2575,10 @@
                 feed.innerHTML = visitors.length === 0
                     ? `<p class="text-xs text-slate-400 text-center py-4">No gate activity recorded yet.</p>`
                     : visitors.slice(0, 15).map(v => `
-                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
-                            <div class="min-w-0">
-                                <span class="font-bold text-slate-900">${v.visitorName}</span>
-                                <span class="text-slate-500"> → ${v.destination}</span>
+                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2 text-xs">
+                            <div class="min-w-0 flex-1">
+                                <p class="font-bold text-slate-900 truncate">${v.visitorName}</p>
+                                <p class="text-[11px] text-slate-500 truncate">→ ${v.destination}</p>
                             </div>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700 shrink-0">${v.status.replace('_', ' ')}</span>
                         </div>
@@ -2705,7 +2681,7 @@
                             ${a.pinResetRequested ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
                         </div>
                         <p class="text-[11px] text-slate-500 mt-0.5 font-mono">
-                            📱 ${a.phone} • ${a.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${a.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
+                            📱 ${displayIndianMobile(a.phone)} • ${a.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${a.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
                         </p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
@@ -2732,8 +2708,26 @@
             return digits.slice(0, 10);
         };
 
+        window.displayIndianMobile = function(raw) {
+            if (!raw) return '';
+            const cleaned = normalizeIndianMobile(raw);
+            if (!cleaned) return String(raw);
+            return cleaned.length > 5 ? `${cleaned.slice(0, 5)} ${cleaned.slice(5)}` : cleaned;
+        };
+
         window.isValidIndianMobile = function(phone) {
             return /^[6-9]\d{9}$/.test(normalizeIndianMobile(phone));
+        };
+
+        window.formatIndianMobile = function(el) {
+            if (!el) return;
+            const cleaned = normalizeIndianMobile(el.value);
+            if (cleaned.length > 0 && !/^[6-9]/.test(cleaned)) {
+                el.value = '';
+                showToast('⚠️ Indian mobile numbers must start with 6, 7, 8, or 9.');
+                return;
+            }
+            el.value = displayIndianMobile(cleaned);
         };
 
         window.formatIndianMobile = function(el) {
@@ -3228,8 +3222,9 @@
 
         window.shareUserCredentials = function(name, phone, pin, openWhatsApp = false) {
             const cleanPhone = normalizeIndianMobile(phone);
+            const formattedPhone = displayIndianMobile(cleanPhone);
             const appUrl = window.location.href.split('?')[0];
-            const msg = `Namaste ${name}! 🙏 Your Swagat portal for *SPM NIWAS* is active.\n\n🔗 Link: ${appUrl}\n📱 Mobile: ${cleanPhone}\n🔑 Temp PIN: *${pin}*\n\n(You will be prompted to set your own private PIN on first login.)`;
+            const msg = `Namaste ${name}! 🙏 Your Swagat portal for *SPM NIWAS* is active.\n\n🔗 Link: ${appUrl}\n📱 Mobile: ${formattedPhone}\n🔑 Temp PIN: *${pin}*\n\n(You will be prompted to set your own private PIN on first login.)`;
             try { navigator.clipboard?.writeText(msg); } catch (e) {}
             showToast(`📲 Temp PIN ${pin} ready for ${name}`);
             if (openWhatsApp && isValidIndianMobile(cleanPhone)) {
@@ -3336,24 +3331,24 @@
                     : `removeEmployeeByPhone('${item.phone}')`;
 
                 return `
-                <div class="p-3 ${item.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} flex items-center justify-between gap-2 text-xs">
+                <div class="p-3.5 ${item.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} space-y-2.5 text-xs">
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-1.5">
-                            <span class="font-extrabold text-slate-900 truncate">${item.name}</span>
+                            <span class="font-extrabold text-slate-900 break-words">${item.name}</span>
                             ${statusBadge}
                             ${item.pinResetRequested ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
                         </div>
-                        <p class="text-[11px] text-slate-600 mt-0.5 truncate">${unitLine}</p>
+                        <p class="text-[11px] text-slate-600 mt-1 break-words">${unitLine}</p>
                         <p class="text-[11px] text-slate-500 mt-0.5 font-mono">
-                            📱 ${item.phone} • ${item.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${item.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
+                            📱 ${displayIndianMobile(item.phone)} • ${item.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${item.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
                         </p>
                     </div>
-                    <div class="flex flex-wrap items-center justify-end gap-1.5 shrink-0">
+                    <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
                         ${statusToggleBtn}
-                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition">
+                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition">
                             📲 PIN
                         </button>
-                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Delete Entry">✕</button>` : ''}
+                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="ml-auto px-2.5 py-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-[11px] font-bold transition" title="Delete Entry">✕ Remove</button>` : ''}
                     </div>
                 </div>
             `;
