@@ -330,23 +330,23 @@
                 </div>
 
                 <!-- Pre-Approve Guest & AI Invite Generator -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5 overflow-hidden">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                        <h2 class="font-bold text-slate-800 text-base">Pre-Approve Expected Guest</h2>
+                        <h2 class="font-bold text-slate-800 text-base">Pre-Approve Guest</h2>
                         <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full shrink-0">✨ Gemini Assisted</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <input id="pre-guest-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Guest Name * (e.g., Vikram Mehta)" aria-label="Guest Name" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <div class="space-y-2.5">
+                        <input id="pre-guest-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Name *" aria-label="Name" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <input id="pre-guest-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Phone (Optional — e.g., 98765 43210)" aria-label="Phone" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <select id="pre-guest-type" aria-label="Category" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             <option value="Personal Guest">👤 Personal Guest</option>
                             <option value="Official Visitor">💼 Official Visitor</option>
                             <option value="Delivery">📦 Delivery</option>
                             <option value="Cab / Taxi">🚕 Cab / Taxi</option>
                         </select>
+                        <input id="pre-guest-note" type="text" placeholder="Quick Note / Instructions (Optional)" aria-label="Quick Note" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
-
-                    <input id="pre-guest-note" type="text" placeholder="Quick Note / Instructions (Optional)" aria-label="Quick Note" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
                     <button type="button" onclick="createPreApprovedPass()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm py-3 rounded-xl shadow-md shadow-emerald-600/20 transition">
                         🎟️ Generate 4-Digit Gate Pass
@@ -2333,13 +2333,19 @@
 
         window.createPreApprovedPass = async function() {
             const guestName = document.getElementById('pre-guest-name').value.trim();
+            const rawPhone = document.getElementById('pre-guest-phone')?.value || '';
+            const cleanPhone = normalizeIndianMobile(rawPhone);
             const guestType = document.getElementById('pre-guest-type').value;
             const hostSelect = document.getElementById('active-host-unit').value;
             const destination = hostSelect === 'ALL' ? 'IT Dept (Floor 2) - Rahul Sharma' : hostSelect;
             const zone = destination.startsWith('Flat') ? 'RESIDENTIAL' : 'OFFICE';
 
             if (!guestName) {
-                showToast("⚠️ Please enter the expected guest's name.");
+                showToast("⚠️ Please enter the guest's name.");
+                return;
+            }
+            if (rawPhone.trim() && !isValidIndianMobile(cleanPhone)) {
+                showToast("⚠️ Enter a valid 10-digit mobile starting with 6, 7, 8, or 9.");
                 return;
             }
 
@@ -2347,7 +2353,7 @@
             const now = Date.now();
             const record = {
                 visitorName: guestName,
-                visitorPhone: 'Pre-Approved',
+                visitorPhone: cleanPhone ? displayIndianMobile(cleanPhone) : 'Pre-Approved',
                 visitorType: guestType,
                 zone: zone,
                 destination: destination,
@@ -2360,6 +2366,7 @@
 
             await saveVisitorRecord(record, true);
 
+            if (document.getElementById('pre-guest-phone')) document.getElementById('pre-guest-phone').value = '';
             document.getElementById('gen-otp-code').textContent = otp;
             document.getElementById('generated-pass-card').classList.remove('hidden');
             document.getElementById('ai-invite-text').value = `Namaste ${guestName}! Your gate pass for ${destination} at SPM NIWAS is ready. Show OTP *${otp}* at the Main Gate for instant entry.`;
