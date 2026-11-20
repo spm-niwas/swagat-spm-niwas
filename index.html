@@ -166,25 +166,6 @@
 
             <!-- ==================== 1. GUARD VIEW (GATEKEEPER CONSOLE) ==================== -->
             <section id="view-guard" class="space-y-4">
-                
-                <!-- Main Gate Geofencing Live Status Bar -->
-                <div id="guard-geofence-banner" class="hidden rounded-2xl p-3 border text-xs flex items-center justify-between gap-2 transition-all">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span id="guard-geo-icon" class="text-base shrink-0">📍</span>
-                        <div class="min-w-0">
-                            <p id="guard-geo-title" class="font-extrabold truncate">Checking Main Gate GPS...</p>
-                            <p id="guard-geo-sub" class="text-[11px] opacity-80 truncate">Verifying physical presence at gate</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" id="btn-guard-sim-geo" onclick="toggleSimulatedGatePresence()" class="hidden px-2 py-1 rounded-lg bg-slate-900/10 hover:bg-slate-900/20 font-bold text-[10px]">
-                            Simulate
-                        </button>
-                        <button type="button" onclick="refreshGuardLocation(true)" class="px-2.5 py-1.5 rounded-xl bg-white/80 hover:bg-white text-slate-800 font-bold text-[11px] shadow-sm transition">
-                            ↻ GPS
-                        </button>
-                    </div>
-                </div>
 
                 <!-- Pre-Approved Entry Code Quick Bar -->
                 <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-4 text-white shadow-md">
@@ -994,6 +975,25 @@
             </div>
         </div>
 
+        <!-- Guard GPS & Geofence Pop-Up Alert Modal (Shown only when GPS is off or Guard is beyond threshold) -->
+        <div id="guard-gps-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
+                <div id="guard-gps-modal-icon" class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl mx-auto font-bold">📍</div>
+                <div>
+                    <h3 id="guard-gps-modal-title" class="font-extrabold text-slate-900 text-base">Turn On GPS Location</h3>
+                    <p id="guard-gps-modal-message" class="text-xs text-slate-600 mt-1.5 leading-relaxed">Please turn on GPS / Location Services on your device to verify your presence at the Main Gate.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2.5 pt-1">
+                    <button type="button" onclick="closeModal('guard-gps-modal')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition">
+                        Close
+                    </button>
+                    <button type="button" onclick="retryGuardGpsCheck()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3 rounded-xl shadow transition">
+                        Retry GPS
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Subtle Floating Design Studio Launcher (Only shown when URL has ?design=1 or saved in localStorage) -->
@@ -1512,88 +1512,85 @@
 
         window.refreshGuardLocation = function(manual = false) {
             if (!geofenceConfig.enabled || geofenceConfig.lat === null || geofenceConfig.lng === null) {
-                updateGuardGeofenceBanner();
+                return;
+            }
+            if (loggedInSession && loggedInSession.role !== 'guard') {
                 return;
             }
             if (designStudioMode) {
                 guardGeoState.status = guardGeoState.simulatedInside ? 'INSIDE' : 'OUTSIDE';
                 guardGeoState.distanceMeters = guardGeoState.simulatedInside ? 12 : (geofenceConfig.radiusMeters + 320);
-                updateGuardGeofenceBanner();
                 return;
             }
             if (!navigator.geolocation) {
                 guardGeoState.status = 'DENIED';
-                updateGuardGeofenceBanner();
+                if (manual) showGuardGpsPopup('DENIED');
                 return;
             }
             guardGeoState.status = 'CHECKING';
-            updateGuardGeofenceBanner();
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     const dist = haversineMeters(pos.coords.latitude, pos.coords.longitude, geofenceConfig.lat, geofenceConfig.lng);
                     guardGeoState.distanceMeters = dist;
                     guardGeoState.status = dist <= geofenceConfig.radiusMeters ? 'INSIDE' : 'OUTSIDE';
-                    updateGuardGeofenceBanner();
-                    if (manual) {
-                        showToast(guardGeoState.status === 'INSIDE'
-                            ? `✅ At Main Gate (${dist}m from checkpoint)`
-                            : `⛔ Outside Main Gate (${dist}m away)`);
+                    if (guardGeoState.status === 'OUTSIDE' && (manual || (loggedInSession && loggedInSession.role === 'guard'))) {
+                        showGuardGpsPopup('OUTSIDE', dist);
+                    } else if (manual && guardGeoState.status === 'INSIDE') {
+                        closeModal('guard-gps-modal');
+                        showToast('✅ Location verified at Main Gate.');
                     }
                 },
                 () => {
                     guardGeoState.status = 'DENIED';
-                    updateGuardGeofenceBanner();
-                    if (manual) showToast('⚠️ Enable GPS Location Services on your phone.');
+                    if (manual || (loggedInSession && loggedInSession.role === 'guard')) {
+                        showGuardGpsPopup('DENIED');
+                    }
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 15000 }
             );
         };
 
         function updateGuardGeofenceBanner() {
-            const banner = document.getElementById('guard-geofence-banner');
-            if (!banner) return;
-            if (!geofenceConfig.enabled || geofenceConfig.lat === null || geofenceConfig.lng === null) {
-                banner.classList.add('hidden');
-                return;
-            }
-            banner.classList.remove('hidden');
-            const icon = document.getElementById('guard-geo-icon');
-            const title = document.getElementById('guard-geo-title');
-            const sub = document.getElementById('guard-geo-sub');
-            const simBtn = document.getElementById('btn-guard-sim-geo');
-            if (simBtn) simBtn.classList.toggle('hidden', !designStudioMode);
-
-            if (guardGeoState.status === 'INSIDE') {
-                banner.className = 'rounded-2xl p-3 border border-emerald-300 bg-emerald-50 text-emerald-950 text-xs flex items-center justify-between gap-2 transition-all';
-                icon.textContent = '✅';
-                title.textContent = `AT MAIN GATE (${guardGeoState.distanceMeters ?? 0}m)`;
-                sub.textContent = `Within ${geofenceConfig.radiusMeters}m permitted checkpoint`;
-            } else if (guardGeoState.status === 'OUTSIDE') {
-                banner.className = 'rounded-2xl p-3 border-2 border-rose-400 bg-rose-50 text-rose-950 text-xs flex items-center justify-between gap-2 transition-all';
-                icon.textContent = '⛔';
-                title.textContent = `OUTSIDE MAIN GATE (${guardGeoState.distanceMeters}m away)`;
-                sub.textContent = `Move within ${geofenceConfig.radiusMeters}m of Main Gate to check in guests`;
-            } else if (guardGeoState.status === 'DENIED') {
-                banner.className = 'rounded-2xl p-3 border-2 border-amber-400 bg-amber-50 text-amber-950 text-xs flex items-center justify-between gap-2 transition-all';
-                icon.textContent = '📡';
-                title.textContent = 'GPS Location Required';
-                sub.textContent = 'Turn on phone Location & tap ↻ GPS to unlock gate';
-            } else {
-                banner.className = 'rounded-2xl p-3 border border-indigo-200 bg-indigo-50 text-indigo-950 text-xs flex items-center justify-between gap-2 transition-all';
-                icon.textContent = '🛰️';
-                title.textContent = 'Verifying Main Gate GPS...';
-                sub.textContent = `Allowed radius: ${geofenceConfig.radiusMeters}m`;
-            }
+            // Intentionally silent on Guard screen; pop-up modal handles GPS/distance prompts
         }
 
+        function showGuardGpsPopup(reason, dist = null) {
+            const iconEl = document.getElementById('guard-gps-modal-icon');
+            const titleEl = document.getElementById('guard-gps-modal-title');
+            const msgEl = document.getElementById('guard-gps-modal-message');
+            if (!titleEl || !msgEl) return;
+
+            if (reason === 'OUTSIDE') {
+                if (iconEl) {
+                    iconEl.className = 'w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mx-auto font-bold';
+                    iconEl.textContent = '⛔';
+                }
+                titleEl.textContent = 'Outside Main Gate Threshold';
+                msgEl.textContent = `You are currently ${dist ?? guardGeoState.distanceMeters ?? ''}m away from the Main Gate. Please come within the ${geofenceConfig.radiusMeters}m threshold distance to proceed.`;
+            } else {
+                if (iconEl) {
+                    iconEl.className = 'w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl mx-auto font-bold';
+                    iconEl.textContent = '📡';
+                }
+                titleEl.textContent = 'Turn On GPS Location';
+                msgEl.textContent = 'GPS is currently turned off or unavailable. Please turn on GPS / Location Services on your phone and tap Retry GPS.';
+            }
+            openModal('guard-gps-modal');
+        }
+
+        window.retryGuardGpsCheck = function() {
+            refreshGuardLocation(true);
+        };
+
         function enforceGuardGeofence() {
+            if (!loggedInSession || loggedInSession.role !== 'guard') return true;
             if (!geofenceConfig.enabled || geofenceConfig.lat === null || geofenceConfig.lng === null) return true;
             if (guardGeoState.status === 'INSIDE') return true;
             refreshGuardLocation(false);
             if (guardGeoState.status === 'OUTSIDE') {
-                showToast(`⛔ Blocked: You are ${guardGeoState.distanceMeters}m away from Main Gate (max ${geofenceConfig.radiusMeters}m).`);
+                showGuardGpsPopup('OUTSIDE', guardGeoState.distanceMeters);
             } else {
-                showToast('📡 Enable GPS Location at Main Gate before checking in visitors.');
+                showGuardGpsPopup('DENIED');
             }
             return false;
         }
