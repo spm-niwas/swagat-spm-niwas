@@ -211,10 +211,10 @@
                     <!-- Step 1: Zone Access Control Selector -->
                     <div class="grid grid-cols-2 gap-2.5">
                         <button type="button" id="zone-btn-OFFICE" onclick="selectZone('OFFICE')" class="p-3 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-xs flex items-center justify-center gap-2 transition">
-                            <span>🏢 Corporate Office</span>
+                            <span>🏢 Office</span>
                         </button>
                         <button type="button" id="zone-btn-RESIDENTIAL" onclick="selectZone('RESIDENTIAL')" class="p-3 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition">
-                            <span>🏠 Residential Wing</span>
+                            <span>🏠 Residence</span>
                         </button>
                     </div>
 
@@ -373,10 +373,7 @@
                             <p class="text-[11px] font-medium text-slate-500">View past & pre-approved visitors for this unit</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span id="host-history-count" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">0 visits</span>
-                        <span class="text-slate-400 font-bold text-sm">→</span>
-                    </div>
+                    <span class="text-slate-400 font-bold text-sm shrink-0">→</span>
                 </button>
 
                 <!-- Link to Dedicated Family Members Sub-View (For Residential Units) -->
@@ -599,7 +596,7 @@
                         <span id="superadmin-admin-count" class="text-xs font-extrabold text-emerald-300">0 Admins</span>
                     </div>
                     <div>
-                        <h2 class="text-lg font-extrabold text-white">Campus Admin Governance</h2>
+                        <h2 class="text-lg font-extrabold text-white">Super Admin Management</h2>
                         <p class="text-xs text-slate-300 mt-0.5">Bound Account: director@spmniwas.in</p>
                     </div>
                 </div>
@@ -607,8 +604,7 @@
                 <!-- 1. Active Campus Admins List (Top) -->
                 <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
                     <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-slate-900 text-base">Authorized Campus Admins</h3>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Directory</span>
+                        <h3 class="font-bold text-slate-900 text-base">Approved Admins</h3>
                     </div>
                     <div id="superadmin-admin-list" class="divide-y divide-slate-100 border border-slate-100 rounded-xl">
                         <!-- Rendered dynamically -->
@@ -616,48 +612,42 @@
                 </div>
 
                 <!-- 2. Add New Campus Admin Button & Collapsible Form (Middle) -->
-                <button type="button" id="btn-toggle-superadmin-form" onclick="toggleSuperAdminAddForm(true)" class="w-full bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-3.5 px-4 rounded-2xl shadow-md transition flex items-center justify-center gap-2">
-                    <span>+ Add Campus Admin</span>
+                <button type="button" id="btn-toggle-superadmin-form" onclick="toggleSuperAdminAddForm()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                    <span class="flex items-center gap-2"><span>➕</span><span>Add Admin</span></span>
+                    <span id="superadmin-add-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
                 </button>
 
                 <div id="superadmin-add-form-card" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold text-slate-900 text-base">Appoint New Campus Admin</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Grant Admin privileges to authorized SPM NIWAS leadership</p>
+                            <h3 class="font-bold text-slate-900 text-base">Add Admin</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Auto-generates & sends a 4-digit temporary PIN</p>
                         </div>
                         <button type="button" onclick="toggleSuperAdminAddForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">✕</button>
                     </div>
                     <div class="space-y-2.5">
-                        <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Admin Full Name * (e.g., S. K. Banerjee)" aria-label="Admin Full Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold capitalize placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="10-Digit Mobile * (98765 43210)" aria-label="10-Digit Mobile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <input id="superadmin-unit" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Designation / Office" aria-label="Designation or Office" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold capitalize placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
-                        <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
-                            <div class="w-36 flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="superadmin-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Temp PIN" aria-label="Temp PIN" class="w-full px-2.5 py-2.5 text-sm text-center font-extrabold tracking-widest placeholder:font-medium placeholder:tracking-normal bg-transparent focus:outline-none">
-                                <button type="button" onclick="generateRandomSuperAdminPin()" class="px-3 py-2.5 bg-slate-200/70 hover:bg-slate-200 text-sm font-bold text-slate-700" title="Auto-generate 4-digit PIN">🎲</button>
-                            </div>
-                            <button type="button" onclick="addCampusAdminBySuperAdmin()" class="flex-1 min-w-[160px] bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-2.5 px-4 rounded-xl shadow-md transition">
-                                + Add Admin & Share PIN
-                            </button>
-                        </div>
+                        <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Name * (e.g., S. K. Banerjee)" aria-label="Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold capitalize placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Mobile * (e.g., 98765 43210)" aria-label="Mobile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-bold placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" onclick="addCampusAdminBySuperAdmin()" class="w-full bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-3.5 px-4 rounded-xl shadow-md transition">
+                            Add
+                        </button>
                     </div>
                 </div>
 
-                <!-- 3. Campus Logo & Branding Uploader (Bottom) -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
+                <!-- 3. Institute Logo Collapsible Button & Upload Form -->
+                <button type="button" id="btn-toggle-superadmin-logo" onclick="toggleSuperAdminLogoForm()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                    <span class="flex items-center gap-2"><span>🏛️</span><span>Institute Logo</span></span>
+                    <span id="superadmin-logo-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
+                </button>
+
+                <div id="superadmin-logo-panel" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-slate-900 text-base">🏛️ Campus Logo & Branding</h3>
-                            <p class="text-xs text-slate-500">Shown at the center of the Swagat welcome screen</p>
-                        </div>
-                        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 shrink-0">Live Sync</span>
+                        <p class="text-xs text-slate-500">Shown at the center of the Swagat welcome screen</p>
+                        <button type="button" onclick="toggleSuperAdminLogoForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold shrink-0">✕</button>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="w-16 h-16 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
-                            <img id="admin-logo-preview" src="" alt="Campus Logo" class="hidden w-full h-full object-contain p-1 bg-white" />
+                            <img id="admin-logo-preview" src="" alt="Institute Logo" class="hidden w-full h-full object-contain p-1 bg-white" />
                             <span id="admin-logo-empty" class="text-xs font-bold text-slate-400 text-center px-1">No Logo</span>
                         </div>
                         <div class="flex-1 min-w-0 space-y-2">
@@ -672,16 +662,21 @@
                     </div>
                 </div>
 
-                <!-- 4. Main Gate Geofencing (Below Logo) -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
+                <!-- 4. Main Gate Geofencing Collapsible Button & Controls (Below Logo) -->
+                <button type="button" id="btn-toggle-superadmin-geofence" onclick="toggleSuperAdminGeofenceForm()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                    <span class="flex items-center gap-2"><span>📍</span><span>Main Gate Geofencing</span></span>
+                    <span id="superadmin-geofence-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
+                </button>
+
+                <div id="superadmin-geofence-panel" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-slate-900 text-base">📍 Main Gate Geofencing</h3>
-                            <p class="text-xs text-slate-500">Restrict Guard check-ins to physical gate GPS</p>
+                        <p class="text-xs text-slate-500">Restrict Guard check-ins to physical gate GPS</p>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button type="button" id="btn-toggle-geofence" onclick="toggleGeofenceEnabled()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-700 transition">
+                                OFF
+                            </button>
+                            <button type="button" onclick="toggleSuperAdminGeofenceForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">✕</button>
                         </div>
-                        <button type="button" id="btn-toggle-geofence" onclick="toggleGeofenceEnabled()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-700 transition shrink-0">
-                            OFF
-                        </button>
                     </div>
                     <button type="button" id="btn-capture-gate-gps" onclick="captureCurrentGateCoordinates()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs py-3 rounded-xl transition">
                         <span>🎯 Capture My Current Gate Location</span>
@@ -929,6 +924,25 @@
                     </button>
                     <button type="button" onclick="closeModal('allot-flat-modal')" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl">
                         Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unified Delete Confirmation Dialog (Used Everywhere in App) -->
+        <div id="confirm-action-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
+                <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto font-bold">🗑️</div>
+                <div>
+                    <h3 id="confirm-dialog-title" class="font-extrabold text-slate-900 text-base">Confirm Deletion</h3>
+                    <p id="confirm-dialog-message" class="text-xs text-slate-500 mt-1 leading-relaxed">Are you sure you want to delete this record? This action cannot be undone.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2.5 pt-1">
+                    <button type="button" onclick="closeModal('confirm-action-modal')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirm-dialog-proceed-btn" onclick="executePendingDelete()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-3 rounded-xl shadow transition">
+                        Delete
                     </button>
                 </div>
             </div>
@@ -2217,8 +2231,14 @@
                 showToast("⚠️ You cannot remove your own active login.");
                 return;
             }
-            await deleteDirectoryEntry(id);
-            renderHostFamilyManager();
+            requestDeleteConfirmation({
+                title: 'Delete Family Member',
+                message: `Are you sure you want to delete ${target.name} from ${target.unit}? They will no longer receive gate alerts or login access.`,
+                onConfirm: async () => {
+                    await deleteDirectoryEntry(id);
+                    renderHostFamilyManager();
+                }
+            });
         };
 
         function renderHostFamilyManager() {
@@ -2251,7 +2271,7 @@
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
                             <button type="button" onclick="adminResetUserPin('${m.id}')" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">📲 PIN</button>
-                            ${!isSelf && members.length > 1 ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition">Remove</button>` : ''}
+                            ${!isSelf && members.length > 1 ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition">Delete</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -2634,19 +2654,41 @@
             if (shouldOpen) renderAdminDirectory();
         };
 
-        window.generateRandomSuperAdminPin = function() {
-            const el = document.getElementById('superadmin-pin');
-            if (el) el.value = String(Math.floor(1000 + Math.random() * 9000));
+        window.toggleSuperAdminAddForm = function(forceState = null) {
+            const card = document.getElementById('superadmin-add-form-card');
+            const chevron = document.getElementById('superadmin-add-chevron');
+            if (!card) return;
+            const shouldOpen = forceState !== null ? forceState : card.classList.contains('hidden');
+            card.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
+            if (shouldOpen) document.getElementById('superadmin-name')?.focus();
+        };
+
+        window.toggleSuperAdminLogoForm = function(forceState = null) {
+            const panel = document.getElementById('superadmin-logo-panel');
+            const chevron = document.getElementById('superadmin-logo-chevron');
+            if (!panel) return;
+            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
+        };
+
+        window.toggleSuperAdminGeofenceForm = function(forceState = null) {
+            const panel = document.getElementById('superadmin-geofence-panel');
+            const chevron = document.getElementById('superadmin-geofence-chevron');
+            if (!panel) return;
+            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
         };
 
         window.addCampusAdminBySuperAdmin = async function() {
             const name = document.getElementById('superadmin-name').value.trim();
             const phone = normalizeIndianMobile(document.getElementById('superadmin-phone').value);
-            const unit = document.getElementById('superadmin-unit').value.trim() || 'Management Office';
-            let pin = document.getElementById('superadmin-pin').value.trim();
+            const pin = String(Math.floor(1000 + Math.random() * 9000));
 
             if (!name) {
-                showToast('⚠️ Please enter the Admin Full Name.');
+                showToast('⚠️ Please enter the Admin Name.');
                 return;
             }
             if (!isValidIndianMobile(phone)) {
@@ -2657,13 +2699,10 @@
                 showToast('ℹ️ This mobile number is already registered as a Campus Admin.');
                 return;
             }
-            if (pin.length !== 4) {
-                pin = String(Math.floor(1000 + Math.random() * 9000));
-            }
 
             const newAdmin = {
                 zone: 'ADMIN',
-                unit,
+                unit: 'Campus Admin',
                 name,
                 phone,
                 pin,
@@ -2681,8 +2720,6 @@
 
             document.getElementById('superadmin-name').value = '';
             document.getElementById('superadmin-phone').value = '';
-            document.getElementById('superadmin-unit').value = '';
-            document.getElementById('superadmin-pin').value = '';
             toggleSuperAdminAddForm(false);
             renderSuperAdminView();
             shareUserCredentials(name, phone, pin, true);
@@ -2691,14 +2728,78 @@
         window.removeCampusAdminBySuperAdmin = async function(id) {
             const target = directoryEntries.find(d => d.id === id && d.zone === 'ADMIN');
             if (!target) return;
-            if (useFirestore && db && currentUser) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', id));
-            } else {
-                directoryEntries = directoryEntries.filter(d => d.id !== id);
-                syncDirectoryAcrossUI();
-            }
+            requestDeleteConfirmation({
+                title: 'Delete Approved Admin',
+                message: `Are you sure you want to delete ${target.name} (${displayIndianMobile(target.phone)}) from Approved Admins?`,
+                onConfirm: async () => {
+                    if (useFirestore && db && currentUser) {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', id));
+                    } else {
+                        directoryEntries = directoryEntries.filter(d => d.id !== id);
+                        syncDirectoryAcrossUI();
+                    }
+                    renderSuperAdminView();
+                    showToast(`🗑️ Deleted ${target.name} from Approved Admins.`);
+                }
+            });
+        };
+
+        let editingApprovedAdminId = null;
+
+        window.startEditApprovedAdmin = function(id) {
+            editingApprovedAdminId = id;
             renderSuperAdminView();
-            showToast(`🗑️ Removed ${target.name} from Campus Admins.`);
+        };
+
+        window.cancelEditApprovedAdmin = function() {
+            editingApprovedAdminId = null;
+            renderSuperAdminView();
+        };
+
+        window.saveEditedApprovedAdmin = async function(id) {
+            const target = directoryEntries.find(d => d.id === id && d.zone === 'ADMIN');
+            if (!target) return;
+            const nameInput = document.getElementById(`edit-admin-name-${id}`);
+            const phoneInput = document.getElementById(`edit-admin-phone-${id}`);
+            const newName = (nameInput?.value || '').trim();
+            const newPhone = normalizeIndianMobile(phoneInput?.value || '');
+
+            if (!newName) {
+                showToast('⚠️ Please enter the Admin Name.');
+                return;
+            }
+            if (!isValidIndianMobile(newPhone)) {
+                showToast('⚠️ Enter a valid 10-digit mobile starting with 6, 7, 8, or 9.');
+                return;
+            }
+            if (directoryEntries.some(d => d.zone === 'ADMIN' && d.id !== id && d.phone === newPhone)) {
+                showToast('ℹ️ Another Approved Admin already uses this mobile number.');
+                return;
+            }
+
+            if (useFirestore && db && currentUser) {
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', id), {
+                        zone: 'ADMIN',
+                        unit: target.unit || 'Campus Admin',
+                        name: newName,
+                        phone: newPhone,
+                        pin: target.pin || '9999',
+                        pinMustChange: !!target.pinMustChange,
+                        pinResetRequested: !!target.pinResetRequested
+                    }, { merge: true });
+                } catch (err) {
+                    console.warn('Firestore admin update fallback:', err.message);
+                }
+            }
+
+            directoryEntries = directoryEntries.map(d =>
+                d.id === id ? { ...d, name: newName, phone: newPhone } : d
+            );
+            editingApprovedAdminId = null;
+            syncDirectoryAcrossUI();
+            renderSuperAdminView();
+            showToast(`✅ Updated ${newName}'s details.`);
         };
 
         function renderSuperAdminView() {
@@ -2710,35 +2811,70 @@
             if (countEl) countEl.textContent = `${admins.length} ${admins.length === 1 ? 'Admin' : 'Admins'}`;
 
             if (admins.length === 0) {
-                listEl.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">No Campus Admins appointed yet. Tap "+ Add Campus Admin" below to add one.</div>`;
+                listEl.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">No Approved Admins yet. Tap "➕ Add Admin" below to add one.</div>`;
                 return;
             }
 
-            listEl.innerHTML = admins.map(a => `
-                <div class="p-4 bg-white space-y-3 text-sm">
-                    <div class="w-full min-w-0">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="font-extrabold text-slate-900 break-words">${a.name}</span>
-                            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700">${a.unit}</span>
-                            ${a.pinResetRequested ? `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
+            listEl.innerHTML = admins.map(a => {
+                if (editingApprovedAdminId === a.id) {
+                    return `
+                        <div class="p-4 bg-indigo-50/40 space-y-2.5 text-sm">
+                            <p class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-800">✏️ Edit Admin Details</p>
+                            <input id="edit-admin-name-${a.id}" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" value="${a.name.replace(/"/g, '&quot;')}" placeholder="Name *" class="w-full bg-white border border-indigo-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input id="edit-admin-phone-${a.id}" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" value="${displayIndianMobile(a.phone)}" placeholder="Mobile *" class="w-full bg-white border border-indigo-200 rounded-xl px-3.5 py-2.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <div class="grid grid-cols-2 gap-2 pt-1">
+                                <button type="button" onclick="saveEditedApprovedAdmin('${a.id}')" class="w-full py-2.5 px-3 rounded-xl bg-indigo-900 hover:bg-indigo-950 text-white text-xs font-bold text-center transition">
+                                    Save
+                                </button>
+                                <button type="button" onclick="cancelEditApprovedAdmin()" class="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold text-center transition">
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
-                        <p class="text-xs font-medium text-slate-600 mt-1.5">
-                            📱 ${displayIndianMobile(a.phone)} • ${a.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${a.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
-                        </p>
+                    `;
+                }
+
+                return `
+                    <div class="p-4 bg-white space-y-3 text-sm">
+                        <div class="space-y-1">
+                            <p class="font-extrabold text-base text-slate-900 break-words">${a.name}</p>
+                            <p class="text-xs font-medium text-slate-600">📱 ${displayIndianMobile(a.phone)}</p>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-100">
+                            <button type="button" onclick="adminResetUserPin('${a.id}')" class="w-full py-2.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold text-center transition">
+                                🔄 Reset PIN
+                            </button>
+                            <button type="button" onclick="startEditApprovedAdmin('${a.id}')" class="w-full py-2.5 px-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 text-xs font-bold text-center transition">
+                                ✏️ Edit
+                            </button>
+                            <button type="button" onclick="removeCampusAdminBySuperAdmin('${a.id}')" class="w-full py-2.5 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold text-center transition">
+                                🗑️ Delete
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2.5 pt-2.5 border-t border-slate-100">
-                        <button type="button" onclick="adminResetUserPin('${a.id}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition" title="Send Temp PIN via WhatsApp">
-                            📲 PIN
-                        </button>
-                        <button type="button" onclick="removeCampusAdminBySuperAdmin('${a.id}')" class="ml-auto px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition" title="Remove Admin">
-                            Remove
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // ==================== INPUT FORMATTERS, MODALS & AI HELPERS ====================
+        // ==================== UNIFIED CONFIRMATION DIALOG & INPUT FORMATTERS ====================
+        let pendingDeleteAction = null;
+
+        window.requestDeleteConfirmation = function({ title = 'Confirm Deletion', message = 'Are you sure you want to delete this record? This action cannot be undone.', onConfirm }) {
+            pendingDeleteAction = typeof onConfirm === 'function' ? onConfirm : null;
+            const titleEl = document.getElementById('confirm-dialog-title');
+            const msgEl = document.getElementById('confirm-dialog-message');
+            if (titleEl) titleEl.textContent = title;
+            if (msgEl) msgEl.textContent = message;
+            openModal('confirm-action-modal');
+        };
+
+        window.executePendingDelete = async function() {
+            const action = pendingDeleteAction;
+            pendingDeleteAction = null;
+            closeModal('confirm-action-modal');
+            if (action) await action();
+        };
+
         window.normalizeIndianMobile = function(raw) {
             if (!raw) return '';
             let digits = String(raw).replace(/\D/g, '');
@@ -3341,15 +3477,22 @@
         window.removeEmployeeByPhone = async function(phone) {
             const targets = directoryEntries.filter(d => d.phone === phone && d.zone !== 'ADMIN' && d.zone !== 'SUPERADMIN');
             if (targets.length === 0) return;
-            if (useFirestore && db && currentUser) {
-                for (const t of targets) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', t.id));
+            const targetName = targets[0].name;
+            requestDeleteConfirmation({
+                title: 'Delete User',
+                message: `Are you sure you want to delete ${targetName} (${displayIndianMobile(phone)}) from the campus directory?`,
+                onConfirm: async () => {
+                    if (useFirestore && db && currentUser) {
+                        for (const t of targets) {
+                            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'directory', t.id));
+                        }
+                    } else {
+                        directoryEntries = directoryEntries.filter(d => !(d.phone === phone && d.zone !== 'ADMIN' && d.zone !== 'SUPERADMIN'));
+                        syncDirectoryAcrossUI();
+                    }
+                    showToast(`🗑️ ${targetName} deleted from directory.`);
                 }
-            } else {
-                directoryEntries = directoryEntries.filter(d => !(d.phone === phone && d.zone !== 'ADMIN' && d.zone !== 'SUPERADMIN'));
-                syncDirectoryAcrossUI();
-            }
-            showToast('🗑️ Employee removed from directory.');
+            });
         };
 
         window.adminResetUserPin = async function(id) {
@@ -3523,7 +3666,7 @@
                         <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="w-full py-2.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center transition">
                             📲 PIN
                         </button>
-                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="w-full py-2.5 px-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 text-xs font-bold text-center transition" title="Delete Entry">✕ Remove</button>` : ''}
+                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="w-full py-2.5 px-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 text-xs font-bold text-center transition" title="Delete Entry">🗑️ Delete</button>` : ''}
                     </div>
                 </div>
             `;
