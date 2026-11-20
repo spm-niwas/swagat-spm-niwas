@@ -49,8 +49,8 @@
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                    <!-- Always-Accessible Design Studio Pill (Shows Login + Guard + Host + Admin Side-by-Side) -->
-                    <button id="header-design-studio-btn" type="button" onclick="toggleDesignStudioMode()" class="flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition" title="View Login, Guard, Host & Admin Screens Side-by-Side">
+                    <!-- Always-Accessible Design Studio Pill (Admin/SuperAdmin Preview Only) -->
+                    <button id="header-design-studio-btn" type="button" onclick="toggleDesignStudioMode()" class="hidden items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition" title="View Login, Guard, Host & Admin Screens Side-by-Side">
                         <span>🎨 All Screens</span>
                     </button>
                     <!-- Quick Return to Admin Dashboard (Shown when Admin switches to their own Host unit) -->
@@ -1352,11 +1352,12 @@
 
         // ==================== DESIGN STUDIO MODE (ALL 4 SCREENS SIDE-BY-SIDE) ====================
         function initDesignStudioMode() {
+            // Default strictly to single-screen mobile app view unless explicitly requested via ?design=1
             const params = new URLSearchParams(window.location.search);
-            const urlDesign = params.get('design') === '1';
-            const savedDesign = localStorage.getItem('swagat_design_studio') === '1';
-            if (urlDesign || savedDesign) {
+            if (params.get('design') === '1') {
                 toggleDesignStudioMode(true);
+            } else {
+                try { localStorage.removeItem('swagat_design_studio'); } catch (e) {}
             }
         }
 
@@ -1377,10 +1378,13 @@
             const floatingBtn = document.getElementById('floating-design-toggle');
 
             if (headerStudioBtn) {
+                const allowStudio = !loggedInSession || loggedInSession.role === 'admin' || loggedInSession.role === 'superadmin';
+                headerStudioBtn.classList.toggle('hidden', !allowStudio);
+                headerStudioBtn.classList.toggle('flex', allowStudio);
                 headerStudioBtn.innerHTML = designStudioMode ? '<span>🔒 Single View</span>' : '<span>🎨 All Screens</span>';
                 headerStudioBtn.className = designStudioMode
-                    ? 'flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 shadow transition'
-                    : 'flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition';
+                    ? `${allowStudio ? 'flex' : 'hidden'} items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 shadow transition`
+                    : `${allowStudio ? 'flex' : 'hidden'} items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition`;
             }
             if (toggleBtn) {
                 toggleBtn.textContent = designStudioMode ? 'ON' : 'OFF';
@@ -1648,6 +1652,9 @@
                 localStorage.setItem('swagat_session_v1', JSON.stringify(loggedInSession));
             } catch (e) {}
 
+            if (designStudioMode) {
+                toggleDesignStudioMode(false);
+            }
             applySessionUI();
 
             if (matches.some(m => m.pinMustChange)) {
@@ -1811,6 +1818,7 @@
             const adminSettingsSection = document.getElementById('settings-admin-only-section');
             const settingsTitle = document.getElementById('settings-modal-title');
             const backAdminBtn = document.getElementById('header-back-admin-btn');
+            const headerStudioBtn = document.getElementById('header-design-studio-btn');
 
             if (!loggedInSession) {
                 updateAppShellLayout('login');
@@ -1818,6 +1826,7 @@
                 mainViewport.classList.add('hidden');
                 userPill.classList.add('hidden');
                 userPill.classList.remove('flex');
+                if (headerStudioBtn) { headerStudioBtn.classList.remove('hidden'); headerStudioBtn.classList.add('flex'); }
                 if (backAdminBtn) { backAdminBtn.classList.add('hidden'); backAdminBtn.classList.remove('flex'); }
                 if (pwaBtn) pwaBtn.classList.add('hidden');
                 if (settingsBtn) settingsBtn.classList.add('hidden');
@@ -1828,6 +1837,11 @@
             }
             const isAdmin = loggedInSession.role === 'admin';
             const isSuperAdmin = loggedInSession.role === 'superadmin';
+            if (headerStudioBtn) {
+                const allowStudio = isAdmin || isSuperAdmin;
+                headerStudioBtn.classList.toggle('hidden', !allowStudio);
+                headerStudioBtn.classList.toggle('flex', allowStudio);
+            }
             loginView.classList.add('hidden');
             mainViewport.classList.remove('hidden');
             userPill.classList.remove('hidden');
@@ -2084,6 +2098,11 @@
         }
 
         window.switchRole = function(role) {
+            // Enforce strict role isolation: Guards and Hosts cannot switch to Admin/SuperAdmin views
+            if (loggedInSession && !designStudioMode) {
+                if (loggedInSession.role === 'guard' && role !== 'guard') role = 'guard';
+                if (loggedInSession.role === 'host' && role !== 'host') role = 'host';
+            }
             currentRole = role;
             updateAppShellLayout(role);
             if (role === 'guard' && geofenceConfig.enabled) {
@@ -2107,7 +2126,16 @@
             }
             ['guard', 'host', 'admin', 'superadmin'].forEach(r => {
                 const sec = document.getElementById(`view-${r}`);
-                if (sec) sec.classList.toggle('hidden', r !== role);
+                if (!sec) return;
+                const isActive = (r === role);
+                if (r === 'admin' && !designStudioMode) {
+                    // Prevent Tailwind's lg:grid from overriding hidden when Admin is not the active role
+                    sec.className = isActive
+                        ? "space-y-4 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0 lg:items-start"
+                        : "hidden";
+                } else {
+                    sec.classList.toggle('hidden', !isActive);
+                }
                 const tab = document.getElementById(`tab-${r}`);
                 if (!tab) return;
                 if (r === role) {
