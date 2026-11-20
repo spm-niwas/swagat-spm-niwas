@@ -321,6 +321,9 @@
                             <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
                             <span>Action Required at Main Gate</span>
                         </h3>
+                        <button type="button" onclick="syncLatestVisitorsFromCloud(true)" class="text-[11px] font-extrabold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-2.5 py-1 rounded-lg transition">
+                            ↻ Refresh
+                        </button>
                     </div>
                     <div id="host-pending-list" class="space-y-2.5">
                         <!-- Rendered dynamically -->
@@ -1024,7 +1027,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
         // Default Staff, Residents, Guards & Admin Directory Data (Includes Mobile & 4-Digit PIN)
@@ -1185,20 +1188,81 @@
             if (document.visibilityState === 'visible') {
                 if (hostAlertsEnabled) unlockSharedAudioContext();
                 syncHostWakeLock();
-                if (loggedInSession) renderAll();
+                if (loggedInSession) {
+                    syncLatestVisitorsFromCloud(false);
+                    renderAll();
+                }
             }
         });
+
+        window.addEventListener('focus', () => {
+            if (loggedInSession) syncLatestVisitorsFromCloud(false);
+        });
+
+        window.addEventListener('pageshow', () => {
+            if (loggedInSession) syncLatestVisitorsFromCloud(false);
+        });
+
+        window.syncLatestVisitorsFromCloud = async function(manual = false) {
+            if (!useFirestore || !db || !currentUser) {
+                if (loggedInSession) renderAll();
+                if (manual) showToast('🔄 Gate list refreshed.');
+                return;
+            }
+            try {
+                const visitorsCol = collection(db, 'artifacts', appId, 'public', 'data', 'visitors');
+                const snap = await getDocs(visitorsCol);
+                const freshList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                freshList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                if (freshList.length > 0) {
+                    visitors = freshList;
+                    renderAll();
+                }
+                if (manual) showToast('✅ Synced latest Main Gate requests!');
+            } catch (err) {
+                console.warn('Manual visitor sync warning:', err.message);
+                if (manual) showToast('⚠️ Could not reach cloud. Check internet connection.');
+            }
+        };
+
+        // Periodic heartbeat every 15s while Host screen is open to recover any mobile carrier WebSocket stall
+        setInterval(() => {
+            if (document.visibilityState === 'visible' && loggedInSession && loggedInSession.role === 'host') {
+                syncLatestVisitorsFromCloud(false);
+            }
+        }, 15000);
+
+        window.enableHostGateAlerts = async function() {
+            unlockSharedAudioContext();
+            hostAlertsEnabled = true;
+            try { localStorage.setItem('swagat_host_alerts_v1', '1'); } catch (e) {}
+
+            if ('Notification' in window && Notification.permission !== 'granted') {
+                try {
+                    const perm = await Notification.requestPermission();
+                    if (perm === 'granted') {
+                        await registerHostFcmPushToken();
+                    }
+                } catch (e) {}
+            } else if ('Notification' in window && Notification.permission === 'granted') {
+                await registerHostFcmPushToken();
+            }
+
+            playGateDoorbellChime();
+            updateHostAlertBannerUI();
+            showToast('🔔 Gate Bell & Lock-Screen Alerts enabled!');
+        };
 
         async function dispatchSystemLockScreenNotification(visitor) {
             if (!('Notification' in window) || Notification.permission !== 'granted') return;
             const title = `🚪 Guest at Main Gate — ${visitor.visitorName}`;
             const options = {
                 body: `${visitor.visitorType} for ${visitor.destination}. Tap to Approve or Deny.`,
-                tag: `swagat-gate-${visitor.id}`,
+                tag: 'swagat-gate-arrival',
                 renotify: true,
                 requireInteraction: true,
                 vibrate: [300, 150, 300, 150, 450],
-                data: { visitorId: visitor.id, url: './' }
+                data: { url: './' }
             };
             try {
                 const reg = window.swagatSwRegistration || (await navigator.serviceWorker?.getRegistration());
@@ -1211,25 +1275,6 @@
                 new Notification(title, options);
             } catch (e) {}
         }
-
-        window.enableHostGateAlerts = async function() {
-            hostAlertsEnabled = true;
-            try { localStorage.setItem('swagat_host_alerts_v1', '1'); } catch (e) {}
-            unlockSharedAudioContext();
-            playGateDoorbellChime();
-            if ('Notification' in window && Notification.permission !== 'granted') {
-                try { await Notification.requestPermission(); } catch (e) {}
-            }
-            if ('Notification' in window && Notification.permission === 'granted') {
-                await registerHostFcmPushToken();
-            }
-            updateHostAlertBannerUI();
-            if ('Notification' in window && Notification.permission === 'denied') {
-                showToast('⚠️ Browser notifications are blocked. Enable Notifications in Phone App Settings for screen-off alerts.');
-            } else {
-                showToast('🔔 Gate Bell & Background Push Alerts enabled!');
-            }
-        };
 
         // Register Firebase Cloud Messaging (FCM) Device Token so Server Push can wake a completely closed app
         async function registerHostFcmPushToken() {
@@ -2021,7 +2066,10 @@
             }
         }
 
-        window.addEventListener('online', () => updateSyncStatus(useFirestore ? 'CLOUD' : 'DEMO'));
+        window.addEventListener('online', () => {
+            updateSyncStatus(useFirestore ? 'CLOUD' : 'DEMO');
+            if (loggedInSession) syncLatestVisitorsFromCloud(false);
+        });
         window.addEventListener('offline', () => updateSyncStatus('OFFLINE'));
 
         async function initBackend(customConfig = null) {
@@ -2108,12 +2156,13 @@
                 }, () => {});
 
                 const visitorsCol = collection(db, 'artifacts', appId, 'public', 'data', 'visitors');
-                onSnapshot(visitorsCol, (snapshot) => {
-                    visitors = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    visitors.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                    if (visitors.length === 0) {
+                onSnapshot(visitorsCol, { includeMetadataChanges: false }, (snapshot) => {
+                    const cloudVisitors = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    cloudVisitors.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    if (cloudVisitors.length === 0) {
                         seedInitialDemoData();
                     } else {
+                        visitors = cloudVisitors;
                         renderAll();
                     }
                 }, (err) => {
