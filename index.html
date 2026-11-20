@@ -712,7 +712,31 @@
                     </div>
                 </div>
 
-                <!-- 5. Design Studio Preview Launcher (Super Admin Only in Production) -->
+                <!-- 5. Gemini AI API Key Collapsible Button & Input Form -->
+                <button type="button" id="btn-toggle-superadmin-gemini" onclick="toggleSuperAdminGeminiForm()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                    <span class="flex items-center gap-2"><span>✨</span><span>Gemini AI API Key (OCR & AI)</span></span>
+                    <span id="superadmin-gemini-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
+                </button>
+
+                <div id="superadmin-gemini-panel" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
+                    <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs text-slate-500">Enables Guard AI ID/Plate OCR, Smart Invites & Security Briefings across all campus devices</p>
+                        <button type="button" onclick="toggleSuperAdminGeminiForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold shrink-0">✕</button>
+                    </div>
+                    <div class="space-y-2.5">
+                        <input id="superadmin-gemini-key" type="password" autocomplete="off" placeholder="Paste Gemini API Key (AIzaSy...)" aria-label="Gemini API Key" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="saveSuperAdminGeminiKey()" class="w-full bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-3 rounded-xl shadow-sm transition">
+                                Save Key
+                            </button>
+                            <button type="button" onclick="clearSuperAdminGeminiKey()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm py-3 rounded-xl transition">
+                                Clear Key
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Design Studio Preview Launcher (Super Admin Only in Production) -->
                 <div class="bg-amber-50/90 rounded-2xl p-4 border border-amber-200 flex items-center justify-between gap-3">
                     <div class="min-w-0">
                         <h3 class="font-bold text-amber-950 text-sm">🎨 All-Screens Design View</h3>
@@ -2250,6 +2274,19 @@
                     }
                 }, () => {});
 
+                // Sync Gemini AI Key from Firestore so Guard & Host devices get OCR automatically
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'ai'), (snap) => {
+                    if (snap.exists() && snap.data().geminiApiKey !== undefined) {
+                        const cloudKey = snap.data().geminiApiKey || '';
+                        try {
+                            if (cloudKey) localStorage.setItem('swagat_gemini_key_v1', cloudKey);
+                            else localStorage.removeItem('swagat_gemini_key_v1');
+                        } catch (e) {}
+                        const superInput = document.getElementById('superadmin-gemini-key');
+                        if (superInput) superInput.value = cloudKey;
+                    }
+                }, () => {});
+
                 const visitorsCol = collection(db, 'artifacts', appId, 'public', 'data', 'visitors');
                 onSnapshot(visitorsCol, { includeMetadataChanges: false }, (snapshot) => {
                     const cloudVisitors = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -3096,9 +3133,56 @@
             if (shouldOpen) {
                 toggleSuperAdminAddForm(false);
                 toggleSuperAdminLogoForm(false);
+                toggleSuperAdminGeminiForm(false);
             }
             panel.classList.toggle('hidden', !shouldOpen);
             if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
+        };
+
+        window.toggleSuperAdminGeminiForm = function(forceState = null) {
+            const panel = document.getElementById('superadmin-gemini-panel');
+            const chevron = document.getElementById('superadmin-gemini-chevron');
+            if (!panel) return;
+            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
+            if (shouldOpen) {
+                toggleSuperAdminAddForm(false);
+                toggleSuperAdminLogoForm(false);
+                toggleSuperAdminGeofenceForm(false);
+                const keyInput = document.getElementById('superadmin-gemini-key');
+                if (keyInput) keyInput.value = localStorage.getItem('swagat_gemini_key_v1') || '';
+            }
+            panel.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
+        };
+
+        window.saveSuperAdminGeminiKey = async function() {
+            const val = document.getElementById('superadmin-gemini-key')?.value.trim() || '';
+            if (!val) {
+                showToast('⚠️ Paste your Gemini API Key (AIzaSy...) first.');
+                return;
+            }
+            try { localStorage.setItem('swagat_gemini_key_v1', val); } catch (e) {}
+            if (useFirestore && db && currentUser) {
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'ai'), { geminiApiKey: val, updatedAt: Date.now() }, { merge: true });
+                } catch (err) {
+                    console.warn('Gemini key cloud sync warning:', err.message);
+                }
+            }
+            toggleSuperAdminGeminiForm(false);
+            showToast('✨ Gemini API Key saved & synced to all campus devices!');
+        };
+
+        window.clearSuperAdminGeminiKey = async function() {
+            try { localStorage.removeItem('swagat_gemini_key_v1'); } catch (e) {}
+            const keyInput = document.getElementById('superadmin-gemini-key');
+            if (keyInput) keyInput.value = '';
+            if (useFirestore && db && currentUser) {
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'ai'), { geminiApiKey: '', updatedAt: Date.now() }, { merge: true });
+                } catch (err) {}
+            }
+            showToast('🧹 Gemini API Key cleared.');
         };
 
         window.toggleSuperAdminGeofenceForm = function(forceState = null) {
@@ -4111,6 +4195,3 @@
     </script>
 </body>
 </html>
-```
-
-I have replaced the top-right logout icon in **`index.html`** with a **Gear (`⚙️`) icon** when logged in. Clicking it opens a profile card showing the signed-in user's **Name**, **Category** (and assigned unit), and a **Logout** button with a confirmation prompt before signing out.
