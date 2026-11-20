@@ -426,7 +426,7 @@
                     <span id="host-family-unit-badge" class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full shrink-0">Flat</span>
                 </div>
 
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                <div id="host-add-family-card" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
                     <div>
                         <h3 class="text-base font-extrabold text-slate-900">Add Family Member</h3>
                         <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">They will sign in with their own mobile & PIN and receive simultaneous Main Gate alerts for this flat.</p>
@@ -442,6 +442,10 @@
                             Add
                         </button>
                     </div>
+                </div>
+
+                <div id="host-family-readonly-note" class="hidden bg-indigo-50/80 border border-indigo-200 rounded-2xl p-3.5 text-xs text-indigo-950 font-medium leading-relaxed">
+                    🔒 Only the <strong>Primary Host</strong> of this flat can add or remove family members.
                 </div>
 
                 <div class="space-y-2">
@@ -2424,10 +2428,33 @@
             if (el) el.value = String(Math.floor(1000 + Math.random() * 9000));
         };
 
+        function isPrimaryHostOfFlat(member, allFlatMembers) {
+            if (!member) return false;
+            if (member.isPrimaryHost === true) return true;
+            if (member.isFamilyMember === true) return false;
+            const memberPhone = normalizeIndianMobile(member.phone);
+            const hasOfficeAllotment = directoryEntries.some(d => d.zone === 'OFFICE' && normalizeIndianMobile(d.phone) === memberPhone);
+            if (hasOfficeAllotment) return true;
+            // Fallback for legacy records: first registered resident of the flat is Primary Host
+            return allFlatMembers.length > 0 && allFlatMembers[0].id === member.id;
+        }
+
+        function isCurrentUserPrimaryHost(flatUnit) {
+            if (designStudioMode && !loggedInSession) return true;
+            if (!loggedInSession) return false;
+            const members = directoryEntries.filter(d => d.zone === 'RESIDENTIAL' && d.unit.toLowerCase() === flatUnit.toLowerCase());
+            const me = members.find(m => normalizeIndianMobile(m.phone) === normalizeIndianMobile(loggedInSession.phone));
+            return isPrimaryHostOfFlat(me, members);
+        }
+
         window.addHostFamilyMember = async function() {
             const flatUnit = getActiveResidentialUnitForHost();
             if (!flatUnit) {
                 showToast("⚠️ Switch Active Host Unit to a Residential Flat first.");
+                return;
+            }
+            if (!isCurrentUserPrimaryHost(flatUnit)) {
+                showToast("🔒 Only the Primary Host of " + flatUnit + " can add family members.");
                 return;
             }
             const name = document.getElementById('host-family-name').value.trim();
@@ -2456,6 +2483,7 @@
                 name,
                 phone,
                 pin,
+                isFamilyMember: true,
                 pinMustChange: true,
                 pinResetRequested: false
             };
@@ -2479,6 +2507,14 @@
             const target = directoryEntries.find(d => d.id === id);
             if (!target) return;
             const flatMembers = directoryEntries.filter(d => d.zone === 'RESIDENTIAL' && d.unit.toLowerCase() === target.unit.toLowerCase());
+            if (!isCurrentUserPrimaryHost(target.unit)) {
+                showToast("🔒 Only the Primary Host can remove family members.");
+                return;
+            }
+            if (isPrimaryHostOfFlat(target, flatMembers)) {
+                showToast("🔒 The Primary Host cannot be deleted from this flat.");
+                return;
+            }
             if (flatMembers.length <= 1) {
                 showToast("⚠️ At least 1 primary resident must remain on the flat.");
                 return;
@@ -2503,6 +2539,8 @@
             const list = document.getElementById('host-family-list');
             const countPill = document.getElementById('host-family-count');
             const familyCardBtn = document.getElementById('btn-host-family-card');
+            const addFamilyCard = document.getElementById('host-add-family-card');
+            const readOnlyNote = document.getElementById('host-family-readonly-note');
 
             if (familyCardBtn) {
                 familyCardBtn.classList.toggle('hidden', !flatUnit);
@@ -2511,25 +2549,34 @@
 
             if (badge) badge.textContent = flatUnit;
             const members = directoryEntries.filter(d => d.zone === 'RESIDENTIAL' && d.unit.toLowerCase() === flatUnit.toLowerCase());
+            const viewerIsPrimary = isCurrentUserPrimaryHost(flatUnit);
+
+            if (addFamilyCard) addFamilyCard.classList.toggle('hidden', !viewerIsPrimary);
+            if (readOnlyNote) readOnlyNote.classList.toggle('hidden', viewerIsPrimary);
             if (countPill) countPill.textContent = `${members.length} ${members.length === 1 ? 'member' : 'members'}`;
 
             if (!list) return;
             list.innerHTML = members.map(m => {
-                const isSelf = loggedInSession && m.phone === loggedInSession.phone;
-                const canDelete = !isSelf && members.length > 1;
+                const isSelf = loggedInSession && normalizeIndianMobile(m.phone) === normalizeIndianMobile(loggedInSession.phone);
+                const isPrimary = isPrimaryHostOfFlat(m, members);
+                const canDelete = viewerIsPrimary && !isPrimary && !isSelf && members.length > 1;
                 return `
                     <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-2.5">
                         <div class="space-y-1">
-                            <div class="flex items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
                                 <p class="text-base font-extrabold text-slate-900 break-words">${m.name}</p>
-                                ${isSelf ? `<span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 shrink-0">You</span>` : ''}
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    ${isPrimary ? `<span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">👑 Primary Host</span>` : ''}
+                                    ${isSelf ? `<span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800">You</span>` : ''}
+                                </div>
                             </div>
                             <p class="text-xs font-medium text-slate-600">📱 ${displayIndianMobile(m.phone)} • ${m.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${m.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}</p>
                         </div>
+                        ${viewerIsPrimary ? `
                         <div class="grid ${canDelete ? 'grid-cols-2' : 'grid-cols-1'} gap-2 pt-2 border-t border-slate-100">
                             <button type="button" onclick="adminResetUserPin('${m.id}')" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center transition">📲 Share PIN</button>
                             ${canDelete ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="w-full py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold text-center transition">🗑️ Delete</button>` : ''}
-                        </div>
+                        </div>` : ''}
                     </div>
                 `;
             }).join('');
