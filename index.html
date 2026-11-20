@@ -714,7 +714,11 @@
 
                 <!-- 5. Gemini AI API Key Collapsible Button & Input Form -->
                 <button type="button" id="btn-toggle-superadmin-gemini" onclick="toggleSuperAdminGeminiForm()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
-                    <span class="flex items-center gap-2"><span>✨</span><span>Gemini AI API Key (OCR & AI)</span></span>
+                    <span class="flex items-center gap-2">
+                        <span>✨</span>
+                        <span>Gemini AI API Key (OCR & AI)</span>
+                        <span id="superadmin-gemini-status" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">Not Set</span>
+                    </span>
                     <span id="superadmin-gemini-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
                 </button>
 
@@ -1068,7 +1072,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
 
         // Default Staff, Residents, Guards & Admin Directory Data (Includes Mobile & 4-Digit PIN)
@@ -1111,17 +1115,24 @@
         let hostWakeLockWanted = localStorage.getItem('swagat_host_wakelock_v1') === '1';
         let sharedAudioCtx = null;
         let activeDoorbellLoopTimer = null;
+        let cloudGeminiApiKey = (localStorage.getItem('swagat_gemini_key_v1') || '').trim();
 
-        // ==================== HOST GATE BELL, LOCK-SCREEN & BACKGROUND ALERTS ====================
-        function unlockSharedAudioContext() {
+        function syncGeminiKeyState(newKey) {
+            cloudGeminiApiKey = (newKey || '').trim();
             try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                if (!AudioCtx) return null;
-                if (!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
-                if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
-                return sharedAudioCtx;
-            } catch (e) {
-                return null;
+                if (cloudGeminiApiKey) localStorage.setItem('swagat_gemini_key_v1', cloudGeminiApiKey);
+                else localStorage.removeItem('swagat_gemini_key_v1');
+            } catch (e) {}
+            const superInput = document.getElementById('superadmin-gemini-key');
+            if (superInput && document.activeElement !== superInput) {
+                superInput.value = cloudGeminiApiKey;
+            }
+            const statusPill = document.getElementById('superadmin-gemini-status');
+            if (statusPill) {
+                statusPill.textContent = cloudGeminiApiKey ? '🟢 Active' : 'Not Set';
+                statusPill.className = cloudGeminiApiKey
+                    ? 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800'
+                    : 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500';
             }
         }
 
@@ -2277,13 +2288,7 @@
                 // Sync Gemini AI Key from Firestore so Guard & Host devices get OCR automatically
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'ai'), (snap) => {
                     if (snap.exists() && snap.data().geminiApiKey !== undefined) {
-                        const cloudKey = snap.data().geminiApiKey || '';
-                        try {
-                            if (cloudKey) localStorage.setItem('swagat_gemini_key_v1', cloudKey);
-                            else localStorage.removeItem('swagat_gemini_key_v1');
-                        } catch (e) {}
-                        const superInput = document.getElementById('superadmin-gemini-key');
-                        if (superInput) superInput.value = cloudKey;
+                        syncGeminiKeyState(snap.data().geminiApiKey || '');
                     }
                 }, () => {});
 
@@ -3149,7 +3154,7 @@
                 toggleSuperAdminLogoForm(false);
                 toggleSuperAdminGeofenceForm(false);
                 const keyInput = document.getElementById('superadmin-gemini-key');
-                if (keyInput) keyInput.value = localStorage.getItem('swagat_gemini_key_v1') || '';
+                if (keyInput) keyInput.value = cloudGeminiApiKey || localStorage.getItem('swagat_gemini_key_v1') || '';
             }
             panel.classList.toggle('hidden', !shouldOpen);
             if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
@@ -3161,7 +3166,7 @@
                 showToast('⚠️ Paste your Gemini API Key (AIzaSy...) first.');
                 return;
             }
-            try { localStorage.setItem('swagat_gemini_key_v1', val); } catch (e) {}
+            syncGeminiKeyState(val);
             if (useFirestore && db && currentUser) {
                 try {
                     await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'ai'), { geminiApiKey: val, updatedAt: Date.now() }, { merge: true });
@@ -3174,7 +3179,7 @@
         };
 
         window.clearSuperAdminGeminiKey = async function() {
-            try { localStorage.removeItem('swagat_gemini_key_v1'); } catch (e) {}
+            syncGeminiKeyState('');
             const keyInput = document.getElementById('superadmin-gemini-key');
             if (keyInput) keyInput.value = '';
             if (useFirestore && db && currentUser) {
@@ -3183,15 +3188,6 @@
                 } catch (err) {}
             }
             showToast('🧹 Gemini API Key cleared.');
-        };
-
-        window.toggleSuperAdminGeofenceForm = function(forceState = null) {
-            const panel = document.getElementById('superadmin-geofence-panel');
-            const chevron = document.getElementById('superadmin-geofence-chevron');
-            if (!panel) return;
-            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
-            panel.classList.toggle('hidden', !shouldOpen);
-            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
         };
 
         window.addCampusAdminBySuperAdmin = async function() {
@@ -3507,18 +3503,31 @@
         };
 
         async function callGemini(parts) {
-            const apiKey = localStorage.getItem('swagat_gemini_key_v1') || '';
-            if (!apiKey) return null;
+            let apiKey = (cloudGeminiApiKey || localStorage.getItem('swagat_gemini_key_v1') || '').trim();
+            if (!apiKey && useFirestore && db && currentUser) {
+                try {
+                    const aiSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'ai'));
+                    if (aiSnap.exists() && aiSnap.data().geminiApiKey) {
+                        syncGeminiKeyState(aiSnap.data().geminiApiKey);
+                        apiKey = cloudGeminiApiKey;
+                    }
+                } catch (e) {}
+            }
+            if (!apiKey) return { error: 'NO_KEY' };
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts }] })
                 });
                 const data = await res.json();
-                return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+                if (!res.ok || data?.error) {
+                    return { error: data?.error?.message || `HTTP ${res.status}` };
+                }
+                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                return text ? { text } : { error: 'EMPTY_RESPONSE' };
             } catch (e) {
-                return null;
+                return { error: e.message || 'NETWORK_ERROR' };
             }
         }
 
@@ -3534,12 +3543,12 @@
             reader.onload = async (ev) => {
                 try {
                     const base64Data = ev.target.result.split(',')[1];
-                    const rawText = await callGemini([
+                    const result = await callGemini([
                         { text: 'Extract visitor full name and Indian vehicle registration plate number from this image. Return strictly JSON: {"name":"","vehicle":""}' },
                         { inlineData: { mimeType: file.type || 'image/jpeg', data: base64Data } }
                     ]);
-                    if (rawText) {
-                        const cleaned = rawText.replace(/```json|```/g, '').trim();
+                    if (result?.text) {
+                        const cleaned = result.text.replace(/```json|```/g, '').trim();
                         const parsed = JSON.parse(cleaned);
                         if (parsed.name) {
                             const nameEl = document.getElementById('visitor-name');
@@ -3550,8 +3559,10 @@
                             if (vehEl) { vehEl.value = parsed.vehicle.toUpperCase(); }
                         }
                         showToast('✨ ID / Plate details auto-filled!');
+                    } else if (result?.error === 'NO_KEY') {
+                        showToast('ℹ️ Add your Gemini API key in Super Admin / Admin Settings for live OCR.');
                     } else {
-                        showToast('ℹ️ Add your Gemini API key in ⚙️ Admin Settings for live OCR.');
+                        showToast(`⚠️ Gemini OCR: ${result?.error || 'Could not read image'}`);
                     }
                 } catch (err) {
                     showToast('⚠️ Could not extract details from image.');
@@ -3572,15 +3583,15 @@
             const btn = document.getElementById('btn-ai-invite');
             if (btn) btn.textContent = '✨ Drafting...';
 
-            const aiReply = await callGemini([{
+            const aiResult = await callGemini([{
                 text: `Write a warm, polite 2-sentence WhatsApp gate pass invitation for ${guestName} visiting ${destination} at SPM NIWAS. Gate OTP is *${otp}*. ${note ? 'Additional note: ' + note : ''}`
             }]);
 
             if (btn) btn.textContent = '✨ Draft Invite';
             const fallback = `Namaste ${guestName}! 🙏 You are cordially invited to ${destination} at SPM NIWAS.${note ? ' (' + note + ')' : ''} Please show Gate Pass OTP *${otp}* at the Main Gate for seamless entry.`;
             const box = document.getElementById('ai-invite-text');
-            if (box) box.value = aiReply ? aiReply.trim() : fallback;
-            showToast(aiReply ? '✨ Gemini drafted your invite!' : '📝 Invite message ready!');
+            if (box) box.value = aiResult?.text ? aiResult.text.trim() : fallback;
+            showToast(aiResult?.text ? '✨ Gemini drafted your invite!' : '📝 Invite message ready!');
         };
 
         window.openGuestWhatsApp = function() {
@@ -3611,13 +3622,13 @@
             const resIn = visitors.filter(v => v.zone === 'RESIDENTIAL' && v.status === 'APPROVED').length;
             const pending = visitors.filter(v => v.status === 'PENDING').length;
 
-            const aiSummary = await callGemini([{
+            const aiResult = await callGemini([{
                 text: `Provide a concise 3-bullet executive security briefing for SPM NIWAS campus: Total logs today: ${visitors.length}, Corporate Office inside: ${officeIn}, Residential Wing inside: ${resIn}, Pending gate approvals: ${pending}.`
             }]);
 
             if (out) {
-                out.innerHTML = aiSummary
-                    ? aiSummary.replace(/\n/g, '<br>')
+                out.innerHTML = aiResult?.text
+                    ? aiResult.text.replace(/\n/g, '<br>')
                     : `<strong>SPM NIWAS Live Security Snapshot:</strong><br>• <strong>${officeIn + resIn}</strong> total visitors currently inside (${officeIn} Corporate Office, ${resIn} Residential Wing).<br>• <strong>${pending}</strong> walk-in visitor(s) currently awaiting host approval at the Main Gate.<br>• <strong>${visitors.length}</strong> total gate movements logged today with zero unauthorized breaches.`;
             }
         };
@@ -4186,6 +4197,7 @@
         }
 
         // Boot App
+        syncGeminiKeyState(cloudGeminiApiKey);
         applyCampusLogoUI(campusLogoDataUrl);
         syncGeofenceAdminUI();
         selectZone('OFFICE');
