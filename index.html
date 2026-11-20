@@ -30,8 +30,8 @@
     <!-- Mobile App Shell (Full-screen on mobile, sleek phone frame on desktop) -->
     <div id="app-shell" class="w-full sm:max-w-[430px] h-[100dvh] sm:h-[850px] bg-slate-50 sm:rounded-[2.5rem] sm:shadow-2xl sm:border-[6px] sm:border-slate-800 flex flex-col overflow-hidden relative">
         
-        <!-- Top Status & App Bar: Strictly App Name, Cloud Status & Logout Icon -->
-        <header id="app-header" class="bg-slate-900 text-white px-4 pt-4 pb-3 shrink-0 z-20 shadow-md">
+        <!-- Top Status & App Bar -->
+        <header id="app-header" class="bg-slate-900 text-white px-4 pt-4 pb-3 shrink-0 z-30 shadow-md relative">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <!-- Dynamic Campus Logo or Fallback Icon -->
@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-1.5 shrink-0">
+                <div class="flex items-center gap-1.5 shrink-0 relative">
                     <!-- Design Studio Pill (Shown ONLY when Design Mode ?design=1 is active) -->
                     <button id="header-design-studio-btn" type="button" onclick="toggleDesignStudioMode()" class="hidden items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 shadow transition" title="Exit Design Studio">
                         <span>🔒 Single View</span>
@@ -57,13 +57,26 @@
                     <button id="header-back-admin-btn" onclick="switchRole('admin')" class="hidden items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition" title="Return to Admin Dashboard">
                         <span>← Admin</span>
                     </button>
-                    <!-- Clean Logout Icon Button (Shown on all logged-in screens) -->
-                    <button id="header-user-pill" onclick="logoutUser()" class="hidden items-center justify-center w-10 h-10 rounded-xl bg-slate-800 hover:bg-rose-900/70 text-rose-400 border border-slate-700 transition" title="Logout">
+                    <!-- Gear Icon Button (Shown on all logged-in screens) -->
+                    <button id="header-user-pill" type="button" onclick="toggleHeaderUserMenu(event)" class="hidden items-center justify-center w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 transition" title="Account & Logout">
                         <span id="header-user-label" class="sr-only">User</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"/>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                     </button>
+
+                    <!-- Gear Icon User Details & Logout Popover -->
+                    <div id="header-user-dropdown" class="hidden absolute right-0 top-12 w-64 bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-200 p-4 z-50 space-y-3">
+                        <div class="space-y-1 border-b border-slate-100 pb-3">
+                            <p id="menu-user-name" class="text-sm font-extrabold text-slate-900 break-words">User Name</p>
+                            <span id="menu-user-category" class="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-100">Category</span>
+                            <p id="menu-user-unit" class="text-xs font-medium text-slate-500 break-words pt-0.5"></p>
+                        </div>
+                        <button type="button" onclick="confirmLogoutPrompt()" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-[0.99] text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
+                            <span>Logout</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -934,10 +947,10 @@
             </div>
         </div>
 
-        <!-- Unified Delete Confirmation Dialog (Used Everywhere in App) -->
+        <!-- Unified Delete / Logout Confirmation Dialog -->
         <div id="confirm-action-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
-                <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto font-bold">🗑️</div>
+                <div id="confirm-dialog-icon" class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto font-bold">🗑️</div>
                 <div>
                     <h3 id="confirm-dialog-title" class="font-extrabold text-slate-900 text-base">Confirm Deletion</h3>
                     <p id="confirm-dialog-message" class="text-xs text-slate-500 mt-1 leading-relaxed">Are you sure you want to delete this record? This action cannot be undone.</p>
@@ -1971,11 +1984,79 @@
             showToast("📨 PIN reset request sent to SPM NIWAS Admin!");
         };
 
+        function getLoggedInCategoryDetails() {
+            if (!loggedInSession) return { category: 'Guest', unitText: '' };
+            if (loggedInSession.role === 'superadmin') return { category: '👑 Super Admin', unitText: 'Director Office' };
+            if (loggedInSession.role === 'admin') return { category: '📊 Campus Admin', unitText: 'Management Office' };
+            if (loggedInSession.role === 'guard') {
+                const guardRec = directoryEntries.find(d => d.phone === loggedInSession.phone && d.zone === 'GUARD');
+                return { category: '🛡️ Security Guard', unitText: guardRec?.unit || 'Main Gate' };
+            }
+            const userRecs = directoryEntries.filter(d => d.phone === loggedInSession.phone);
+            const hasOffice = userRecs.some(r => r.zone === 'OFFICE');
+            const hasRes = userRecs.some(r => r.zone === 'RESIDENTIAL');
+            const isFamily = userRecs.some(r => r.isFamilyMember === true);
+            const units = (loggedInSession.allowedUnits || []).map(extractUnitName).filter(Boolean).join(' • ');
+
+            if (hasOffice && hasRes) return { category: '🏢🏠 Office with Residence', unitText: units };
+            if (isFamily) return { category: '👨‍👩‍👧‍👦 Family Member', unitText: units };
+            if (hasRes) return { category: '🏠 Resident', unitText: units };
+            return { category: '🏢 Office Staff', unitText: units };
+        }
+
+        window.toggleHeaderUserMenu = function(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('header-user-dropdown');
+            if (!dropdown || !loggedInSession) return;
+
+            const nameEl = document.getElementById('menu-user-name');
+            const catEl = document.getElementById('menu-user-category');
+            const unitEl = document.getElementById('menu-user-unit');
+            const details = getLoggedInCategoryDetails();
+
+            if (nameEl) nameEl.textContent = loggedInSession.name;
+            if (catEl) catEl.textContent = details.category;
+            if (unitEl) {
+                unitEl.textContent = details.unitText ? `Unit: ${details.unitText}` : '';
+                unitEl.classList.toggle('hidden', !details.unitText);
+            }
+            dropdown.classList.toggle('hidden');
+        };
+
+        window.confirmLogoutPrompt = function() {
+            const dropdown = document.getElementById('header-user-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+            const iconEl = document.getElementById('confirm-dialog-icon');
+            const proceedBtn = document.getElementById('confirm-dialog-proceed-btn');
+            if (iconEl) iconEl.textContent = '🚪';
+            if (proceedBtn) proceedBtn.textContent = 'Logout';
+            requestDeleteConfirmation({
+                title: 'Confirm Logout',
+                message: `Are you sure you want to log out of ${loggedInSession ? loggedInSession.name : 'your account'}?`,
+                onConfirm: () => {
+                    if (iconEl) iconEl.textContent = '🗑️';
+                    if (proceedBtn) proceedBtn.textContent = 'Delete';
+                    logoutUser();
+                }
+            });
+        };
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('header-user-dropdown');
+            const gearBtn = document.getElementById('header-user-pill');
+            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && (!gearBtn || !gearBtn.contains(e.target))) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
         window.logoutUser = function() {
+            const dropdown = document.getElementById('header-user-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
             loggedInSession = null;
             demoBarEnabled = false;
             try { localStorage.removeItem('swagat_session_v1'); } catch (e) {}
-            document.getElementById('login-pin').value = '';
+            const loginPinEl = document.getElementById('login-pin');
+            if (loginPinEl) loginPinEl.value = '';
             applySessionUI();
             showToast("🔒 Signed out.");
         };
@@ -2010,12 +2091,15 @@
             const loginView = document.getElementById('view-login');
             const mainViewport = document.getElementById('main-app-viewport');
             const userPill = document.getElementById('header-user-pill');
+            const userDropdown = document.getElementById('header-user-dropdown');
             const roleBar = document.getElementById('demo-role-switcher');
             const changePinBox = document.getElementById('settings-change-pin-box');
             const adminSettingsSection = document.getElementById('settings-admin-only-section');
             const settingsTitle = document.getElementById('settings-modal-title');
             const backAdminBtn = document.getElementById('header-back-admin-btn');
             const headerStudioBtn = document.getElementById('header-design-studio-btn');
+
+            if (userDropdown) userDropdown.classList.add('hidden');
 
             if (headerStudioBtn) {
                 headerStudioBtn.classList.toggle('hidden', !designStudioMode);
@@ -2024,29 +2108,36 @@
 
             if (!loggedInSession) {
                 updateAppShellLayout('login');
-                loginView.classList.remove('hidden');
-                mainViewport.classList.add('hidden');
-                userPill.classList.add('hidden');
-                userPill.classList.remove('flex');
+                if (loginView) loginView.classList.remove('hidden');
+                if (mainViewport) mainViewport.classList.add('hidden');
+                if (userPill) {
+                    userPill.classList.add('hidden');
+                    userPill.classList.remove('flex');
+                }
                 if (backAdminBtn) { backAdminBtn.classList.add('hidden'); backAdminBtn.classList.remove('flex'); }
-                roleBar.classList.add('hidden');
+                if (roleBar) roleBar.classList.add('hidden');
                 if (changePinBox) changePinBox.classList.add('hidden');
                 if (adminSettingsSection) adminSettingsSection.classList.add('hidden');
                 return;
             }
             const isAdmin = loggedInSession.role === 'admin';
             const isSuperAdmin = loggedInSession.role === 'superadmin';
-            loginView.classList.add('hidden');
-            mainViewport.classList.remove('hidden');
-            userPill.classList.remove('hidden');
-            userPill.classList.add('flex');
+            if (loginView) loginView.classList.add('hidden');
+            if (mainViewport) mainViewport.classList.remove('hidden');
+            if (userPill) {
+                userPill.classList.remove('hidden');
+                userPill.classList.add('flex');
+            }
             if (changePinBox) changePinBox.classList.remove('hidden');
             if (adminSettingsSection) adminSettingsSection.classList.toggle('hidden', !isAdmin);
             if (settingsTitle) settingsTitle.textContent = isAdmin ? '⚙️ Admin Settings & Cloud Sync' : '⚙️ Account Settings';
-            document.getElementById('header-user-label').textContent = isSuperAdmin ? 'Super Admin' : loggedInSession.name.split(' ')[0];
+            const headerUserLabel = document.getElementById('header-user-label');
+            if (headerUserLabel) headerUserLabel.textContent = isSuperAdmin ? 'Super Admin' : loggedInSession.name.split(' ')[0];
 
-            if (demoBarEnabled && isAdmin) roleBar.classList.remove('hidden');
-            else roleBar.classList.add('hidden');
+            if (roleBar) {
+                if (demoBarEnabled && isAdmin) roleBar.classList.remove('hidden');
+                else roleBar.classList.add('hidden');
+            }
 
             syncDirectoryAcrossUI();
             switchRole(loggedInSession.role);
@@ -4022,6 +4113,4 @@
 </html>
 ```
 
-I have cleaned up the top header bar across all screens in **`index.html`**:
-- **Clean Header Everywhere:** Displays only the **Swagat (`SPM NIWAS • Guest welcome app`)** logo/title, **`CLOUD LIVE`** status badge, and a clean **Logout (`⏻`)** icon button on every logged-in screen.
-- **Design Mode Only (`?design=1`):** Removed the **`🎨 All Screens`** button from live view so all screens side-by-side only appear when explicitly launched in Design Studio mode (`?design=1`).
+I have replaced the top-right logout icon in **`index.html`** with a **Gear (`⚙️`) icon** when logged in. Clicking it opens a profile card showing the signed-in user's **Name**, **Category** (and assigned unit), and a **Logout** button with a confirmation prompt before signing out.
