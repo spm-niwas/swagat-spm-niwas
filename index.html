@@ -550,33 +550,33 @@
                         <div class="flex items-center justify-between gap-2">
                             <div class="min-w-0">
                                 <h3 class="font-bold text-slate-800 text-sm">📍 Main Gate Geofencing</h3>
-                                <p class="text-[11px] text-slate-500">Require Guard to be physically at Main Gate</p>
+                    <!-- Super Admin Dedicated Login Modal (director@spmniwas.in) -->
+                    <div id="superadmin-login-modal" class="hidden absolute inset-0 bg-slate-900/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-extrabold text-slate-900 text-lg">👑 Super Admin Login</h3>
+                                <button onclick="closeModal('superadmin-login-modal')" class="p-2 rounded-xl bg-slate-100 text-slate-600 font-bold">✕</button>
                             </div>
-                            <button type="button" id="btn-toggle-geofence" onclick="toggleGeofenceEnabled()" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-700 transition shrink-0">
-                                OFF
-                            </button>
-                        </div>
-                        <button type="button" id="btn-capture-gate-gps" onclick="captureCurrentGateCoordinates()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition">
-                            <span>🎯 Capture Current Gate Location</span>
-                        </button>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="min-w-0">
-                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Latitude</label>
-                                <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="22.5726" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs font-mono">
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Authorized access to appoint or remove Campus Admins.
+                            </p>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Super Admin Email *</label>
+                                    <input id="superadmin-login-email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" value="director@spmniwas.in" placeholder="director@spmniwas.in" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">4-Digit PIN *</label>
+                                    <input id="superadmin-login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="••••" class="pin-mask w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-extrabold tracking-[0.45em] text-center text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
                             </div>
-                            <div class="min-w-0">
-                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Longitude</label>
-                                <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="88.3639" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-1.5 text-xs font-mono">
-                            </div>
-                            <div class="min-w-0">
-                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-0.5">Radius</label>
-                                <select id="geo-radius-select" onchange="saveGeofenceFields()" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs font-bold">
-                                    <option value="50">50m</option>
-                                    <option value="100" selected>100m</option>
-                                    <option value="150">150m</option>
-                                    <option value="250">250m</option>
-                                    <option value="500">500m</option>
-                                </select>
+                            <div class="flex gap-2.5 pt-1">
+                                <button type="button" onclick="handleSuperAdminModalLogin()" class="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-bold text-sm py-3.5 rounded-xl shadow">
+                                    Access Super Admin
+                                </button>
+                                <button type="button" onclick="closeModal('superadmin-login-modal')" class="bg-slate-100 text-slate-700 font-bold text-sm px-4 py-3.5 rounded-xl">
+                                    Cancel
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -623,24 +623,24 @@
                             <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="OFFICE">🏢 Office Staff</option>
                                 <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
-                                <option value="GUARD">🛡️ Security Guard</option>
-                            </select>
-                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div id="admin-dir-flat-wrap" class="hidden">
-                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full min-w-0 bg-emerald-50/70 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210 *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
-                            <div class="w-28 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full min-w-0 px-2 py-2 text-xs text-center font-bold tracking-widest focus:outline-none">
-                                <button type="button" onclick="generateRandomAdminPin()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 shrink-0" title="Auto-generate 4-digit PIN">🎲</button>
+                    <!-- Generated OTP & AI WhatsApp Invite Card -->
+                    <div id="generated-pass-card" class="hidden bg-emerald-50/90 border border-emerald-200 rounded-2xl p-4 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-emerald-800">4-Digit Entry OTP</p>
+                                <p id="gen-otp-code" class="text-3xl font-black tracking-[0.22em] text-emerald-950 mt-0.5">0000</p>
                             </div>
-                            <button type="button" onclick="addDirectoryEntry()" class="flex-1 min-w-[140px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition">
-                                + Add & Share PIN
+                            <button type="button" id="btn-ai-invite" onclick="generateAiInvite()" class="px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition shrink-0">
+                                ✨ Draft Invite
+                            </button>
+                        </div>
+                        <textarea id="ai-invite-text" rows="3" class="w-full bg-white border border-emerald-200 rounded-xl p-3 text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <button type="button" onclick="openGuestWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3.5 rounded-xl shadow-sm transition">
+                                📲 Send on WhatsApp
+                            </button>
+                            <button type="button" onclick="copyInviteText()" class="bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-bold text-sm py-3.5 rounded-xl transition">
+                                📋 Copy Message
                             </button>
                         </div>
                     </div>
@@ -697,23 +697,124 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 mb-1">Admin Full Name *</label>
                             <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., S. K. Banerjee" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="min-w-0">
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Latitude</label>
+                                <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="22.5726" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
+                            </div>
+                            <div class="min-w-0">
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Longitude</label>
+                                <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="88.3639" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
+                            </div>
+                            <div class="min-w-0">
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Radius</label>
+                                <select id="geo-radius-select" onchange="saveGeofenceFields()" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-sm font-bold">
+                                    <option value="50">50m</option>
+                                    <option value="100" selected>100m</option>
+                                    <option value="150">150m</option>
+                                    <option value="250">250m</option>
+                                    <option value="500">500m</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                    </div>
+                    <!-- Add New Host / Guard Form -->
+                    <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="OFFICE">🏢 Office Staff</option>
+                                <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
+                                <option value="GUARD">🛡️ Security Guard</option>
+                            </select>
+                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div id="admin-dir-flat-wrap" class="hidden">
+                            <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full min-w-0 bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-3 text-sm font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210 *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
+                            <div class="w-32 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
+                                <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full min-w-0 px-2.5 py-3 text-sm text-center font-bold tracking-widest focus:outline-none">
+                                <button type="button" onclick="generateRandomAdminPin()" class="px-3 py-3 bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-700 shrink-0" title="Auto-generate 4-digit PIN">🎲</button>
+                            </div>
+                            <button type="button" onclick="addDirectoryEntry()" class="flex-1 min-w-[160px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-sm transition">
+                                + Add & Share PIN
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex flex-wrap gap-2 text-xs font-bold">
+                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-3 py-2 rounded-xl bg-slate-900 text-white transition">All</button>
+                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢 Office Staff</button>
+                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢🏠 Office + Res</button>
+                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🛡️ Guards</button>
+                        <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">📊 Admins</button>
+                        <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🔄 Resets</button>
+                    </div>
+
+                    <!-- Directory List -->
+                    <div id="admin-directory-list" class="max-h-80 lg:max-h-[450px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl"></div>
+                </div>
+            </section>
+
+            <!-- ==================== 4. SUPER ADMIN VIEW (director@spmniwas.in ONLY) ==================== -->
+            <section id="view-superadmin" class="hidden space-y-4">
+                <!-- Super Admin Identity Header Card -->
+                <div class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white rounded-2xl p-4 shadow-lg border border-indigo-500/30 space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-extrabold uppercase tracking-[0.16em] px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40">
+                            👑 Super Admin
+                        </span>
+                        <span id="superadmin-admin-count" class="text-xs font-extrabold text-emerald-300">0 Admins</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-white">Campus Admin Governance</h2>
+                        <p class="text-xs text-slate-300 mt-0.5">Bound Account: director@spmniwas.in</p>
+                    </div>
+                </div>
+
+                <!-- 1. Active Campus Admins List (Top) -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-900 text-base">Authorized Campus Admins</h3>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Directory</span>
+                    </div>
+                    <div id="superadmin-admin-list" class="divide-y divide-slate-100 border border-slate-100 rounded-xl">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- 2. Add New Campus Admin Form (Middle) -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Appoint New Campus Admin</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Grant Admin privileges to authorized SPM NIWAS leadership</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Admin Full Name *</label>
+                            <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., S. K. Banerjee" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1">10-Digit Mobile *</label>
-                                <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <label class="block text-xs font-bold text-slate-600 mb-1.5">10-Digit Mobile *</label>
+                                <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1">Designation / Office</label>
-                                <input id="superadmin-unit" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Management Office" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <label class="block text-xs font-bold text-slate-600 mb-1.5">Designation / Office</label>
+                                <input id="superadmin-unit" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Management Office" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <div class="w-32 flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="superadmin-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Temp PIN" class="w-full px-2 py-2 text-xs text-center font-extrabold tracking-widest bg-transparent focus:outline-none">
-                                <button type="button" onclick="generateRandomSuperAdminPin()" class="px-2.5 py-2 bg-slate-200/70 hover:bg-slate-200 text-xs font-bold text-slate-700" title="Auto-generate 4-digit PIN">🎲</button>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
+                            <div class="w-36 flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shrink-0">
+                                <input id="superadmin-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Temp PIN" class="w-full px-2.5 py-3 text-sm text-center font-extrabold tracking-widest bg-transparent focus:outline-none">
+                                <button type="button" onclick="generateRandomSuperAdminPin()" class="px-3 py-3 bg-slate-200/70 hover:bg-slate-200 text-sm font-bold text-slate-700" title="Auto-generate 4-digit PIN">🎲</button>
                             </div>
-                            <button type="button" onclick="addCampusAdminBySuperAdmin()" class="flex-1 bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-xs py-2.5 rounded-xl shadow-md transition">
+                            <button type="button" onclick="addCampusAdminBySuperAdmin()" class="flex-1 min-w-[160px] bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-3 px-4 rounded-xl shadow-md transition">
                                 + Add Admin & Share PIN
                             </button>
                         </div>
@@ -724,22 +825,22 @@
                 <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
                     <div class="flex items-center justify-between gap-2">
                         <div class="min-w-0">
-                            <h3 class="font-bold text-slate-800 text-sm">🏛️ Campus Logo & Branding</h3>
-                            <p class="text-[11px] text-slate-500">Shown at the center of the Swagat welcome screen</p>
+                            <h3 class="font-bold text-slate-900 text-base">🏛️ Campus Logo & Branding</h3>
+                            <p class="text-xs text-slate-500">Shown at the center of the Swagat welcome screen</p>
                         </div>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 shrink-0">Live Sync</span>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 shrink-0">Live Sync</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="w-16 h-16 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
                             <img id="admin-logo-preview" src="" alt="Campus Logo" class="hidden w-full h-full object-contain p-1 bg-white" />
-                            <span id="admin-logo-empty" class="text-[10px] font-bold text-slate-400 text-center px-1">No Logo</span>
+                            <span id="admin-logo-empty" class="text-xs font-bold text-slate-400 text-center px-1">No Logo</span>
                         </div>
-                        <div class="flex-1 min-w-0 space-y-1.5">
-                            <label class="cursor-pointer w-full bg-slate-900 hover:bg-indigo-950 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 text-center">
+                        <div class="flex-1 min-w-0 space-y-2">
+                            <label class="cursor-pointer w-full bg-slate-900 hover:bg-indigo-950 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 text-center">
                                 <span class="truncate">📤 Upload Logo</span>
                                 <input type="file" accept="image/*" class="hidden" onchange="handleCampusLogoUpload(event)">
                             </label>
-                            <button type="button" id="btn-remove-logo" onclick="removeCampusLogo()" class="hidden w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] py-1.5 rounded-xl transition">
+                            <button type="button" id="btn-remove-logo" onclick="removeCampusLogo()" class="hidden w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-sm py-2.5 rounded-xl transition">
                                 Remove Custom Logo
                             </button>
                         </div>
@@ -1421,7 +1522,7 @@
                     guard: '2. Guard Gate Console',
                     host: '3. Host (Resident/Staff)',
                     admin: '4. Admin Dashboard',
-                    superadmin: '5. Super Admin (Director)'
+                    superadmin: '5. Super Admin'
                 };
                 ['guard', 'host', 'admin', 'superadmin'].forEach(r => {
                     const sec = document.getElementById(`view-${r}`);
@@ -1851,7 +1952,7 @@
             if (changePinBox) changePinBox.classList.remove('hidden');
             if (adminSettingsSection) adminSettingsSection.classList.toggle('hidden', !isAdmin);
             if (settingsTitle) settingsTitle.textContent = isAdmin ? '⚙️ Admin Settings & Cloud Sync' : '⚙️ Account Settings';
-            document.getElementById('header-user-label').textContent = isSuperAdmin ? 'Director' : loggedInSession.name.split(' ')[0];
+            document.getElementById('header-user-label').textContent = isSuperAdmin ? 'Super Admin' : loggedInSession.name.split(' ')[0];
 
             if (demoBarEnabled && isAdmin) roleBar.classList.remove('hidden');
             else roleBar.classList.add('hidden');
@@ -2293,19 +2394,19 @@
             list.innerHTML = members.map((m, idx) => {
                 const isSelf = loggedInSession && m.phone === loggedInSession.phone;
                 return `
-                    <div class="bg-white rounded-xl p-3 border border-slate-200/80 flex items-center justify-between gap-2 text-xs">
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-3 text-sm">
                         <div class="min-w-0">
-                            <div class="flex items-center gap-1.5">
-                                <span class="font-extrabold text-slate-900 truncate">${m.name}</span>
-                                ${idx === 0 ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">PRIMARY</span>` : `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700">FAMILY</span>`}
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-extrabold text-slate-900 break-words">${m.name}</span>
+                                ${idx === 0 ? `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">PRIMARY</span>` : `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700">FAMILY</span>`}
                             </div>
-                            <p class="text-[11px] text-slate-500 mt-0.5 font-mono">📱 ${displayIndianMobile(m.phone)} • ${m.pinMustChange ? `Temp PIN: ${m.pin}` : 'Private PIN Set'}</p>
+                            <p class="text-xs font-medium text-slate-600 mt-1">📱 ${displayIndianMobile(m.phone)} • ${m.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${m.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}</p>
                         </div>
-                        <div class="flex items-center gap-1 shrink-0">
-                            <button type="button" onclick="adminResetUserPin('${m.id}')" class="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold transition" title="Send Temp PIN on WhatsApp">
+                        <div class="flex items-center gap-2 pt-2.5 border-t border-slate-100">
+                            <button type="button" onclick="adminResetUserPin('${m.id}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition" title="Send Temp PIN on WhatsApp">
                                 📲 PIN
                             </button>
-                            ${(!isSelf && members.length > 1) ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Remove Family Member">✕</button>` : ''}
+                            ${(!isSelf && members.length > 1) ? `<button type="button" onclick="removeHostFamilyMember('${m.id}')" class="ml-auto px-3.5 py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold transition" title="Remove Family Member">✕ Remove</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -2723,22 +2824,22 @@
             }
 
             listEl.innerHTML = admins.map(a => `
-                <div class="p-3.5 bg-white space-y-2.5 text-xs">
+                <div class="p-4 bg-white space-y-3 text-sm">
                     <div class="w-full min-w-0">
-                        <div class="flex flex-wrap items-center gap-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
                             <span class="font-extrabold text-slate-900 break-words">${a.name}</span>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">${a.unit}</span>
-                            ${a.pinResetRequested ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700">${a.unit}</span>
+                            ${a.pinResetRequested ? `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-1 font-mono">
+                        <p class="text-xs font-medium text-slate-600 mt-1.5">
                             📱 ${displayIndianMobile(a.phone)} • ${a.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${a.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
                         </p>
                     </div>
-                    <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
-                        <button type="button" onclick="adminResetUserPin('${a.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition" title="Send Temp PIN via WhatsApp">
+                    <div class="flex items-center gap-2.5 pt-2.5 border-t border-slate-100">
+                        <button type="button" onclick="adminResetUserPin('${a.id}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition" title="Send Temp PIN via WhatsApp">
                             📲 PIN
                         </button>
-                        <button type="button" onclick="removeCampusAdminBySuperAdmin('${a.id}')" class="ml-auto px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-bold transition" title="Remove Admin">
+                        <button type="button" onclick="removeCampusAdminBySuperAdmin('${a.id}')" class="ml-auto px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition" title="Remove Admin">
                             Remove
                         </button>
                     </div>
@@ -2778,17 +2879,6 @@
                 return;
             }
             el.value = displayIndianMobile(cleaned);
-        };
-
-        window.formatIndianMobile = function(el) {
-            if (!el) return;
-            const cleaned = normalizeIndianMobile(el.value);
-            if (cleaned.length > 0 && !/^[6-9]/.test(cleaned)) {
-                el.value = '';
-                showToast('⚠️ Indian mobile numbers must start with 6, 7, 8, or 9.');
-                return;
-            }
-            el.value = cleaned;
         };
 
         window.formatNumericOnly = function(el) {
@@ -3101,8 +3191,8 @@
                 const btn = document.getElementById(`dir-filter-${k}`);
                 if (!btn) return;
                 btn.className = k === filter
-                    ? 'px-2.5 py-1.5 rounded-lg bg-slate-900 text-white transition shrink-0'
-                    : 'px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition shrink-0';
+                    ? 'px-3 py-2 rounded-xl bg-slate-900 text-white transition shrink-0'
+                    : 'px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition shrink-0';
             });
             renderAdminDirectory();
         };
@@ -3365,12 +3455,12 @@
                     statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">🏢🏠 Office + Residence</span>`;
                     unitLine = `${officeTxt} • <strong>${flatTxt}</strong>`;
                     if (item.officeRec) {
-                        statusToggleBtn = `<button type="button" onclick="vacateEmployeeResidence('${item.phone}')" class="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold transition" title="Remove Residence & switch to Office Staff only">Vacate Flat</button>`;
+                        statusToggleBtn = `<button type="button" onclick="vacateEmployeeResidence('${item.phone}')" class="px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition" title="Remove Residence & switch to Office Staff only">Vacate Flat</button>`;
                     }
                 } else {
-                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">🏢 Office Staff</span>`;
+                    statusBadge = `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700">🏢 Office Staff</span>`;
                     unitLine = item.officeRec ? item.officeRec.unit : '';
-                    statusToggleBtn = `<button type="button" onclick="openAllotResidenceModal('${item.phone}', '${item.name.replace(/'/g, "\\'")}')" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold transition" title="Allot Quarter & upgrade to Office with Residence">+ Allot Flat</button>`;
+                    statusToggleBtn = `<button type="button" onclick="openAllotResidenceModal('${item.phone}', '${item.name.replace(/'/g, "\\'")}')" class="px-3.5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition" title="Allot Quarter & upgrade to Office with Residence">+ Allot Flat</button>`;
                 }
 
                 const deleteAction = item.category === 'ADMIN'
@@ -3378,24 +3468,24 @@
                     : `removeEmployeeByPhone('${item.phone}')`;
 
                 return `
-                <div class="p-3.5 ${item.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} space-y-2.5 text-xs">
+                <div class="p-4 ${item.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} space-y-3 text-sm">
                     <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
                             <span class="font-extrabold text-slate-900 break-words">${item.name}</span>
                             ${statusBadge}
-                            ${item.pinResetRequested ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
+                            ${item.pinResetRequested ? `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
                         </div>
-                        <p class="text-[11px] text-slate-600 mt-1 break-words">${unitLine}</p>
-                        <p class="text-[11px] text-slate-500 mt-0.5 font-mono">
+                        <p class="text-xs text-slate-600 mt-1.5 break-words">${unitLine}</p>
+                        <p class="text-xs font-medium text-slate-600 mt-1">
                             📱 ${displayIndianMobile(item.phone)} • ${item.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${item.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
                         </p>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+                    <div class="flex flex-wrap items-center gap-2.5 pt-2.5 border-t border-slate-100">
                         ${statusToggleBtn}
-                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition">
+                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
                             📲 PIN
                         </button>
-                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="ml-auto px-2.5 py-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-[11px] font-bold transition" title="Delete Entry">✕ Remove</button>` : ''}
+                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="ml-auto px-3.5 py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold transition" title="Delete Entry">✕ Remove</button>` : ''}
                     </div>
                 </div>
             `;
