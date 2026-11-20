@@ -30,57 +30,46 @@
     <!-- Mobile App Shell (Full-screen on mobile, sleek phone frame on desktop) -->
     <div id="app-shell" class="w-full sm:max-w-[430px] h-[100dvh] sm:h-[850px] bg-slate-50 sm:rounded-[2.5rem] sm:shadow-2xl sm:border-[6px] sm:border-slate-800 flex flex-col overflow-hidden relative">
         
-        <!-- Top Status & App Bar (Shown after sign-in, or compact status bar on Welcome Screen) -->
+        <!-- Top Status & App Bar: Strictly App Name, Cloud Status & Logout Icon -->
         <header id="app-header" class="bg-slate-900 text-white px-4 pt-4 pb-3 shrink-0 z-20 shadow-md">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
                     <!-- Dynamic Campus Logo or Fallback Icon -->
                     <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden shrink-0" title="SPM NIWAS">
                         <img id="header-logo-img" src="" alt="SPM NIWAS Logo" class="hidden w-full h-full object-contain p-0.5 bg-white" />
                         <span id="header-logo-fallback" class="font-swagat text-lg font-black text-amber-400">S</span>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <h1 class="font-swagat font-bold text-base tracking-wide leading-none text-white">Swagat</h1>
-                            <button onclick="openModal('config-modal')" id="sync-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:opacity-80 transition cursor-pointer" title="Tap to configure Cloud Sync">DEMO MODE</button>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-swagat font-bold text-base tracking-wide leading-none text-white shrink-0">Swagat</h1>
+                            <button onclick="openModal('config-modal')" id="sync-badge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:opacity-80 transition cursor-pointer shrink-0" title="Sync Status">DEMO MODE</button>
                         </div>
-                        <p class="text-[11px] font-semibold tracking-wide text-amber-300/90 mt-0.5">SPM NIWAS • Guest welcome app</p>
+                        <p class="text-[11px] font-semibold tracking-wide text-amber-300/90 mt-0.5 truncate">SPM NIWAS • Guest welcome app</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-1.5">
-                    <!-- Always-Accessible Design Studio Pill (Admin/SuperAdmin Preview Only) -->
-                    <button id="header-design-studio-btn" type="button" onclick="toggleDesignStudioMode()" class="hidden items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition" title="View Login, Guard, Host & Admin Screens Side-by-Side">
-                        <span>🎨 All Screens</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <!-- Design Studio Pill (Shown ONLY when Design Mode ?design=1 is active) -->
+                    <button id="header-design-studio-btn" type="button" onclick="toggleDesignStudioMode()" class="hidden items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 shadow transition" title="Exit Design Studio">
+                        <span>🔒 Single View</span>
                     </button>
-                    <!-- Quick Return to Admin Dashboard (Shown when Admin switches to their own Host unit) -->
+                    <!-- Quick Return to Admin Dashboard (Shown only when Admin switches to their own Host unit) -->
                     <button id="header-back-admin-btn" onclick="switchRole('admin')" class="hidden items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition" title="Return to Admin Dashboard">
                         <span>← Admin</span>
                     </button>
-                    <!-- Active User Pill & Logout -->
-                    <button id="header-user-pill" onclick="logoutUser()" class="hidden items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-900/60 text-slate-200 border border-slate-700 transition" title="Switch User / Logout">
-                        <span id="header-user-label">User</span>
-                        <span class="text-rose-400">⏻</span>
-                    </button>
-                    <!-- Install PWA / APK Guide Button (Admin Only) -->
-                    <button id="header-pwa-btn" onclick="openModal('pwa-modal')" class="hidden p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Install PWA / Build APK">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                    </button>
-                    <!-- Role-Aware Settings Button (Hidden on Login Screen) -->
-                    <button id="header-settings-btn" onclick="openModal('config-modal')" class="hidden p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Account Settings">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <!-- Clean Logout Icon Button (Shown on all logged-in screens) -->
+                    <button id="header-user-pill" onclick="logoutUser()" class="hidden items-center justify-center w-10 h-10 rounded-xl bg-slate-800 hover:bg-rose-900/70 text-rose-400 border border-slate-700 transition" title="Logout">
+                        <span id="header-user-label" class="sr-only">User</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"/>
                         </svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Design Studio Mode Banner (Visible only when ?design=1 or toggled ON) -->
+            <!-- Design Studio Mode Banner (Visible only when ?design=1) -->
             <div id="design-studio-bar" class="hidden items-center justify-between bg-amber-500/15 border border-amber-400/30 rounded-xl px-3 py-1.5 mt-2.5 text-[11px]">
-                <span class="font-extrabold text-amber-300 tracking-wide">🎨 DESIGN STUDIO MODE — All 4 Screens Live</span>
+                <span class="font-extrabold text-amber-300 tracking-wide">🎨 DESIGN STUDIO MODE — All Screens Live</span>
                 <button type="button" onclick="toggleDesignStudioMode(false)" class="px-2 py-0.5 rounded-lg bg-amber-400 text-slate-950 font-extrabold hover:bg-amber-300 transition">
                     Exit Design Mode
                 </button>
@@ -109,7 +98,7 @@
 
             <div class="my-auto flex flex-col items-center text-center space-y-5 relative z-10">
                 
-                <!-- Centered Logo Placeholder (Synced with Admin Upload) -->
+                <!-- Centered Logo Placeholder (Synced with Super Admin Upload) -->
                 <div id="welcome-logo-box" class="w-24 h-24 rounded-3xl bg-white/95 backdrop-blur border-2 border-dashed border-amber-400/80 shadow-lg shadow-indigo-950/10 flex flex-col items-center justify-center overflow-hidden transition-all">
                     <img id="welcome-logo-img" src="" alt="SPM NIWAS Logo" class="hidden w-full h-full object-contain p-1.5" />
                     <div id="welcome-logo-placeholder" class="flex flex-col items-center justify-center text-amber-600 px-2">
@@ -134,17 +123,11 @@
                 </div>
 
                 <!-- Login Form Card -->
-                <div class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-5 sm:p-6 shadow-xl shadow-indigo-950/10 border border-white space-y-4 text-left">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-950/75 mb-1.5">Mobile Number *</label>
-                        <input id="login-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210"
-                            class="w-full bg-slate-50/90 border border-indigo-100 rounded-xl px-4 py-3 text-base font-bold tracking-wider text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-950/75 mb-1.5">4-Digit PIN *</label>
-                        <input id="login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="••••"
-                            class="pin-mask w-full bg-slate-50/90 border border-indigo-100 rounded-xl px-4 py-3 text-lg font-extrabold tracking-[0.45em] text-center text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
-                    </div>
+                <div class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-xl shadow-indigo-950/10 border border-white space-y-3 text-left">
+                    <input id="login-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Mobile Number (e.g., 98765 43210)" aria-label="Mobile Number"
+                        class="w-full bg-slate-50/90 border border-indigo-100 rounded-xl px-4 py-3 text-base font-bold tracking-wider text-slate-900 placeholder:font-medium placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
+                    <input id="login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="4-Digit PIN" aria-label="4-Digit PIN"
+                        class="pin-mask w-full bg-slate-50/90 border border-indigo-100 rounded-xl px-4 py-3 text-lg font-extrabold tracking-[0.45em] text-center text-slate-900 placeholder:text-base placeholder:font-medium placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white">
                     <button type="button" onclick="handlePinLogin()" id="btn-login-submit" class="w-full bg-gradient-to-r from-indigo-900 via-blue-800 to-indigo-950 hover:from-indigo-800 hover:to-slate-900 active:scale-[0.99] text-white font-bold text-base py-3.5 rounded-xl shadow-lg shadow-indigo-900/25 transition">
                         Login
                     </button>
@@ -208,7 +191,7 @@
                 <!-- New Walk-In Visitor Check-In Card -->
                 <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-4">
                     <div class="flex items-center justify-between gap-2">
-                        <h2 class="font-bold text-slate-800 text-base">Log Walk-In Visitor</h2>
+                        <h2 class="font-bold text-slate-800 text-base">Walk-in Visitor</h2>
                         <!-- AI Scan ID / Vehicle Plate Button -->
                         <label class="cursor-pointer inline-flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-2 rounded-xl text-xs font-bold transition shrink-0">
                             <span>✨ AI Scan ID/Plate</span>
@@ -226,30 +209,26 @@
                     </div>
 
                     <!-- Step 1: Zone Access Control Selector -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">1. Select Access Zone (Single Gate Control)</label>
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <button type="button" id="zone-btn-OFFICE" onclick="selectZone('OFFICE')" class="p-3 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-xs flex items-center justify-center gap-2 transition">
-                                <span>🏢 Corporate Office</span>
-                            </button>
-                            <button type="button" id="zone-btn-RESIDENTIAL" onclick="selectZone('RESIDENTIAL')" class="p-3 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition">
-                                <span>🏠 Residential Wing</span>
-                            </button>
-                        </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button type="button" id="zone-btn-OFFICE" onclick="selectZone('OFFICE')" class="p-3 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-xs flex items-center justify-center gap-2 transition">
+                            <span>🏢 Corporate Office</span>
+                        </button>
+                        <button type="button" id="zone-btn-RESIDENTIAL" onclick="selectZone('RESIDENTIAL')" class="p-3 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition">
+                            <span>🏠 Residential Wing</span>
+                        </button>
                     </div>
 
                     <!-- Step 2: Searchable Host / Destination Selector -->
                     <div class="relative">
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">2. Search & Select Host / Unit</label>
                         <div class="relative">
                             <input id="visitor-destination-search" type="text" autocomplete="off"
                                 onfocus="openDestinationDropdown()" oninput="filterDestinations(this.value)"
-                                placeholder="Type flat no., dept, or name..."
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-9 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
-                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                placeholder="Search Host / Unit (flat no., dept, name) *" aria-label="Search Host or Unit"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-9 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
-                            <button type="button" onclick="clearDestinationSearch()" class="absolute right-2.5 top-3 text-slate-400 hover:text-slate-600 text-sm font-bold px-1.5">✕</button>
+                            <button type="button" onclick="clearDestinationSearch()" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-sm font-bold px-1.5">✕</button>
                         </div>
                         <input id="visitor-destination" type="hidden" value="">
                         <div id="destination-dropdown-list" class="hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-30 divide-y divide-slate-100">
@@ -257,32 +236,17 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: Visitor Details -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Visitor Name *</label>
-                            <input id="visitor-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Phone Number *</label>
-                            <input id="visitor-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Category</label>
-                            <select id="visitor-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="Guest">👤 Guest / Client</option>
-                                <option value="Delivery">📦 Delivery</option>
-                                <option value="Cab">🚕 Cab / Taxi</option>
-                                <option value="Vendor">🛠️ Service / Vendor</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Vehicle No. (Opt)</label>
-                            <input id="visitor-vehicle" type="text" inputmode="text" autocapitalize="characters" oninput="formatAllCaps(this)" placeholder="WB 02 AB 1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
+                    <!-- Step 3: Visitor Details (Labels inside fields, one per line) -->
+                    <div class="space-y-2.5">
+                        <input id="visitor-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Name *" aria-label="Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input id="visitor-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Phone * (e.g., 98765 43210)" aria-label="Phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="visitor-type" aria-label="Category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Personal Guest">👤 Personal Guest</option>
+                            <option value="Official Visitor">💼 Official Visitor</option>
+                            <option value="Delivery">📦 Delivery</option>
+                            <option value="Cab / Taxi">🚕 Cab / Taxi</option>
+                        </select>
+                        <input id="visitor-vehicle" type="text" inputmode="text" autocapitalize="characters" oninput="formatAllCaps(this)" placeholder="Vehicle No. (Optional — e.g., WB 02 AB 1234)" aria-label="Vehicle Number" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm uppercase placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <button onclick="submitWalkIn()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-base py-3.5 rounded-xl shadow-md shadow-blue-600/20 transition flex items-center justify-center gap-2">
@@ -302,10 +266,7 @@
                             <p class="text-[11px] font-medium text-slate-500">View active passes, pending approvals & check-outs</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span id="guard-log-count" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">0 entries</span>
-                        <span class="text-slate-400 font-bold text-sm">→</span>
-                    </div>
+                    <span class="text-slate-400 font-bold text-base shrink-0">→</span>
                 </button>
             </section>
 
@@ -331,7 +292,7 @@
                         <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Active Host Unit</span>
                         <span id="host-zone-pill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">OFFICE ZONE</span>
                     </div>
-                    <select id="active-host-unit" onchange="renderAll()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="active-host-unit" onchange="handleActiveHostUnitChange()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="ALL">🌐 View All Units (Demo Mode)</option>
                     </select>
                 </div>
@@ -369,34 +330,25 @@
                 </div>
 
                 <!-- Pre-Approve Guest & AI Invite Generator -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5 overflow-hidden">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5 overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <h2 class="font-bold text-slate-800 text-base">Pre-Approve Expected Guest</h2>
                         <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full shrink-0">✨ Gemini Assisted</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="min-w-0">
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Guest Name *</label>
-                            <input id="pre-guest-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., Vikram Mehta" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        </div>
-                        <div class="min-w-0">
-                            <label class="block text-xs font-bold text-slate-600 mb-1.5">Category</label>
-                            <select id="pre-guest-type" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <option value="Guest">👤 Guest / Client</option>
-                                <option value="Delivery">📦 Delivery</option>
-                                <option value="Cab">🚕 Cab / Taxi</option>
-                                <option value="Vendor">🛠️ Service / Vendor</option>
-                            </select>
-                        </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <input id="pre-guest-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Guest Name * (e.g., Vikram Mehta)" aria-label="Guest Name" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <select id="pre-guest-type" aria-label="Category" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="Personal Guest">👤 Personal Guest</option>
+                            <option value="Official Visitor">💼 Official Visitor</option>
+                            <option value="Delivery">📦 Delivery</option>
+                            <option value="Cab / Taxi">🚕 Cab / Taxi</option>
+                        </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1.5">Quick Note / Instructions (Optional)</label>
-                        <input id="pre-guest-note" type="text" placeholder="e.g., Client meeting at 3 PM, park in Visitor Bay" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
+                    <input id="pre-guest-note" type="text" placeholder="Quick Note / Instructions (Optional)" aria-label="Quick Note" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-                    <button type="button" onclick="createPreApprovedPass()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm py-3.5 rounded-xl shadow-md shadow-emerald-600/20 transition">
+                    <button type="button" onclick="createPreApprovedPass()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm py-3 rounded-xl shadow-md shadow-emerald-600/20 transition">
                         🎟️ Generate 4-Digit Gate Pass
                     </button>
 
@@ -485,18 +437,18 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 mb-1">Family Member Name *</label>
                             <input id="host-family-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., Neha Sharma" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900">Add Family Member</h3>
+                        <p class="text-[11px] text-slate-500">They will sign in with their own mobile & PIN and receive simultaneous Main Gate alerts for this flat.</p>
+                    </div>
+                    <div class="space-y-2.5">
+                        <input id="host-family-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Family Member Name * (e.g., Neha Sharma)" aria-label="Family Member Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="col-span-2">
-                                <label class="block text-xs font-semibold text-slate-500 mb-1">10-Digit Mobile *</label>
-                                <input id="host-family-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 00001" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1">Temp PIN</label>
-                                <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
-                                    <input id="host-family-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Auto" class="w-full px-1.5 py-2 text-sm text-center font-extrabold bg-transparent focus:outline-none">
-                                    <button type="button" onclick="generateRandomHostFamilyPin()" class="px-2 py-2 bg-slate-200/70 hover:bg-slate-200 text-xs font-bold" title="Random PIN">🎲</button>
-                                </div>
+                            <input id="host-family-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Mobile * (98765 00001)" aria-label="10-Digit Mobile" class="col-span-2 w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold placeholder:font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                                <input id="host-family-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" aria-label="Temp PIN" class="w-full px-1.5 py-2.5 text-sm text-center font-extrabold bg-transparent focus:outline-none">
+                                <button type="button" onclick="generateRandomHostFamilyPin()" class="px-2 py-2.5 bg-slate-200/70 hover:bg-slate-200 text-xs font-bold" title="Random PIN">🎲</button>
                             </div>
                         </div>
                         <button type="button" onclick="addHostFamilyMember()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold text-xs py-3 rounded-xl shadow-md shadow-indigo-600/20 transition">
@@ -545,39 +497,30 @@
                         </div>
                     </div>
 
-                    <!-- Main Gate Geofencing Control Card -->
+                    <!-- Campus Logo & Branding Uploader (Bottom) -->
                     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3 overflow-hidden">
                         <div class="flex items-center justify-between gap-2">
                             <div class="min-w-0">
                                 <h3 class="font-bold text-slate-800 text-sm">📍 Main Gate Geofencing</h3>
-                    <!-- Super Admin Dedicated Login Modal (director@spmniwas.in) -->
-                    <div id="superadmin-login-modal" class="hidden absolute inset-0 bg-slate-900/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                        <div class="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl space-y-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="font-extrabold text-slate-900 text-lg">👑 Super Admin Login</h3>
-                                <button onclick="closeModal('superadmin-login-modal')" class="p-2 rounded-xl bg-slate-100 text-slate-600 font-bold">✕</button>
+                                <p class="text-xs text-slate-500">Restrict Guard check-ins to physical gate GPS</p>
                             </div>
-                            <p class="text-sm text-slate-600 leading-relaxed">
-                                Authorized access to appoint or remove Campus Admins.
-                            </p>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Super Admin Email *</label>
-                                    <input id="superadmin-login-email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" value="director@spmniwas.in" placeholder="director@spmniwas.in" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-base font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">4-Digit PIN *</label>
-                                    <input id="superadmin-login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="••••" class="pin-mask w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-extrabold tracking-[0.45em] text-center text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                </div>
-                            </div>
-                            <div class="flex gap-2.5 pt-1">
-                                <button type="button" onclick="handleSuperAdminModalLogin()" class="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-bold text-sm py-3.5 rounded-xl shadow">
-                                    Access Super Admin
-                                </button>
-                                <button type="button" onclick="closeModal('superadmin-login-modal')" class="bg-slate-100 text-slate-700 font-bold text-sm px-4 py-3.5 rounded-xl">
-                                    Cancel
-                                </button>
-                            </div>
+                            <button type="button" id="btn-toggle-geofence" onclick="toggleGeofenceEnabled()" class="px-3.5 py-2 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-700 transition shrink-0">
+                                OFF
+                            </button>
+                        </div>
+                        <button type="button" id="btn-capture-gate-gps" onclick="captureCurrentGateCoordinates()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs py-3 rounded-xl transition">
+                            <span>🎯 Capture My Current Gate Location</span>
+                        </button>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="Lat (22.5726)" aria-label="Latitude" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
+                            <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="Lng (88.3639)" aria-label="Longitude" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
+                            <select id="geo-radius-select" onchange="saveGeofenceFields()" aria-label="Radius" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-sm font-bold">
+                                <option value="50">50m</option>
+                                <option value="100" selected>100m</option>
+                                <option value="150">150m</option>
+                                <option value="250">250m</option>
+                                <option value="500">500m</option>
+                            </select>
                         </div>
                     </div>
 
@@ -586,9 +529,9 @@
                         <div class="flex items-center justify-between gap-2">
                             <div class="min-w-0">
                                 <h3 class="font-bold text-slate-800 text-sm">AI Security Briefing</h3>
-                                <p class="text-[11px] text-slate-500">Real-time traffic & anomaly insights</p>
+                                <p class="text-xs text-slate-500">Real-time traffic & anomaly insights</p>
                             </div>
-                            <button onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition shrink-0">
+                            <button onclick="generateSecurityBriefing()" id="btn-ai-briefing" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow transition shrink-0">
                                 ✨ Analyze
                             </button>
                         </div>
@@ -601,123 +544,22 @@
                     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5 overflow-hidden">
                         <div class="flex items-center justify-between gap-2">
                             <h3 class="font-bold text-slate-800 text-sm">Live Gate Activity</h3>
-                            <span id="admin-gate-count" class="text-[11px] font-semibold text-slate-500 shrink-0">0 entries</span>
+                            <span id="admin-gate-count" class="text-xs font-semibold text-slate-500 shrink-0">0 entries</span>
                         </div>
                         <div id="admin-gate-feed" class="max-h-60 overflow-y-auto space-y-2 pr-0.5"></div>
                     </div>
                 </div>
 
                 <!-- Right Column: Staff, Residents & Guards Directory -->
-                <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3 lg:col-span-7 min-w-0 overflow-hidden">
+                <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3.5 lg:col-span-7 min-w-0 overflow-hidden">
                     <div class="flex items-center justify-between gap-2">
                         <div class="min-w-0">
-                            <h3 class="font-bold text-slate-800 text-sm">Staff & Residents Database</h3>
-                            <p class="text-[11px] text-slate-500">Manage role-locked PIN access & WhatsApp onboarding</p>
+                            <h3 class="font-bold text-slate-800 text-base">Staff & Residents Database</h3>
+                            <p class="text-xs text-slate-500">Manage role-locked PIN access & WhatsApp onboarding</p>
                         </div>
-                        <span id="admin-dir-count" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 shrink-0">0 people</span>
+                        <span id="admin-dir-count" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 shrink-0">0 people</span>
                     </div>
 
-                    <!-- Add New Host / Guard Form -->
-                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-2.5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="OFFICE">🏢 Office Staff</option>
-                                <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
-                    <!-- Generated OTP & AI WhatsApp Invite Card -->
-                    <div id="generated-pass-card" class="hidden bg-emerald-50/90 border border-emerald-200 rounded-2xl p-4 space-y-3">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div>
-                                <p class="text-xs font-bold uppercase tracking-wider text-emerald-800">4-Digit Entry OTP</p>
-                                <p id="gen-otp-code" class="text-3xl font-black tracking-[0.22em] text-emerald-950 mt-0.5">0000</p>
-                            </div>
-                            <button type="button" id="btn-ai-invite" onclick="generateAiInvite()" class="px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition shrink-0">
-                                ✨ Draft Invite
-                            </button>
-                        </div>
-                        <textarea id="ai-invite-text" rows="3" class="w-full bg-white border border-emerald-200 rounded-xl p-3 text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <button type="button" onclick="openGuestWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3.5 rounded-xl shadow-sm transition">
-                                📲 Send on WhatsApp
-                            </button>
-                            <button type="button" onclick="copyInviteText()" class="bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-bold text-sm py-3.5 rounded-xl transition">
-                                📋 Copy Message
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Filter Tabs -->
-                    <div class="flex flex-wrap gap-1.5 text-[11px] font-bold">
-                        <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white transition">All</button>
-                        <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🏢 Office Staff</button>
-                        <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🏢🏠 Office + Res</button>
-                        <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🛡️ Guards</button>
-                        <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">📊 Admins</button>
-                        <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 transition">🔄 Resets</button>
-                    </div>
-
-                    <!-- Directory List -->
-                    <div id="admin-directory-list" class="max-h-72 lg:max-h-[430px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl"></div>
-                </div>
-            </section>
-
-            <!-- ==================== 4. SUPER ADMIN VIEW (director@spmniwas.in ONLY) ==================== -->
-            <section id="view-superadmin" class="hidden space-y-4">
-                <!-- Super Admin Identity Header Card -->
-                <div class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white rounded-2xl p-4 shadow-lg border border-indigo-500/30 space-y-2">
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-[10px] font-extrabold uppercase tracking-[0.2em] px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                            👑 Director Super Admin
-                        </span>
-                        <span id="superadmin-admin-count" class="text-xs font-extrabold text-emerald-300">0 Admins</span>
-                    </div>
-                    <div>
-                        <h2 class="text-base font-extrabold text-white">Campus Admin Governance</h2>
-                        <p class="text-[11px] text-slate-300 font-mono mt-0.5">Bound Account: director@spmniwas.in</p>
-                    </div>
-                </div>
-
-                <!-- 1. Active Campus Admins List (Top) -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-2.5">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-slate-800 text-sm">Authorized Campus Admins</h3>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Live Directory</span>
-                    </div>
-                    <div id="superadmin-admin-list" class="divide-y divide-slate-100 border border-slate-100 rounded-xl">
-                        <!-- Rendered dynamically -->
-                    </div>
-                </div>
-
-                <!-- 2. Add New Campus Admin Form (Middle) -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-sm">Appoint New Campus Admin</h3>
-                        <p class="text-[11px] text-slate-500">Grant Admin privileges to authorized SPM NIWAS leadership</p>
-                    </div>
-                    <div class="space-y-2.5">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Admin Full Name *</label>
-                            <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="e.g., S. K. Banerjee" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="min-w-0">
-                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Latitude</label>
-                                <input id="geo-lat-input" type="text" onchange="saveGeofenceFields()" placeholder="22.5726" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
-                            </div>
-                            <div class="min-w-0">
-                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Longitude</label>
-                                <input id="geo-lng-input" type="text" onchange="saveGeofenceFields()" placeholder="88.3639" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-sm font-medium">
-                            </div>
-                            <div class="min-w-0">
-                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Radius</label>
-                                <select id="geo-radius-select" onchange="saveGeofenceFields()" class="w-full min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-sm font-bold">
-                                    <option value="50">50m</option>
-                                    <option value="100" selected>100m</option>
-                                    <option value="150">150m</option>
-                                    <option value="250">250m</option>
-                                    <option value="500">500m</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
                     <!-- Add New Host / Guard Form -->
                     <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-3">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -788,11 +630,18 @@
                     </div>
                 </div>
 
-                <!-- 2. Add New Campus Admin Form (Middle) -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5">
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Appoint New Campus Admin</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Grant Admin privileges to authorized SPM NIWAS leadership</p>
+                <!-- 2. Add New Campus Admin Button & Collapsible Form (Middle) -->
+                <button type="button" id="btn-toggle-superadmin-form" onclick="toggleSuperAdminAddForm(true)" class="w-full bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-3.5 px-4 rounded-2xl shadow-md transition flex items-center justify-center gap-2">
+                    <span>+ Add Campus Admin</span>
+                </button>
+
+                <div id="superadmin-add-form-card" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Appoint New Campus Admin</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Grant Admin privileges to authorized SPM NIWAS leadership</p>
+                        </div>
+                        <button type="button" onclick="toggleSuperAdminAddForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">✕</button>
                     </div>
                     <div class="space-y-3">
                         <div>
@@ -803,18 +652,18 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1.5">10-Digit Mobile *</label>
                                 <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-600 mb-1.5">Designation / Office</label>
-                                <input id="superadmin-unit" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Management Office" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
+                    <div class="space-y-2.5">
+                        <input id="superadmin-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Admin Full Name * (e.g., S. K. Banerjee)" aria-label="Admin Full Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold capitalize placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <input id="superadmin-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="10-Digit Mobile * (98765 43210)" aria-label="10-Digit Mobile" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input id="superadmin-unit" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Designation / Office" aria-label="Designation or Office" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold capitalize placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
                             <div class="w-36 flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                <input id="superadmin-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Temp PIN" class="w-full px-2.5 py-3 text-sm text-center font-extrabold tracking-widest bg-transparent focus:outline-none">
-                                <button type="button" onclick="generateRandomSuperAdminPin()" class="px-3 py-3 bg-slate-200/70 hover:bg-slate-200 text-sm font-bold text-slate-700" title="Auto-generate 4-digit PIN">🎲</button>
+                                <input id="superadmin-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="Temp PIN" aria-label="Temp PIN" class="w-full px-2.5 py-2.5 text-sm text-center font-extrabold tracking-widest placeholder:font-medium placeholder:tracking-normal bg-transparent focus:outline-none">
+                                <button type="button" onclick="generateRandomSuperAdminPin()" class="px-3 py-2.5 bg-slate-200/70 hover:bg-slate-200 text-sm font-bold text-slate-700" title="Auto-generate 4-digit PIN">🎲</button>
                             </div>
-                            <button type="button" onclick="addCampusAdminBySuperAdmin()" class="flex-1 min-w-[160px] bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-3 px-4 rounded-xl shadow-md transition">
+                            <button type="button" onclick="addCampusAdminBySuperAdmin()" class="flex-1 min-w-[160px] bg-indigo-900 hover:bg-indigo-950 active:scale-[0.99] text-white font-bold text-sm py-2.5 px-4 rounded-xl shadow-md transition">
                                 + Add Admin & Share PIN
                             </button>
                         </div>
@@ -845,6 +694,17 @@
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <!-- 4. Design Studio Preview Launcher (Super Admin Only in Production) -->
+                <div class="bg-amber-50/90 rounded-2xl p-4 border border-amber-200 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-amber-950 text-sm">🎨 All-Screens Design View</h3>
+                        <p class="text-xs text-amber-800 mt-0.5">Preview Login, Guard, Host, Admin & Super Admin side-by-side</p>
+                    </div>
+                    <button type="button" onclick="toggleDesignStudioMode(true)" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-sm transition shrink-0">
+                        Open View
+                    </button>
                 </div>
             </section>
         </main>
@@ -1029,10 +889,9 @@
                     Authorized Director access to appoint or remove Campus Admins.
                 </p>
                 <div class="space-y-2.5">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Director Email *</label>
-                        <input id="superadmin-login-email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" value="director@spmniwas.in" placeholder="director@spmniwas.in" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
+                    <input id="superadmin-login-email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" value="director@spmniwas.in" placeholder="Super Admin Email *" aria-label="Super Admin Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input id="superadmin-login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="4-Digit PIN" aria-label="4-Digit PIN" class="pin-mask w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-base font-extrabold tracking-[0.45em] text-center text-slate-900 placeholder:text-sm placeholder:font-medium placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">4-Digit PIN *</label>
                         <input id="superadmin-login-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="formatNumericOnly(this)" placeholder="••••" class="pin-mask w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-base font-extrabold tracking-[0.45em] text-center text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -1452,13 +1311,24 @@
         }
 
         // ==================== DESIGN STUDIO MODE (ALL 4 SCREENS SIDE-BY-SIDE) ====================
+        function isGeminiPreviewEnvironment() {
+            const host = window.location.hostname || '';
+            const proto = window.location.protocol || '';
+            return proto === 'about:' || proto === 'blob:' || host === '' || host.includes('googleusercontent.com') || host.includes('webcontainer');
+        }
+
         function initDesignStudioMode() {
-            // Default strictly to single-screen mobile app view unless explicitly requested via ?design=1
             const params = new URLSearchParams(window.location.search);
+            const floatingBtn = document.getElementById('floating-design-toggle');
             if (params.get('design') === '1') {
                 toggleDesignStudioMode(true);
             } else {
                 try { localStorage.removeItem('swagat_design_studio'); } catch (e) {}
+                // In Gemini Design Console Preview, show discreet bottom-right launcher; keep hidden on live github.io
+                if (floatingBtn && isGeminiPreviewEnvironment()) {
+                    floatingBtn.classList.remove('hidden');
+                    floatingBtn.textContent = '🎨 All Screens';
+                }
             }
         }
 
@@ -1473,19 +1343,13 @@
             const loginView = document.getElementById('view-login');
             const mainViewport = document.getElementById('main-app-viewport');
             const designBar = document.getElementById('design-studio-bar');
-            const settingsBtn = document.getElementById('header-settings-btn');
             const toggleBtn = document.getElementById('btn-toggle-design-studio');
             const headerStudioBtn = document.getElementById('header-design-studio-btn');
             const floatingBtn = document.getElementById('floating-design-toggle');
 
             if (headerStudioBtn) {
-                const allowStudio = !loggedInSession || loggedInSession.role === 'admin' || loggedInSession.role === 'superadmin';
-                headerStudioBtn.classList.toggle('hidden', !allowStudio);
-                headerStudioBtn.classList.toggle('flex', allowStudio);
-                headerStudioBtn.innerHTML = designStudioMode ? '<span>🔒 Single View</span>' : '<span>🎨 All Screens</span>';
-                headerStudioBtn.className = designStudioMode
-                    ? `${allowStudio ? 'flex' : 'hidden'} items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-950 shadow transition`
-                    : `${allowStudio ? 'flex' : 'hidden'} items-center gap-1 text-[11px] font-extrabold px-2.5 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/40 transition`;
+                headerStudioBtn.classList.toggle('hidden', !designStudioMode);
+                headerStudioBtn.classList.toggle('flex', designStudioMode);
             }
             if (toggleBtn) {
                 toggleBtn.textContent = designStudioMode ? 'ON' : 'OFF';
@@ -1494,15 +1358,15 @@
                     : 'px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-200 text-amber-900 transition shrink-0';
             }
             if (floatingBtn) {
-                floatingBtn.classList.toggle('hidden', !designStudioMode);
-                floatingBtn.textContent = '🔒 Exit Design Mode';
+                const showFloat = designStudioMode || isGeminiPreviewEnvironment();
+                floatingBtn.classList.toggle('hidden', !showFloat);
+                floatingBtn.textContent = designStudioMode ? '🔒 Exit Design Mode' : '🎨 All Screens';
             }
 
             if (designStudioMode) {
                 // Expand shell into a centered multi-phone Design Board where each card stays proportioned like a real mobile phone (~390px)
                 shell.className = "w-full max-w-[1720px] min-h-[100dvh] bg-slate-200/90 sm:rounded-[1.75rem] sm:shadow-2xl sm:border-[5px] sm:border-slate-800 flex flex-col overflow-hidden relative transition-all duration-300";
                 if (designBar) { designBar.classList.remove('hidden'); designBar.classList.add('flex'); }
-                if (settingsBtn) settingsBtn.classList.remove('hidden');
 
                 loginView.classList.remove('hidden');
                 mainViewport.classList.remove('hidden');
@@ -1548,6 +1412,7 @@
                     const officeOpts = getZoneDirectoryLabels('OFFICE').map(l => `<option value="${l}">🏢 ${l}</option>`).join('');
                     const resOpts = getZoneDirectoryLabels('RESIDENTIAL').map(l => `<option value="${l}">🏠 ${l}</option>`).join('');
                     hostSelect.innerHTML = `<option value="ALL">🌐 View All Units (Studio Preview)</option>${officeOpts}${resOpts}`;
+                    updateHostCategoryOptions();
                 }
                 renderAll();
                 showToast("🎨 Design Studio ON — Mobile-proportioned screens displayed!");
@@ -1912,8 +1777,6 @@
             const loginView = document.getElementById('view-login');
             const mainViewport = document.getElementById('main-app-viewport');
             const userPill = document.getElementById('header-user-pill');
-            const pwaBtn = document.getElementById('header-pwa-btn');
-            const settingsBtn = document.getElementById('header-settings-btn');
             const roleBar = document.getElementById('demo-role-switcher');
             const changePinBox = document.getElementById('settings-change-pin-box');
             const adminSettingsSection = document.getElementById('settings-admin-only-section');
@@ -1921,16 +1784,18 @@
             const backAdminBtn = document.getElementById('header-back-admin-btn');
             const headerStudioBtn = document.getElementById('header-design-studio-btn');
 
+            if (headerStudioBtn) {
+                headerStudioBtn.classList.toggle('hidden', !designStudioMode);
+                headerStudioBtn.classList.toggle('flex', designStudioMode);
+            }
+
             if (!loggedInSession) {
                 updateAppShellLayout('login');
                 loginView.classList.remove('hidden');
                 mainViewport.classList.add('hidden');
                 userPill.classList.add('hidden');
                 userPill.classList.remove('flex');
-                if (headerStudioBtn) { headerStudioBtn.classList.remove('hidden'); headerStudioBtn.classList.add('flex'); }
                 if (backAdminBtn) { backAdminBtn.classList.add('hidden'); backAdminBtn.classList.remove('flex'); }
-                if (pwaBtn) pwaBtn.classList.add('hidden');
-                if (settingsBtn) settingsBtn.classList.add('hidden');
                 roleBar.classList.add('hidden');
                 if (changePinBox) changePinBox.classList.add('hidden');
                 if (adminSettingsSection) adminSettingsSection.classList.add('hidden');
@@ -1938,17 +1803,10 @@
             }
             const isAdmin = loggedInSession.role === 'admin';
             const isSuperAdmin = loggedInSession.role === 'superadmin';
-            if (headerStudioBtn) {
-                const allowStudio = isAdmin || isSuperAdmin;
-                headerStudioBtn.classList.toggle('hidden', !allowStudio);
-                headerStudioBtn.classList.toggle('flex', allowStudio);
-            }
             loginView.classList.add('hidden');
             mainViewport.classList.remove('hidden');
             userPill.classList.remove('hidden');
             userPill.classList.add('flex');
-            if (settingsBtn) settingsBtn.classList.remove('hidden');
-            if (pwaBtn) pwaBtn.classList.toggle('hidden', !isAdmin);
             if (changePinBox) changePinBox.classList.remove('hidden');
             if (adminSettingsSection) adminSettingsSection.classList.toggle('hidden', !isAdmin);
             if (settingsTitle) settingsTitle.textContent = isAdmin ? '⚙️ Admin Settings & Cloud Sync' : '⚙️ Account Settings';
@@ -2184,6 +2042,7 @@
             if (hostSelect) {
                 hostSelect.innerHTML = loggedInSession.allowedUnits.map(u => `<option value="${u}">${u}</option>`).join('');
                 hostSelect.value = loggedInSession.allowedUnits[0];
+                updateHostCategoryOptions();
             }
             switchRole('host');
         };
@@ -2556,7 +2415,8 @@
         function renderGuardView() {
             const list = document.getElementById('guard-visitor-list');
             const countText = `${visitors.length} entries`;
-            document.getElementById('guard-log-count').textContent = countText;
+            const logCountEl = document.getElementById('guard-log-count');
+            if (logCountEl) logCountEl.textContent = countText;
             const subCount = document.getElementById('guard-sublog-count');
             if (subCount) subCount.textContent = countText;
 
@@ -2657,7 +2517,7 @@
                     <div class="bg-amber-50 border-2 border-amber-400 rounded-2xl p-4 shadow-sm space-y-3">
                         <div class="flex items-start justify-between">
                             <div>
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">Gate Approval Needed</span>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">Approve Guest</span>
                                 <h4 class="font-extrabold text-slate-900 text-base mt-1">${v.visitorName}</h4>
                                 <p class="text-xs text-slate-600">${v.visitorType} • 📞 ${displayIndianMobile(v.visitorPhone)}</p>
                                 <p class="text-xs font-semibold text-slate-700 mt-0.5">For: ${v.destination}</p>
@@ -2665,7 +2525,7 @@
                             <span class="text-xs font-bold text-slate-500">${v.timeLabel}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="updateVisitorStatus('${v.id}', 'APPROVED')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl shadow transition">✅ Approve Entry</button>
+                            <button onclick="updateVisitorStatus('${v.id}', 'APPROVED')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl shadow transition">✅ Approve</button>
                             <button onclick="updateVisitorStatus('${v.id}', 'DENIED')" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 font-bold text-xs py-2.5 rounded-xl transition">⛔ Deny</button>
                         </div>
                     </div>
@@ -3084,6 +2944,62 @@
         };
 
         // ==================== GUARD DESTINATION & ADMIN DIRECTORY ====================
+        const BASE_VISITOR_CATEGORIES = [
+            { value: 'Personal Guest', label: '👤 Personal Guest' },
+            { value: 'Official Visitor', label: '💼 Official Visitor' },
+            { value: 'Delivery', label: '📦 Delivery' },
+            { value: 'Cab / Taxi', label: '🚕 Cab / Taxi' }
+        ];
+        const HOUSE_ONLY_CATEGORIES = [
+            { value: 'Domestic Help', label: '👷 Domestic Help' },
+            { value: 'Service / Vendor', label: '🛠️ Service / Vendor' }
+        ];
+
+        function buildCategoryOptionsHTML(includeHouseCategories) {
+            const list = includeHouseCategories
+                ? [
+                    BASE_VISITOR_CATEGORIES[0],
+                    BASE_VISITOR_CATEGORIES[1],
+                    HOUSE_ONLY_CATEGORIES[0],
+                    BASE_VISITOR_CATEGORIES[2],
+                    BASE_VISITOR_CATEGORIES[3],
+                    HOUSE_ONLY_CATEGORIES[1]
+                  ]
+                : BASE_VISITOR_CATEGORIES;
+            return list.map(c => `<option value="${c.value}">${c.label}</option>`).join('');
+        }
+
+        function hasHouseWithOfficeAccess(unitValue = '') {
+            if (designStudioMode && unitValue === 'ALL') return true;
+            if (unitValue && (unitValue.toLowerCase().startsWith('flat') || directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, unitValue)))) {
+                return true;
+            }
+            if (loggedInSession && Array.isArray(loggedInSession.allowedUnits)) {
+                return loggedInSession.allowedUnits.some(u =>
+                    u.toLowerCase().startsWith('flat') ||
+                    directoryEntries.some(d => d.zone === 'RESIDENTIAL' && isSameUnit(d.unit, u))
+                );
+            }
+            return false;
+        }
+
+        function updateHostCategoryOptions() {
+            const preSelect = document.getElementById('pre-guest-type');
+            if (!preSelect) return;
+            const activeUnit = document.getElementById('active-host-unit')?.value || '';
+            const prevVal = preSelect.value;
+            const allowHouse = hasHouseWithOfficeAccess(activeUnit);
+            preSelect.innerHTML = buildCategoryOptionsHTML(allowHouse);
+            if (Array.from(preSelect.options).some(o => o.value === prevVal)) {
+                preSelect.value = prevVal;
+            }
+        }
+
+        window.handleActiveHostUnitChange = function() {
+            updateHostCategoryOptions();
+            renderAll();
+        };
+
         window.selectZone = function(zone) {
             selectedZone = zone;
             const officeBtn = document.getElementById('zone-btn-OFFICE');
@@ -3095,6 +3011,14 @@
                 resBtn.className = zone === 'RESIDENTIAL'
                     ? 'p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-bold text-xs flex items-center justify-center gap-2 transition'
                     : 'p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-2 transition';
+            }
+            const guardTypeSelect = document.getElementById('visitor-type');
+            if (guardTypeSelect) {
+                const prevVal = guardTypeSelect.value;
+                guardTypeSelect.innerHTML = buildCategoryOptionsHTML(zone === 'RESIDENTIAL');
+                if (Array.from(guardTypeSelect.options).some(o => o.value === prevVal)) {
+                    guardTypeSelect.value = prevVal;
+                }
             }
             const searchEl = document.getElementById('visitor-destination-search');
             const hiddenEl = document.getElementById('visitor-destination');
@@ -3163,6 +3087,7 @@
                     hostSelect.innerHTML = `<option value="">No Unit Assigned</option>`;
                 }
             }
+            updateHostCategoryOptions();
             renderAdminDirectory();
             renderHostFamilyManager();
         }
@@ -3502,3 +3427,8 @@
     </script>
 </body>
 </html>
+```
+
+I have cleaned up the top header bar across all screens in **`index.html`**:
+- **Clean Header Everywhere:** Displays only the **Swagat (`SPM NIWAS • Guest welcome app`)** logo/title, **`CLOUD LIVE`** status badge, and a clean **Logout (`⏻`)** icon button on every logged-in screen.
+- **Design Mode Only (`?design=1`):** Removed the **`🎨 All Screens`** button from live view so all screens side-by-side only appear when explicitly launched in Design Studio mode (`?design=1`).
