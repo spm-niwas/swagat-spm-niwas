@@ -498,10 +498,11 @@
                     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 overflow-hidden">
                         <button type="button" onclick="toggleAdminGateFeed()" class="w-full flex items-center justify-between gap-2 text-left">
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-slate-800 text-sm">Live Gate Activity</h3>
-                                <span id="admin-gate-count" class="text-xs font-semibold text-slate-500 shrink-0">0 entries</span>
+                                <span class="text-sm">📋</span>
+                                <h3 class="font-bold text-slate-900 text-sm">Live Gate Activity</h3>
+                                <span id="admin-gate-count" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 shrink-0">0 entries</span>
                             </div>
-                            <span id="admin-gate-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg transition-transform">▼ Tap to expand</span>
+                            <span id="admin-gate-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg transition-transform">▼</span>
                         </button>
                         <div id="admin-gate-feed" class="hidden max-h-60 overflow-y-auto space-y-2 pr-0.5 mt-3 pt-2.5 border-t border-slate-100"></div>
                     </div>
@@ -510,9 +511,9 @@
                 <!-- Right Column: Collapsible Add User & Added Users Directory -->
                 <div class="space-y-3 lg:col-span-7 min-w-0">
                     <!-- 1. Add User Toggle Button -->
-                    <button type="button" id="btn-toggle-admin-add-user" onclick="toggleAdminAddUserForm()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-sm py-3.5 px-4 rounded-2xl shadow-md shadow-blue-600/20 flex items-center justify-between transition">
+                    <button type="button" id="btn-toggle-admin-add-user" onclick="toggleAdminAddUserForm()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
                         <span class="flex items-center gap-2"><span>➕</span><span>Add User</span></span>
-                        <span id="admin-add-user-chevron" class="text-xs font-extrabold bg-white/20 px-2.5 py-1 rounded-lg">▼ Open Form</span>
+                        <span id="admin-add-user-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
                     </button>
 
                     <!-- Collapsible New User Form -->
@@ -520,62 +521,69 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="font-bold text-slate-900 text-sm">Register Staff, Resident or Guard</h3>
-                                <p class="text-xs text-slate-500">Issue role-locked mobile & 4-digit PIN access</p>
+                                <p class="text-xs text-slate-500">Auto-generates a 4-digit PIN & shares via WhatsApp</p>
                             </div>
                             <button type="button" onclick="toggleAdminAddUserForm(false)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">✕</button>
                         </div>
-                        <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-3">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="OFFICE">🏢 Office Staff</option>
-                                    <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
-                                    <option value="GUARD">🛡️ Security Guard</option>
-                                </select>
-                                <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
+                        <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-2.5">
+                            <select id="admin-dir-zone" onchange="handleAdminDirCategoryChange()" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="OFFICE">🏢 Office Staff</option>
+                                <option value="OFFICE_RES">🏢🏠 Office with Residence</option>
+                                <option value="GUARD">🛡️ Security Guard</option>
+                            </select>
+                            <input id="admin-dir-unit" type="text" placeholder="Office Dept (e.g., IT Dept Floor 2) *" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <div id="admin-dir-flat-wrap" class="hidden">
-                                <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full min-w-0 bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-3 text-sm font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <input id="admin-dir-flat" type="text" placeholder="Residential Flat / Quarter (e.g., Flat C-301) *" class="w-full bg-emerald-50/70 border border-emerald-200 rounded-xl px-3.5 py-3 text-sm font-semibold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="98765 43210 *" class="w-full min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </div>
-                            <div class="flex flex-wrap sm:flex-nowrap gap-2.5">
-                                <div class="w-32 flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shrink-0">
-                                    <input id="admin-dir-pin" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" oninput="formatNumericOnly(this)" placeholder="PIN" class="w-full min-w-0 px-2.5 py-3 text-sm text-center font-bold tracking-widest focus:outline-none">
-                                    <button type="button" onclick="generateRandomAdminPin()" class="px-3 py-3 bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-700 shrink-0" title="Auto-generate 4-digit PIN">🎲</button>
-                                </div>
-                                <button type="button" onclick="addDirectoryEntry()" class="flex-1 min-w-[160px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-sm transition">
-                                    + Add & Share PIN
-                                </button>
-                            </div>
+                            <input id="admin-dir-name" type="text" inputmode="text" autocapitalize="words" oninput="formatTitleCase(this)" placeholder="Full Name *" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input id="admin-dir-phone" type="tel" inputmode="numeric" pattern="[6-9][0-9]{4}\s?[0-9]{5}" maxlength="16" oninput="formatIndianMobile(this)" onchange="formatIndianMobile(this)" placeholder="Mobile * (e.g., 98765 43210)" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="button" onclick="addDirectoryEntry()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-sm py-3.5 px-4 rounded-xl shadow-sm transition">
+                                Add
+                            </button>
                         </div>
                     </div>
 
                     <!-- 2. Added Users Toggle Button -->
-                    <button type="button" id="btn-toggle-admin-added-users" onclick="toggleAdminAddedUsersList()" class="w-full bg-white hover:bg-slate-100 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                    <button type="button" id="btn-toggle-admin-added-users" onclick="toggleAdminAddedUsersList()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
                         <span class="flex items-center gap-2">
                             <span>👥</span>
                             <span>Added Users</span>
-                            <span id="admin-dir-count" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">0 people</span>
+                            <span id="admin-dir-count" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0 people</span>
                         </span>
-                        <span id="admin-added-users-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼ View All</span>
+                        <span id="admin-added-users-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
                     </button>
 
                     <!-- Collapsible Added Users Directory -->
                     <div id="admin-added-users-panel" class="hidden bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200/80 space-y-3.5 overflow-hidden">
-                        <!-- Filter Tabs -->
-                        <div class="flex flex-wrap gap-2 text-xs font-bold">
-                            <button type="button" id="dir-filter-ALL" onclick="setAdminDirFilter('ALL')" class="px-3 py-2 rounded-xl bg-slate-900 text-white transition">All</button>
-                            <button type="button" id="dir-filter-OFFICE" onclick="setAdminDirFilter('OFFICE')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢 Office Staff</button>
-                            <button type="button" id="dir-filter-OFFICE_RES" onclick="setAdminDirFilter('OFFICE_RES')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🏢🏠 Office + Res</button>
-                            <button type="button" id="dir-filter-GUARD" onclick="setAdminDirFilter('GUARD')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🛡️ Guards</button>
-                            <button type="button" id="dir-filter-ADMIN" onclick="setAdminDirFilter('ADMIN')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">📊 Admins</button>
-                            <button type="button" id="dir-filter-RESETS" onclick="setAdminDirFilter('RESETS')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition">🔄 Resets</button>
+                        <!-- Stacked Full-Width Category Dropdown & Search Bar -->
+                        <div class="space-y-2.5">
+                            <select id="admin-dir-filter-select" onchange="setAdminDirFilter(this.value)" aria-label="Filter Users by Role" class="w-full bg-slate-900 text-white rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="ALL">All Users</option>
+                                <option value="OFFICE">🏢 Office Staff</option>
+                                <option value="OFFICE_RES">🏢🏠 Office + Res</option>
+                                <option value="GUARD">🛡️ Guards</option>
+                                <option value="ADMIN">📊 Admins</option>
+                            </select>
+                            <input id="admin-dir-search" type="text" oninput="renderAdminDirectory()" placeholder="🔍 Search name, unit or phone..." aria-label="Search Added Users" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
                         </div>
 
                         <!-- Directory List -->
-                        <div id="admin-directory-list" class="max-h-80 lg:max-h-[450px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl"></div>
+                        <div id="admin-directory-list" class="max-h-80 lg:max-h-[450px] overflow-y-auto space-y-2.5"></div>
+                    </div>
+
+                    <!-- 3. PIN Reset Requests Toggle Button (Separate Function with Live Count) -->
+                    <button type="button" id="btn-toggle-admin-pin-resets" onclick="toggleAdminPinResetsList()" class="w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition">
+                        <span class="flex items-center gap-2">
+                            <span>🔄</span>
+                            <span>PIN Reset Requests</span>
+                            <span id="admin-pin-resets-count" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0</span>
+                        </span>
+                        <span id="admin-pin-resets-chevron" class="text-xs font-extrabold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">▼</span>
+                    </button>
+
+                    <!-- Collapsible PIN Reset Requests List (2-Line Compact Cards) -->
+                    <div id="admin-pin-resets-panel" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-amber-200/80 space-y-2.5 overflow-hidden">
+                        <div id="admin-pin-resets-list" class="divide-y divide-slate-100 border border-slate-100 rounded-xl"></div>
                     </div>
                 </div>
             </section>
@@ -2592,7 +2600,7 @@
             if (!feed) return;
             const isHidden = feed.classList.toggle('hidden');
             if (chevron) {
-                chevron.textContent = isHidden ? '▼ Tap to expand' : '▲ Collapse';
+                chevron.textContent = isHidden ? '▼' : '▲';
             }
         };
 
@@ -2602,7 +2610,7 @@
             if (!panel) return;
             const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
             panel.classList.toggle('hidden', !shouldOpen);
-            if (chevron) chevron.textContent = shouldOpen ? '▲ Close Form' : '▼ Open Form';
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
             if (shouldOpen) document.getElementById('admin-dir-name')?.focus();
         };
 
@@ -2612,7 +2620,17 @@
             if (!panel) return;
             const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
             panel.classList.toggle('hidden', !shouldOpen);
-            if (chevron) chevron.textContent = shouldOpen ? '▲ Hide' : '▼ View All';
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
+            if (shouldOpen) renderAdminDirectory();
+        };
+
+        window.toggleAdminPinResetsList = function(forceState = null) {
+            const panel = document.getElementById('admin-pin-resets-panel');
+            const chevron = document.getElementById('admin-pin-resets-chevron');
+            if (!panel) return;
+            const shouldOpen = forceState !== null ? forceState : panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !shouldOpen);
+            if (chevron) chevron.textContent = shouldOpen ? '▲' : '▼';
             if (shouldOpen) renderAdminDirectory();
         };
 
@@ -3179,13 +3197,8 @@
 
         window.setAdminDirFilter = function(filter) {
             adminDirFilter = filter;
-            ['ALL', 'OFFICE', 'OFFICE_RES', 'GUARD', 'ADMIN', 'RESETS'].forEach(k => {
-                const btn = document.getElementById(`dir-filter-${k}`);
-                if (!btn) return;
-                btn.className = k === filter
-                    ? 'px-3 py-2 rounded-xl bg-slate-900 text-white transition shrink-0'
-                    : 'px-3 py-2 rounded-xl bg-slate-100 text-slate-700 transition shrink-0';
-            });
+            const sel = document.getElementById('admin-dir-filter-select');
+            if (sel && sel.value !== filter) sel.value = filter;
             renderAdminDirectory();
         };
 
@@ -3199,7 +3212,7 @@
             const flatUnit = document.getElementById('admin-dir-flat')?.value.trim() || '';
             const name = document.getElementById('admin-dir-name').value.trim();
             const phone = normalizeIndianMobile(document.getElementById('admin-dir-phone').value);
-            let pin = document.getElementById('admin-dir-pin').value.trim();
+            const pin = String(Math.floor(1000 + Math.random() * 9000));
 
             if (!name || !isValidIndianMobile(phone)) {
                 showToast('⚠️ Enter Full Name & valid 10-digit mobile starting with 6, 7, 8, or 9.');
@@ -3212,9 +3225,6 @@
             if (category === 'OFFICE_RES' && !flatUnit) {
                 showToast('⚠️ Enter the Residential Flat / Quarter number.');
                 return;
-            }
-            if (pin.length !== 4) {
-                pin = String(Math.floor(1000 + Math.random() * 9000));
             }
 
             const recordsToCreate = [];
@@ -3267,7 +3277,6 @@
             if (document.getElementById('admin-dir-flat')) document.getElementById('admin-dir-flat').value = '';
             document.getElementById('admin-dir-name').value = '';
             document.getElementById('admin-dir-phone').value = '';
-            document.getElementById('admin-dir-pin').value = '';
             toggleAdminAddUserForm(false);
             toggleAdminAddedUsersList(true);
             shareUserCredentials(name, phone, pin, true);
@@ -3424,9 +3433,45 @@
                 return { ...g, category };
             });
 
+            // Update dedicated PIN Reset Requests button count & 2-line expanded list
+            const resetRequesters = consolidated.filter(item => item.pinResetRequested);
+            const resetCountEl = document.getElementById('admin-pin-resets-count');
+            const resetBtnEl = document.getElementById('btn-toggle-admin-pin-resets');
+            const resetListEl = document.getElementById('admin-pin-resets-list');
+            if (resetCountEl) {
+                resetCountEl.textContent = String(resetRequesters.length);
+                resetCountEl.className = resetRequesters.length > 0
+                    ? 'text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950'
+                    : 'text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600';
+            }
+            if (resetBtnEl) {
+                resetBtnEl.className = resetRequesters.length > 0
+                    ? 'w-full bg-amber-100/90 hover:bg-amber-100 animate-pulse active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-amber-300 flex items-center justify-between transition'
+                    : 'w-full bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-900 font-bold text-sm py-3.5 px-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between transition';
+            }
+            if (resetListEl) {
+                resetListEl.innerHTML = resetRequesters.length === 0
+                    ? `<div class="p-4 text-center text-xs text-slate-400">No pending PIN reset requests.</div>`
+                    : resetRequesters.map(item => `
+                        <div class="p-3.5 bg-amber-50/50 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-extrabold text-sm text-slate-900 truncate">${item.name}</span>
+                                <span class="text-xs font-semibold text-slate-500 shrink-0">📱 ${displayIndianMobile(item.phone)}</span>
+                            </div>
+                            <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-xs font-bold shadow-sm transition">
+                                🔄 Reset PIN & Share
+                            </button>
+                        </div>
+                    `).join('');
+            }
+
+            const searchQuery = (document.getElementById('admin-dir-search')?.value || '').trim().toLowerCase();
             const filtered = consolidated.filter(item => {
-                if (adminDirFilter === 'RESETS') return item.pinResetRequested;
-                if (adminDirFilter !== 'ALL') return item.category === adminDirFilter;
+                if (adminDirFilter !== 'ALL' && item.category !== adminDirFilter) return false;
+                if (searchQuery) {
+                    const hay = `${item.name} ${item.phone} ${item.officeRec?.unit || ''} ${item.resRecs.map(r => r.unit).join(' ')} ${item.guardRec?.unit || ''} ${item.adminRec?.unit || ''}`.toLowerCase();
+                    if (!hay.includes(searchQuery)) return false;
+                }
                 return true;
             });
             if (countEl) countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'person' : 'people'}`;
@@ -3434,27 +3479,27 @@
             listEl.innerHTML = filtered.map(item => {
                 const canDelete = item.category !== 'ADMIN' || (loggedInSession && loggedInSession.role === 'superadmin');
                 let statusBadge = '';
-                let unitLine = '';
+                let officeLine = '';
+                let flatLine = '';
                 let statusToggleBtn = '';
 
                 if (item.category === 'ADMIN') {
-                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">📊 Campus Admin</span>`;
-                    unitLine = item.adminRec.unit;
+                    statusBadge = `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700">📊 Campus Admin</span>`;
+                    officeLine = item.adminRec.unit;
                 } else if (item.category === 'GUARD') {
-                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800">🛡️ Security Guard</span>`;
-                    unitLine = item.guardRec.unit;
+                    statusBadge = `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800">🛡️ Security Guard</span>`;
+                    officeLine = item.guardRec.unit;
                 } else if (item.category === 'OFFICE_RES') {
-                    const officeTxt = item.officeRec ? item.officeRec.unit : 'Campus Staff';
-                    const flatTxt = item.resRecs.map(r => r.unit).join(', ');
-                    statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">🏢🏠 Office + Residence</span>`;
-                    unitLine = `${officeTxt} • <strong>${flatTxt}</strong>`;
+                    officeLine = item.officeRec ? item.officeRec.unit : 'Campus Staff';
+                    flatLine = item.resRecs.map(r => r.unit).join(', ');
+                    statusBadge = `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">🏢🏠 Office with Residence</span>`;
                     if (item.officeRec) {
-                        statusToggleBtn = `<button type="button" onclick="vacateEmployeeResidence('${item.phone}')" class="px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition" title="Remove Residence & switch to Office Staff only">Vacate Flat</button>`;
+                        statusToggleBtn = `<button type="button" onclick="vacateEmployeeResidence('${item.phone}')" class="flex-1 py-2.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold text-center transition" title="Remove Residence & switch to Office Staff only">Vacate Flat</button>`;
                     }
                 } else {
                     statusBadge = `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700">🏢 Office Staff</span>`;
-                    unitLine = item.officeRec ? item.officeRec.unit : '';
-                    statusToggleBtn = `<button type="button" onclick="openAllotResidenceModal('${item.phone}', '${item.name.replace(/'/g, "\\'")}')" class="px-3.5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition" title="Allot Quarter & upgrade to Office with Residence">+ Allot Flat</button>`;
+                    officeLine = item.officeRec ? item.officeRec.unit : '';
+                    statusToggleBtn = `<button type="button" onclick="openAllotResidenceModal('${item.phone}', '${item.name.replace(/'/g, "\\'")}')" class="flex-1 py-2.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold text-center transition" title="Allot Quarter & upgrade to Office with Residence">+ Allot Flat</button>`;
                 }
 
                 const deleteAction = item.category === 'ADMIN'
@@ -3462,24 +3507,23 @@
                     : `removeEmployeeByPhone('${item.phone}')`;
 
                 return `
-                <div class="p-4 ${item.pinResetRequested ? 'bg-amber-50/70' : 'bg-white'} space-y-3 text-sm">
-                    <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="font-extrabold text-slate-900 break-words">${item.name}</span>
-                            ${statusBadge}
-                            ${item.pinResetRequested ? `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
-                        </div>
-                        <p class="text-xs text-slate-600 mt-1.5 break-words">${unitLine}</p>
-                        <p class="text-xs font-medium text-slate-600 mt-1">
-                            📱 ${displayIndianMobile(item.phone)} • ${item.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${item.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
-                        </p>
+                <div class="rounded-2xl p-4 ${item.pinResetRequested ? 'bg-amber-50/70 border border-amber-300' : 'bg-slate-50/80 border border-slate-200/80'} shadow-sm space-y-2 text-sm">
+                    <div class="flex flex-wrap items-center gap-2">
+                        ${statusBadge}
+                        ${officeLine ? `<span class="text-xs font-semibold text-slate-600 break-words">• ${officeLine}</span>` : ''}
+                        ${item.pinResetRequested ? `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900">🔄 Reset Requested</span>` : ''}
                     </div>
-                    <div class="flex flex-wrap items-center gap-2.5 pt-2.5 border-t border-slate-100">
+                    ${flatLine ? `<p class="text-xs font-semibold text-emerald-800 break-words">🏠 ${flatLine}</p>` : ''}
+                    <p class="font-extrabold text-base text-slate-900 break-words">${item.name}</p>
+                    <p class="text-xs font-medium text-slate-600">
+                        📱 ${displayIndianMobile(item.phone)} • ${item.pinMustChange ? `<span class="text-amber-700 font-bold">Temp PIN: ${item.pin}</span>` : `<span class="text-emerald-700 font-bold">Private PIN Set</span>`}
+                    </p>
+                    <div class="grid ${statusToggleBtn && canDelete ? 'grid-cols-3' : (statusToggleBtn || canDelete ? 'grid-cols-2' : 'grid-cols-1')} gap-2 pt-2.5 border-t border-slate-200/70">
                         ${statusToggleBtn}
-                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
+                        <button type="button" onclick="adminResetUserPin('${item.primaryId}')" class="w-full py-2.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center transition">
                             📲 PIN
                         </button>
-                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="ml-auto px-3.5 py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold transition" title="Delete Entry">✕ Remove</button>` : ''}
+                        ${canDelete ? `<button type="button" onclick="${deleteAction}" class="w-full py-2.5 px-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 text-xs font-bold text-center transition" title="Delete Entry">✕ Remove</button>` : ''}
                     </div>
                 </div>
             `;
