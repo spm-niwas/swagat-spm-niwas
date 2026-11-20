@@ -1746,17 +1746,16 @@
         function getZoneDirectoryLabels(zone) {
             const entries = directoryEntries.filter(d => d.zone === zone);
             if (zone === 'RESIDENTIAL') {
-                const grouped = new Map();
+                const seenUnits = new Set();
+                const labels = [];
                 entries.forEach(d => {
                     const key = d.unit.trim().toLowerCase();
-                    if (!grouped.has(key)) grouped.set(key, { unit: d.unit.trim(), members: [] });
-                    grouped.get(key).members.push(d.name);
+                    if (!seenUnits.has(key)) {
+                        seenUnits.add(key);
+                        labels.push(formatDirectoryLabel(d));
+                    }
                 });
-                return Array.from(grouped.values()).map(g => {
-                    if (g.members.length === 1) return `${g.unit} - ${g.members[0]}`;
-                    const surname = g.members[0].trim().split(/\s+/).pop();
-                    return `${g.unit} - ${surname} Family (${g.members.length} members)`;
-                });
+                return labels;
             }
             return entries.map(formatDirectoryLabel);
         }
